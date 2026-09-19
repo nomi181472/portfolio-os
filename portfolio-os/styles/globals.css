@@ -1,0 +1,494 @@
+@import './tokens.css';
+
+/* ==========================================================================
+   Reset, kept to what is actually needed.
+   ========================================================================== */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+* { margin: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--surface-sunk);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  font-synthesis-weight: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+}
+
+img, svg, video, iframe { display: block; max-width: 100%; }
+img, video { height: auto; }
+
+a { color: inherit; text-decoration: none; }
+
+button, input, textarea, select { font: inherit; color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: var(--radius-control);
+}
+
+::selection { background: var(--signal-wash); color: var(--ink-bright); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--space);
+  top: calc(var(--space) * -6);
+  z-index: var(--z-menu);
+  padding: var(--space-tight) var(--space);
+  background: var(--surface-raised);
+  border: var(--border-hair) solid var(--signal);
+  transition: top var(--dur-quick) var(--ease-out);
+}
+.skip-link:focus { top: var(--space); }
+
+/* ==========================================================================
+   Shell: a fixed instrument rail, and one measured content column.
+   Not a navbar — the rail is always present and never scrolls away, so you
+   always know which system you are inside.
+   ========================================================================== */
+
+.shell {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 100dvh;
+}
+.shell:has([data-open='true']) {
+  grid-template-columns: var(--rail-open) minmax(0, 1fr);
+}
+
+.shell__main {
+  min-width: 0;
+  background: var(--surface);
+  border-left: var(--border-hair) solid var(--rule);
+}
+
+.page {
+  max-width: var(--column-max);
+  padding: var(--space-wide) var(--gutter) var(--space-chapter);
+  margin-inline: 0;
+}
+
+/* The gutter ruler: a measurement device that encodes depth, not decoration.
+   Each tick is one level down from the surface, and the filled tick is where
+   you currently are. */
+.ruler {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  padding-block: var(--space-tight);
+  color: var(--ink-faint);
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  letter-spacing: 0.04em;
+}
+.ruler__ticks { display: flex; gap: 3px; align-items: flex-end; }
+.ruler__tick { width: 1px; height: 7px; background: var(--rule-strong); }
+.ruler__tick[data-on='true'] { background: var(--signal); height: 12px; }
+
+/* ==========================================================================
+   Type roles
+   ========================================================================== */
+
+.display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 400;
+  line-height: 0.96;
+  letter-spacing: -0.022em;
+  color: var(--ink-bright);
+  text-wrap: balance;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  font-weight: 400;
+  line-height: var(--leading-tight);
+  letter-spacing: -0.015em;
+  color: var(--ink-bright);
+  text-wrap: balance;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: 500;
+  line-height: var(--leading-snug);
+  color: var(--ink-bright);
+}
+
+.lead {
+  font-size: var(--text-lead);
+  line-height: var(--leading-reading);
+  color: var(--ink);
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+.prose { max-width: var(--measure); text-wrap: pretty; }
+.prose p + p { margin-top: var(--space); }
+
+/* Metadata is set in the data face, small and quiet. It is reserved for things
+   that really are data: dates, ids, counts, states, versions. */
+.meta {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  letter-spacing: 0.02em;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.label {
+  font-size: var(--text-small);
+  color: var(--ink-quiet);
+  letter-spacing: 0.01em;
+}
+
+/* ==========================================================================
+   Section rule: the primary structural device. Content is separated by
+   measured rules and indentation rather than by boxes.
+   ========================================================================== */
+
+.section { padding-block: var(--space-section); border-top: var(--border-hair) solid var(--rule); }
+.section:first-of-type { border-top: none; padding-top: var(--space-loose); }
+
+.section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-loose);
+  margin-bottom: var(--space-loose);
+  flex-wrap: wrap;
+}
+
+.section__note {
+  color: var(--ink-quiet);
+  font-size: var(--text-meta);
+  max-width: var(--measure-tight);
+}
+
+/* ==========================================================================
+   Entity rows — the preview depth. Rules and type, no cards.
+   Hovering lifts the rule, not the row: the structure responds, the content
+   stays still.
+   ========================================================================== */
+
+.rows { border-top: var(--border-hair) solid var(--rule); }
+
+.row {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  gap: var(--space);
+  align-items: start;
+  padding: var(--space-loose) 0;
+  border-bottom: var(--border-hair) solid var(--rule);
+  position: relative;
+  transition: background var(--dur-quick) var(--ease-out);
+}
+
+.row::before {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -1px;
+  height: 1px; width: 0;
+  background: var(--signal);
+  transition: width var(--dur-considered) var(--ease-out);
+}
+.row:hover::before,
+.row:focus-within::before { width: 100%; }
+
+.row:hover { background: color-mix(in oklab, var(--surface-raised) 55%, transparent); }
+
+.row__mark { color: var(--ink-faint); padding-top: 2px; }
+.row:hover .row__mark, .row:focus-within .row__mark { color: var(--signal); }
+
+.row__name {
+  font-family: var(--font-display);
+  font-size: var(--text-title);
+  font-weight: 500;
+  line-height: var(--leading-snug);
+  color: var(--ink-bright);
+}
+.row__name a::after { content: ''; position: absolute; inset: 0; }
+
+.row__summary {
+  margin-top: var(--space-hair);
+  color: var(--ink-quiet);
+  max-width: var(--measure);
+  font-size: var(--text-meta);
+}
+
+.row__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-hair);
+  text-align: right;
+}
+
+.row__tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-tight);
+  margin-top: var(--space-snug);
+}
+
+.tech {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-faint);
+  border-bottom: var(--border-hair) solid var(--rule-strong);
+  padding-bottom: 1px;
+}
+a.tech:hover { color: var(--signal); border-color: var(--signal); }
+
+/* ==========================================================================
+   State: brass marks state and nothing else.
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-hair);
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  letter-spacing: 0.02em;
+  color: var(--ink-quiet);
+  white-space: nowrap;
+}
+.badge::before {
+  content: '';
+  width: 5px; height: 5px;
+  border: var(--border-hair) solid currentColor;
+  transform: rotate(45deg);
+}
+/* Live and active are the only states that earn the signal colour: they are
+   the only ones that mean "this is running right now". */
+.badge[data-state='live'],
+.badge[data-state='active'],
+.badge[data-state='validated'] { color: var(--signal); }
+.badge[data-state='live']::before,
+.badge[data-state='active']::before { background: currentColor; }
+.badge[data-state='archived'],
+.badge[data-state='unresolved'] { color: var(--ink-faint); }
+.badge[data-state='private']::before { border-style: dashed; }
+
+/* ==========================================================================
+   Vitrine: the only element that gets a frame. Media is an object under glass.
+   ========================================================================== */
+
+.vitrine {
+  border: var(--border-hair) solid var(--rule-strong);
+  background: var(--surface-vitrine);
+  border-radius: var(--radius-frame);
+  overflow: hidden;
+  box-shadow: var(--lift);
+}
+.vitrine__body { position: relative; background: var(--surface-sunk); }
+.vitrine__caption {
+  display: flex; justify-content: space-between; gap: var(--space);
+  padding: var(--space-snug) var(--space);
+  border-top: var(--border-hair) solid var(--rule);
+  font-size: var(--text-small);
+  color: var(--ink-quiet);
+}
+.vitrine__fallback {
+  display: grid; place-items: center; gap: var(--space-tight);
+  min-height: 12rem; padding: var(--space-loose);
+  color: var(--ink-faint); text-align: center;
+}
+
+.gallery {
+  display: grid;
+  gap: var(--space-loose);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+/* ==========================================================================
+   Disclosure: depth costs one deliberate action. Nothing auto-expands.
+   ========================================================================== */
+
+.disclosure { border-top: var(--border-hair) solid var(--rule); }
+.disclosure__trigger {
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space);
+  padding: var(--space) 0;
+  background: none; border: 0; cursor: pointer; text-align: left;
+  color: var(--ink);
+  transition: color var(--dur-quick) var(--ease-out);
+}
+.disclosure__trigger:hover { color: var(--ink-bright); }
+.disclosure__sign { color: var(--ink-faint); font-family: var(--font-data); font-size: var(--text-fine); }
+.disclosure__trigger[aria-expanded='true'] .disclosure__sign { color: var(--signal); }
+.disclosure__panel { padding-bottom: var(--space-loose); }
+.disclosure__panel[hidden] { display: none; }
+
+/* ==========================================================================
+   Reading: research and long-form. Serif, generous leading, real hierarchy.
+   ========================================================================== */
+
+.reader {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  line-height: var(--leading-reading);
+  color: var(--ink);
+  max-width: var(--measure-reading);
+}
+.reader > * + * { margin-top: var(--space); }
+.reader h2 {
+  font-size: var(--text-title);
+  font-weight: 500;
+  color: var(--ink-bright);
+  margin-top: var(--space-wide);
+  padding-top: var(--space);
+  border-top: var(--border-hair) solid var(--rule);
+  line-height: var(--leading-snug);
+}
+.reader h3 { font-size: var(--text-lead); font-weight: 600; color: var(--ink-bright); margin-top: var(--space-loose); }
+.reader ul, .reader ol { padding-left: 1.25em; }
+.reader li + li { margin-top: var(--space-tight); }
+.reader blockquote {
+  border-left: 2px solid var(--signal-quiet);
+  padding-left: var(--space);
+  color: var(--ink-quiet);
+  font-style: italic;
+}
+.reader code {
+  font-family: var(--font-data);
+  font-size: 0.85em;
+  background: var(--surface-raised);
+  border: var(--border-hair) solid var(--rule);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-control);
+}
+.reader pre {
+  font-family: var(--font-data);
+  font-size: var(--text-small);
+  line-height: 1.55;
+  background: var(--surface-sunk);
+  border: var(--border-hair) solid var(--rule);
+  border-radius: var(--radius-frame);
+  padding: var(--space);
+  overflow-x: auto;
+}
+.reader pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+.reader table { width: 100%; border-collapse: collapse; font-family: var(--font-ui); font-size: var(--text-meta); }
+.reader th, .reader td { text-align: left; padding: var(--space-tight) var(--space-snug); border-bottom: var(--border-hair) solid var(--rule); }
+.reader th { color: var(--ink-bright); font-weight: 500; }
+.reader a { color: var(--ink-bright); border-bottom: var(--border-hair) solid var(--signal-quiet); }
+.reader a:hover { border-bottom-color: var(--signal); }
+
+.table-scroll { overflow-x: auto; }
+
+/* ==========================================================================
+   Links and controls
+   ========================================================================== */
+
+.link {
+  color: var(--ink-bright);
+  border-bottom: var(--border-hair) solid var(--rule-strong);
+  transition: border-color var(--dur-quick) var(--ease-out);
+}
+.link:hover { border-bottom-color: var(--signal); }
+
+.control {
+  display: inline-flex; align-items: center; gap: var(--space-tight);
+  padding: var(--space-tight) var(--space-snug);
+  background: transparent;
+  border: var(--border-hair) solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: var(--text-meta);
+  transition: border-color var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
+}
+.control:hover { border-color: var(--signal); color: var(--ink-bright); }
+.control[data-emphasis='signal'] { border-color: var(--signal); color: var(--signal); }
+.control[disabled] { opacity: 0.45; cursor: not-allowed; }
+
+.field {
+  width: 100%;
+  background: var(--surface-sunk);
+  border: var(--border-hair) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-tight) var(--space-snug);
+  color: var(--ink-bright);
+  font-size: var(--text-meta);
+}
+.field:focus { border-color: var(--signal); outline: none; }
+.field[data-invalid='true'] { border-color: var(--signal); background: var(--signal-wash); }
+
+/* ==========================================================================
+   Notices — never alarming, always actionable.
+   ========================================================================== */
+
+.notice {
+  border: var(--border-hair) solid var(--rule-strong);
+  border-left: 2px solid var(--signal-quiet);
+  background: var(--surface-raised);
+  padding: var(--space-snug) var(--space);
+  font-size: var(--text-meta);
+  color: var(--ink-quiet);
+  border-radius: var(--radius-frame);
+}
+.notice strong { color: var(--ink-bright); font-weight: 500; }
+
+/* ==========================================================================
+   Motion: one orchestrated entrance on the surface, nothing else automatic.
+   ========================================================================== */
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(0.5rem); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.enter { animation: rise var(--dur-deliberate) var(--ease-out) backwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Mobile: the rail becomes a bottom bar, the column takes the full width.
+   Deliberately re-laid out, not shrunk.
+   ========================================================================== */
+
+@media (max-width: 56rem) {
+  .shell { grid-template-columns: minmax(0, 1fr); }
+  .shell__main {
+    border-left: 0;
+    padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+  }
+  .page { padding-inline: var(--gutter); }
+  .row { grid-template-columns: 1.75rem minmax(0, 1fr); }
+  .row__aside { grid-column: 2; align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; gap: var(--space-snug); }
+}

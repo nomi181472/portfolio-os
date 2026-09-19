@@ -1,0 +1,305 @@
+/* ==========================================================================
+   Mobile Native App Navigation & Drawer Styles
+   ========================================================================== */
+
+/* Top bar (mobile only) */
+.topBar {
+  display: none;
+}
+
+@media (max-width: 56rem) {
+  .topBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(3.25rem + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-inline: 1rem;
+    background: rgba(11, 19, 24, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--rule);
+    z-index: var(--z-rail);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+.topBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--ink-bright);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.brandDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 8px var(--signal);
+  animation: pulseDot 2.5s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.topBtn {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--surface-float);
+  border: 1px solid var(--rule);
+  color: var(--ink-quiet);
+  cursor: pointer;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+.topBtn:active {
+  transform: scale(0.92);
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+/* Bottom Tab Bar (mobile only) */
+.bottomBar {
+  display: none;
+}
+
+@media (max-width: 56rem) {
+  .bottomBar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(3.75rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: rgba(11, 19, 24, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1px solid var(--rule-strong);
+    z-index: var(--z-rail);
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.tabItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 100%;
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  text-decoration: none;
+  font-size: 10px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  position: relative;
+  transition: color var(--dur-quick) var(--ease-out), transform 0.1s var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tabItem:active {
+  transform: scale(0.9);
+}
+
+.tabItem[data-active='true'] {
+  color: var(--signal);
+  font-weight: 500;
+}
+
+.tabItem[data-active='true']::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 25%;
+  right: 25%;
+  height: 2px;
+  background: var(--signal);
+  border-radius: 0 0 2px 2px;
+  box-shadow: 0 1px 6px var(--signal);
+}
+
+.tabIcon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+}
+
+.tabLabel {
+  font-size: 9.5px;
+  letter-spacing: 0.2px;
+}
+
+/* Slide-up App Drawer Sheet */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: calc(var(--z-rail) + 10);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur-quick) var(--ease-out);
+}
+.backdrop[data-open='true'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  max-height: 85dvh;
+  background: var(--surface);
+  border-top: 1px solid var(--rule-strong);
+  border-radius: 20px 20px 0 0;
+  z-index: calc(var(--z-rail) + 11);
+  display: flex;
+  flex-direction: column;
+  transform: translateY(105%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+}
+.drawer[data-open='true'] {
+  transform: translateY(0);
+}
+
+.handleBar {
+  width: 38px;
+  height: 4px;
+  background: var(--rule-strong);
+  border-radius: 2px;
+  margin: 10px auto 4px;
+  flex-shrink: 0;
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid var(--rule);
+  flex-shrink: 0;
+}
+
+.drawerTitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--ink-bright);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.drawerClose {
+  background: var(--surface-float);
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  width: 1.85rem;
+  height: 1.85rem;
+  color: var(--ink-quiet);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.drawerClose:active {
+  transform: scale(0.92);
+}
+
+.drawerBody {
+  overflow-y: auto;
+  padding: 1rem 1.25rem;
+  display: grid;
+  gap: 1.25rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.searchLauncher {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: var(--surface-sunk);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-frame);
+  color: var(--ink-quiet);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  cursor: pointer;
+}
+.searchLauncher:active {
+  border-color: var(--signal);
+  color: var(--ink-bright);
+}
+
+.categoryGroupTitle {
+  font-family: var(--font-mono);
+  font-size: var(--text-fine);
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.gridLinks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.gridCard {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  background: var(--surface-sunk);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: var(--text-small);
+  transition: all var(--dur-quick) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.gridCard:active {
+  background: rgba(210, 169, 92, 0.1);
+  border-color: var(--signal);
+  color: var(--signal);
+  transform: scale(0.97);
+}
+.gridCard[data-current='true'] {
+  border-color: var(--signal);
+  color: var(--signal);
+}

@@ -1,0 +1,80 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-menu);
+  background: color-mix(in oklab, var(--surface-sunk) 78%, transparent);
+  backdrop-filter: blur(3px);
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: clamp(1rem, 12vh, 9rem) var(--space);
+}
+
+.dialog {
+  width: min(44rem, 100%);
+  background: var(--surface-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-frame);
+  box-shadow: var(--lift);
+  overflow: hidden;
+  animation: rise var(--dur-quick) var(--ease-out);
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-snug);
+  padding: var(--space-snug) var(--space);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-faint);
+}
+
+.input {
+  flex: 1;
+  background: none;
+  border: 0;
+  outline: none;
+  color: var(--ink-bright);
+  font-size: var(--text-lead);
+}
+.input::placeholder { color: var(--ink-faint); }
+
+.results { list-style: none; margin: 0; padding: var(--space-hair); max-height: 26rem; overflow-y: auto; }
+
+.result {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-snug);
+  padding: var(--space-snug) var(--space);
+  background: none;
+  border: 0;
+  border-left: 2px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  color: var(--ink-quiet);
+}
+.result[data-active='true'] {
+  background: var(--surface-vitrine);
+  border-left-color: var(--signal);
+  color: var(--ink);
+}
+
+.resultBody { flex: 1; min-width: 0; display: grid; }
+.resultName { color: var(--ink-bright); font-size: var(--text-meta); }
+.resultSummary {
+  font-size: var(--text-small);
+  color: var(--ink-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.commandMark {
+  width: 16px; height: 16px; flex: none;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.result[data-kind='command'][data-active='true'] .commandMark { border-color: var(--signal); }
+
+.empty { padding: var(--space-loose) var(--space); color: var(--ink-faint); font-size: var(--text-meta); }

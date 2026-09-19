@@ -1,0 +1,265 @@
+.frame {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-frame);
+  background:
+    radial-gradient(120% 80% at 50% 45%, color-mix(in oklab, var(--surface-raised) 90%, transparent), transparent 70%),
+    var(--surface-sunk);
+  overflow: hidden;
+  position: relative;
+  transition: border-color var(--dur-normal) var(--ease-out);
+}
+
+.frame:hover {
+  border-color: color-mix(in oklab, var(--rule-strong) 80%, var(--signal));
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.grid line {
+  stroke: var(--rule);
+  stroke-width: 0.5;
+  opacity: 0.45;
+  transition: opacity var(--dur-quick) var(--ease-out);
+}
+
+.edge,
+.spoke {
+  stroke: var(--rule-strong);
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw var(--dur-deliberate) var(--ease-out) forwards;
+  transition:
+    stroke var(--dur-quick) var(--ease-out),
+    stroke-width var(--dur-quick) var(--ease-out),
+    opacity var(--dur-quick) var(--ease-out),
+    filter var(--dur-quick) var(--ease-out);
+}
+
+.spoke {
+  stroke-width: 0.5;
+  opacity: 0.55;
+}
+
+/* Highlighted Edge on Node Hover */
+.edgeHighlighted {
+  stroke: var(--signal) !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--signal) 65%, transparent));
+}
+
+/* Dimmed Edges when another node is hovered */
+.edgeDimmed {
+  opacity: 0.1 !important;
+  stroke: var(--rule) !important;
+}
+
+/* Highlighted Spoke to Center */
+.spokeHighlighted {
+  stroke: var(--signal) !important;
+  stroke-width: 1.4 !important;
+  opacity: 0.95 !important;
+  filter: drop-shadow(0 0 4px color-mix(in oklab, var(--signal) 50%, transparent));
+}
+
+.spokeDimmed {
+  opacity: 0.1 !important;
+}
+
+/* Central Aperture / Core */
+.core circle {
+  fill: none;
+  stroke: var(--rule-strong);
+  transition: stroke var(--dur-quick) var(--ease-out), transform var(--dur-quick) var(--ease-out);
+}
+
+.coreInner {
+  stroke: var(--signal-quiet);
+  stroke-dasharray: 3 4;
+}
+
+.coreDot {
+  fill: var(--signal);
+  stroke: none;
+  transition: r var(--dur-quick) var(--ease-out), fill var(--dur-quick) var(--ease-out);
+}
+
+.coreHovered .coreInner {
+  stroke: var(--signal);
+  stroke-dasharray: 4 3;
+  animation: rotateCore 12s linear infinite;
+  transform-origin: 360px 216px;
+}
+
+.coreHovered .coreDot {
+  filter: drop-shadow(0 0 6px var(--signal));
+}
+
+/* Node Elements */
+.node {
+  cursor: pointer;
+  opacity: 0;
+  animation: rise var(--dur-considered) var(--ease-out) forwards;
+  transition: opacity var(--dur-quick) var(--ease-out);
+}
+
+.nodeShape {
+  fill: var(--surface-raised);
+  stroke: var(--ink-faint);
+  stroke-width: 1.25;
+  transition:
+    stroke var(--dur-quick) var(--ease-out),
+    fill var(--dur-quick) var(--ease-out),
+    r var(--dur-quick) var(--ease-out),
+    filter var(--dur-quick) var(--ease-out);
+}
+
+.nodeHit {
+  fill: transparent;
+}
+
+.nodeLabel {
+  fill: var(--ink-quiet);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition:
+    fill var(--dur-quick) var(--ease-out),
+    font-size var(--dur-quick) var(--ease-out),
+    font-weight var(--dur-quick) var(--ease-out);
+}
+
+.nodeCount {
+  fill: var(--ink-faint);
+  font-family: var(--font-data);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  transition:
+    fill var(--dur-quick) var(--ease-out),
+    font-weight var(--dur-quick) var(--ease-out);
+}
+
+/* Halo ring for active node */
+.nodeHalo {
+  fill: transparent;
+  stroke: var(--signal);
+  stroke-width: 1.5;
+  opacity: 0.7;
+  stroke-dasharray: 4 3;
+  animation: haloPulse 2s ease-in-out infinite alternate;
+}
+
+/* Active Hovered Node */
+.nodeActive .nodeShape {
+  stroke: var(--signal);
+  fill: color-mix(in oklab, var(--signal) 22%, var(--surface-raised));
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 10px color-mix(in oklab, var(--signal) 60%, transparent));
+}
+
+.nodeActive .nodeLabel {
+  fill: var(--signal);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+
+.nodeActive .nodeCount {
+  fill: var(--signal);
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* Connected Neighbor Node */
+.nodeNeighbor .nodeShape {
+  stroke: var(--signal-quiet);
+  fill: color-mix(in oklab, var(--signal) 8%, var(--surface-raised));
+  stroke-width: 1.6;
+}
+
+.nodeNeighbor .nodeLabel {
+  fill: var(--ink-bright);
+  font-weight: 600;
+}
+
+.nodeNeighbor .nodeCount {
+  fill: var(--ink-quiet);
+  font-weight: 600;
+}
+
+/* Dimmed Node (Unconnected when hovering another) */
+.nodeDimmed {
+  opacity: 0.28 !important;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes haloPulse {
+  from {
+    transform: scale(0.96);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes rotateCore {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge,
+  .spoke {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .node {
+    opacity: 1;
+    animation: none;
+  }
+  .nodeHalo {
+    animation: none;
+  }
+  .coreHovered .coreInner {
+    animation: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  .nodeLabel {
+    font-size: 15px;
+  }
+  .nodeCount {
+    font-size: 14px;
+  }
+  .nodeActive .nodeLabel {
+    font-size: 16px;
+  }
+  .nodeActive .nodeCount {
+    font-size: 15px;
+  }
+}

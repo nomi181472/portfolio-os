@@ -1,0 +1,182 @@
+/**
+ * styles/tokens.css
+ *
+ * The whole visual identity resolves from two values: --brand-primary and
+ * --brand-secondary. Every surface, rule, text tone and state colour is derived
+ * from one of them by moving lightness, dropping chroma, or compositing with
+ * transparency. There is no third hue anywhere in the system.
+ *
+ * Primary is petrol ink — the substrate. It carries the page, the text ramp and
+ * every rule, so the interface reads as one material rather than as boxes on a
+ * background.
+ *
+ * Secondary is brass — the signal. It marks state, focus, and where you
+ * currently are. It is never a fill and never decoration; if brass appears,
+ * it means something. Budget: roughly three per cent of any screen.
+ *
+ * Swap the two values in config/portfolio.config.ts and the system re-skins
+ * coherently, which is the point — this is a framework, not one person's site.
+ */
+
+:root {
+  /* ---------------------------------------------------------- brand seed */
+  --brand-primary: oklch(0.205 0.034 218);
+  --brand-secondary: oklch(0.765 0.108 78);
+
+  /* ------------------------------------------------ fallbacks (no oklch) */
+  --surface-sunk: #0b1418;
+  --surface: #0e1a1f;
+  --surface-raised: #132227;
+  --surface-vitrine: #16272d;
+
+  --ink-bright: #eef3f4;
+  --ink: #c6d2d5;
+  --ink-quiet: #8d9ea3;
+  --ink-faint: #5f7176;
+
+  --rule: #1e3138;
+  --rule-strong: #2b444d;
+
+  --signal: #cfa35f;
+  --signal-quiet: #8a6f43;
+  --signal-wash: rgba(207, 163, 95, 0.1);
+
+  /* ------------------------------------------------------------- spacing */
+  /* 4px base, doubling. Named by role so component code reads as intent. */
+  --space-hair: 0.25rem;
+  --space-tight: 0.5rem;
+  --space-snug: 0.75rem;
+  --space: 1rem;
+  --space-loose: 1.5rem;
+  --space-wide: 2.5rem;
+  --space-section: 4rem;
+  --space-chapter: 7rem;
+
+  /* ---------------------------------------------------------- typography */
+  --font-display: var(--font-display-loaded, 'Newsreader'), 'Iowan Old Style', Georgia, serif;
+  --font-ui: var(--font-ui-loaded, 'IBM Plex Sans'), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-data: var(--font-data-loaded, 'IBM Plex Mono'), ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* A scale of 1.25 from 16px, with the display sizes fluid. */
+  --text-fine: 0.75rem;
+  --text-small: 0.8125rem;
+  --text-meta: 0.875rem;
+  --text-body: 1rem;
+  --text-lead: 1.125rem;
+  --text-title: clamp(1.375rem, 1.1rem + 1vw, 1.75rem);
+  --text-heading: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  --text-display: clamp(2.5rem, 1.4rem + 5vw, 5.25rem);
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.35;
+  --leading-body: 1.6;
+  --leading-reading: 1.72;
+
+  /* Measure. Serif reading columns take a little more. */
+  --measure: 66ch;
+  --measure-reading: 72ch;
+  --measure-tight: 46ch;
+
+  /* ------------------------------------------------------------- surface */
+  --radius-none: 0;
+  --radius-frame: 2px;
+  --radius-control: 3px;
+  --border-hair: 1px;
+
+  /* Shadow is a single, quiet ambient lift. Never a card drop-shadow kit. */
+  --lift: 0 1px 0 rgba(255, 255, 255, 0.025) inset, 0 12px 40px -24px rgba(0, 0, 0, 0.8);
+
+  /* -------------------------------------------------------------- motion */
+  /* Motion answers an action. One duration family, one easing family. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-instant: 90ms;
+  --dur-quick: 180ms;
+  --dur-considered: 340ms;
+  --dur-deliberate: 620ms;
+
+  /* --------------------------------------------------------- layout grid */
+  --rail-width: 4.5rem;
+  --rail-open: 15rem;
+  --gutter: clamp(1.25rem, 4vw, 4rem);
+  --column-max: 74rem;
+
+  --z-rail: 40;
+  --z-overlay: 60;
+  --z-menu: 80;
+
+  color-scheme: dark;
+}
+
+/* Relative colour: derive the entire ramp from the two seeds. */
+@supports (color: oklch(from red l c h)) {
+  :root {
+    --surface-sunk: oklch(from var(--brand-primary) 0.155 c h);
+    --surface: oklch(from var(--brand-primary) 0.19 c h);
+    --surface-raised: oklch(from var(--brand-primary) 0.235 calc(c * 0.95) h);
+    --surface-vitrine: oklch(from var(--brand-primary) 0.275 calc(c * 0.9) h);
+
+    --ink-bright: oklch(from var(--brand-primary) 0.965 calc(c * 0.18) h);
+    --ink: oklch(from var(--brand-primary) 0.855 calc(c * 0.22) h);
+    --ink-quiet: oklch(from var(--brand-primary) 0.675 calc(c * 0.3) h);
+    --ink-faint: oklch(from var(--brand-primary) 0.52 calc(c * 0.4) h);
+
+    --rule: oklch(from var(--brand-primary) 0.3 calc(c * 0.9) h);
+    --rule-strong: oklch(from var(--brand-primary) 0.4 calc(c * 0.9) h);
+
+    --signal: var(--brand-secondary);
+    --signal-quiet: oklch(from var(--brand-secondary) 0.58 calc(c * 0.8) h);
+    --signal-wash: oklch(from var(--brand-secondary) l c h / 0.1);
+  }
+}
+
+/* Light appearance: same two seeds, inverted luminance. Paper, not white. */
+[data-appearance='light'] {
+  color-scheme: light;
+
+  --surface-sunk: #e8eced;
+  --surface: #f2f5f5;
+  --surface-raised: #fbfcfc;
+  --surface-vitrine: #ffffff;
+  --ink-bright: #101a1e;
+  --ink: #23343a;
+  --ink-quiet: #566b72;
+  --ink-faint: #7d9197;
+  --rule: #ccd7da;
+  --rule-strong: #a8b9be;
+  --signal: #8a6023;
+  --signal-quiet: #a98546;
+  --signal-wash: rgba(138, 96, 35, 0.08);
+  --lift: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 12px 32px -26px rgba(11, 20, 24, 0.45);
+}
+
+@supports (color: oklch(from red l c h)) {
+  [data-appearance='light'] {
+    --surface-sunk: oklch(from var(--brand-primary) 0.93 calc(c * 0.35) h);
+    --surface: oklch(from var(--brand-primary) 0.965 calc(c * 0.25) h);
+    --surface-raised: oklch(from var(--brand-primary) 0.99 calc(c * 0.15) h);
+    --surface-vitrine: oklch(from var(--brand-primary) 1 calc(c * 0.08) h);
+
+    --ink-bright: oklch(from var(--brand-primary) 0.16 c h);
+    --ink: oklch(from var(--brand-primary) 0.3 calc(c * 0.9) h);
+    --ink-quiet: oklch(from var(--brand-primary) 0.5 calc(c * 0.7) h);
+    --ink-faint: oklch(from var(--brand-primary) 0.64 calc(c * 0.55) h);
+
+    --rule: oklch(from var(--brand-primary) 0.86 calc(c * 0.4) h);
+    --rule-strong: oklch(from var(--brand-primary) 0.74 calc(c * 0.5) h);
+
+    /* Brass has to darken on paper to keep contrast honest. */
+    --signal: oklch(from var(--brand-secondary) 0.48 calc(c * 1.1) h);
+    --signal-quiet: oklch(from var(--brand-secondary) 0.6 c h);
+    --signal-wash: oklch(from var(--brand-secondary) 0.48 c h / 0.09);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-instant: 1ms;
+    --dur-quick: 1ms;
+    --dur-considered: 1ms;
+    --dur-deliberate: 1ms;
+  }
+}

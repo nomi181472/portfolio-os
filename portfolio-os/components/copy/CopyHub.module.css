@@ -1,0 +1,160 @@
+.hub {
+  display: grid;
+  gap: var(--space-loose);
+  margin-top: var(--space-loose);
+}
+
+.statsBar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--space);
+  padding: var(--space);
+  background: var(--surface-sunk);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-frame);
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.statVal {
+  font-family: var(--font-mono);
+  font-size: var(--text-title);
+  font-weight: 600;
+  color: var(--ink-bright);
+}
+
+.statLabel {
+  font-size: var(--text-small);
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-snug);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: var(--space-tight);
+  overflow-x: auto;
+}
+
+.tab {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-snug) var(--space);
+  font-size: var(--text-small);
+  color: var(--ink-quiet);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+
+.tab:hover {
+  color: var(--ink-bright);
+}
+
+.tab[data-active='true'] {
+  color: var(--signal);
+  border-bottom-color: var(--signal);
+}
+
+.panel {
+  display: grid;
+  gap: var(--space-loose);
+}
+
+.actionsRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-snug);
+  flex-wrap: wrap;
+}
+
+.copySuccess {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--signal);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.codeBox {
+  position: relative;
+  background: var(--surface-sunk);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-frame);
+  overflow: hidden;
+}
+
+.codeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-snug) var(--space);
+  background: rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--ink-dim);
+}
+
+.codePre {
+  margin: 0;
+  padding: var(--space);
+  max-height: 28rem;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.stepsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space);
+}
+
+.stepCard {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-frame);
+  padding: var(--space);
+  background: var(--surface-sunk);
+  display: grid;
+  gap: var(--space-tight);
+}
+
+.stepHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.stepNumber {
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--signal);
+  font-weight: 600;
+}
+
+.commandBox {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-tight) var(--space-snug);
+  background: #060c10;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--text-small);
+  color: var(--ink-bright);
+}

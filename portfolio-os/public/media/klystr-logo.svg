@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Klystr (Dark)</title>
+  <defs>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Square rounded background tile -->
+  <rect x="0" y="0" width="200" height="200" rx="32" ry="32" fill="#000000"/>
+
+  <!-- Subtle inner border -->
+  <rect x="6" y="6" width="188" height="188" rx="26" ry="26" fill="none" stroke="rgba(255, 255, 255, 0.18)" stroke-width="1.2"/>
+
+  <!-- Background outer breathing ring -->
+  <circle cx="100" cy="100" r="78" fill="none" stroke="#FFFFFF" stroke-width="0.8" opacity="0.15"/>
+
+  <!-- Complete Full Circle -->
+  <circle cx="100" cy="100" r="72" fill="none" stroke="rgba(255, 255, 255, 0.85)" stroke-width="2.4" stroke-linecap="round"/>
+
+  <!-- Subtle inner ring -->
+  <circle cx="100" cy="100" r="55" fill="none" stroke="#FFFFFF" stroke-width="0.6" opacity="0.15"/>
+
+  <!-- ============ COMPLETE K LINES ============ -->
+  <!-- Upper stem -->
+  <line x1="72" y1="58" x2="72" y2="100" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Lower stem -->
+  <line x1="72" y1="100" x2="72" y2="142" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Upper arm -->
+  <line x1="72" y1="100" x2="128" y2="58" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- Lower arm -->
+  <line x1="72" y1="100" x2="128" y2="142" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" filter="url(#glow)"/>
+
+  <!-- ============ COMPLETE NODES ============ -->
+  <!-- Center joint -->
+  <circle cx="72" cy="100" r="5.5" fill="#FFFFFF" filter="url(#softGlow)"/>
+
+  <!-- Top of stem -->
+  <circle cx="72" cy="58" r="4.5" fill="#FFFFFF" filter="url(#softGlow)"/>
+
+  <!-- Bottom of stem -->
+  <circle cx="72" cy="142" r="4.5" fill="#FFFFFF" filter="url(#softGlow)"/>
+
+  <!-- End of upper arm -->
+  <circle cx="128" cy="58" r="4.5" fill="#FFFFFF" filter="url(#softGlow)"/>
+
+  <!-- End of lower arm -->
+  <circle cx="128" cy="142" r="4.5" fill="#FFFFFF" filter="url(#softGlow)"/>
+</svg>
