@@ -340,6 +340,7 @@ export const SkillSchema = EntitySchema.extend({
 });
 
 export const StartupSchema = EntitySchema.extend({
+  logo: safeUrl.optional(),
   vision: z.string().optional(),
   mission: z.string().optional(),
   problem: z.string().optional(),

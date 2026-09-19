@@ -107,7 +107,7 @@ portfolio = {
       "featured": True,
       "tags": ["Programming Language", "Language", "TypeScript", "JavaScript", "Static Typing", "Node.js"],
       "technologies": ["TypeScript", "JavaScript", "Node.js", "Type Systems"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator"]
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator", "proj-lab"]
     },
     {
       "id": "sk-cpp",
@@ -1674,6 +1674,67 @@ portfolio = {
   ],
   "projects": [
     {
+      "id": "proj-lab",
+      "slug": "lab-nomanali-online",
+      "name": "lab.nomanali.online — Personal Engineering Lab & Live Playground",
+      "organisation": "Independent",
+      "status": "active",
+      "source": {
+        "type": "open-source"
+      },
+      "period": {
+        "startDate": "2026-09",
+        "ongoing": True
+      },
+      "summary": "A personal engineering lab and live playground site (lab.nomanali.online) for independent experiments, interactive micro-tools, and technical explorations spanning computer vision, agentic AI, and UI engineering.",
+      "description": "**lab.nomanali.online** is Noman Ali's independent engineering lab and experiments space — an always-evolving live playground for ideas, micro-tools, and interactive technical explorations outside of client and enterprise engagements.\n\nIt hosts proof-of-concepts, visual computer vision demos, agentic AI orchestrations, distributed systems prototypes, and modern UI experiments. Built to run on high agency and curiosity: ship fast, test hypotheses empirically in the browser, and document key findings.\n\nThe lab is independently hosted at `lab.nomanali.online` and embedded directly as an interactive live preview.",
+      "concept": "A personal engineering lab — a live site for independent micro-experiments, demos, and explorations across computer vision, distributed systems, and agentic AI.",
+      "problem": "Need for an unconstrained, zero-ceremony sandbox to rapidly prototype computer vision algorithms, micro-tools, agentic workflows, and creative frontend interfaces without client NDA restrictions or production overhead.",
+      "hypothesis": "Maintaining a continuous, publicly accessible live lab environment fosters rapid iteration, lets visitors interact directly with live web demos via embedded sandboxes, and accelerates empirical validation of ideas.",
+      "approach": "Engineered an independent experimental hub at lab.nomanali.online hosting micro-tools, proof-of-concepts, visual demos, and technical experiments across computer vision, distributed systems, agentic AI, and UI engineering.",
+      "implementation": "Lightweight Next.js and static micro-frontends with embedded iframes, WebAssembly/ONNX runtime demos, and independent continuous deployment pipelines.",
+      "results": "Serves as an active, live testbed for experimental features and interactive demonstrators before integrating components into larger production systems.",
+      "lessons": [
+        "Isolating experiments into standalone micro-demos prevents prototype bloat",
+        "Embedding interactive iframes with sandbox isolation allows live experimentation without compromising parent security",
+        "Zero-friction deployment leads to faster feedback cycles and rapid prototyping"
+      ],
+      "futureWork": [
+        "Expand real-time in-browser WebAssembly/WebGPU computer vision demos",
+        "Integrate live agentic reasoning playgrounds and interactive LLM agent workflows"
+      ],
+      "media": [
+        {
+          "type": "iframe",
+          "url": "https://lab.nomanali.online",
+          "title": "lab.nomanali.online — Live Interactive Playground",
+          "caption": "Live personal lab and engineering experiments site (lab.nomanali.online). Interactive preview embedded via iframe.",
+          "ratio": 1.777,
+          "order": 0,
+          "visibility": "public"
+        }
+      ],
+      "links": [
+        {
+          "label": "Open lab.nomanali.online",
+          "url": "https://lab.nomanali.online",
+          "type": "website"
+        }
+      ],
+      "technologies": [
+        "Independent",
+        "Computer Vision",
+        "Distributed Systems",
+        "Agentic AI",
+        "UI Engineering",
+        "TypeScript",
+        "Next.js",
+        "Python"
+      ],
+      "tags": ["Personal", "Lab", "Experiments", "Playground", "Open", "Independent"],
+      "featured": True
+    },
+    {
       "id": "proj-navirox",
       "slug": "navirox",
       "name": "NAVIROX — Autonomous Unmanned Vessel CV & 360° LiDAR Fusion POC",
@@ -2811,6 +2872,7 @@ portfolio = {
     "id": "startup-botonetics",
     "slug": "botonetics",
     "name": "Botonetics",
+    "logo": "/media/botonetics-logo.svg",
     "status": "coming-soon",
     "vision": "Bridging Brains, Bots, Business",
     "links": [
