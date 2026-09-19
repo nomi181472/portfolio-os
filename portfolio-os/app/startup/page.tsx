@@ -7,17 +7,23 @@ import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { StatusBadge } from '@/components/entity/Badges';
 
-export const metadata: Metadata = {
-  title: 'Botonetics — Incubation',
-  description: 'Botonetics: Bridging Brains, Bots, Business',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { bundle } = await getGraph();
+  const startup = bundle.data.startup;
+  const name = startup?.name || 'Startup';
+  return {
+    title: `${name} — Incubation`,
+    description: startup?.vision ? `${name}: ${startup.vision}` : `${name} Incubation`,
+  };
+}
 
 export default async function StartupPage() {
   const { bundle } = await getGraph();
   const startup = bundle.data.startup;
   if (!startup) notFound();
 
-  const websiteUrl = startup.links?.find((l) => l.type === 'website')?.url || 'https://botonetics.com/';
+  const websiteUrl = startup.links?.find((l) => l.type === 'website')?.url || '#';
+  const websiteLabel = startup.links?.find((l) => l.type === 'website')?.label || `Visit ${startup.name}`;
 
   return (
     <div className="page">
@@ -53,11 +59,15 @@ export default async function StartupPage() {
               boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
             }}
           >
-            <img
-              src="/media/botonetics-logo.svg"
-              alt={`${startup.name} logo`}
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-            />
+            {startup.logo ? (
+              <img
+                src={startup.logo}
+                alt={`${startup.name} logo`}
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              />
+            ) : (
+              <span style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--signal)' }}>{startup.name.charAt(0)}</span>
+            )}
           </div>
 
           {/* Name & Tagline */}
@@ -111,7 +121,7 @@ export default async function StartupPage() {
               transition: 'transform 0.15s ease, filter 0.15s ease',
             }}
           >
-            <span>Visit botonetics.com</span>
+            <span>{websiteLabel}</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M7 17l10-10" />
               <path d="M7 7h10v10" />
@@ -142,7 +152,7 @@ export default async function StartupPage() {
         >
           <iframe
             src={websiteUrl}
-            title="Botonetics Interactive Preview"
+            title={`${startup.name} Interactive Preview`}
             loading="lazy"
             referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-scripts allow-forms allow-popups allow-same-origin"

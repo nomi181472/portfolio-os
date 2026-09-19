@@ -87,7 +87,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <EditorProvider canonical={bundle.data}>
-          <Shell index={index}>
+          <Shell index={index} profile={{ name: bundle.data.profile.name, avatar: bundle.data.profile.avatar }} startupName={bundle.data.startup?.name}>
             {children}
             <div className="page" style={{ paddingTop: 0 }}>
               <Footer profile={bundle.data.profile} source={bundle.source} />

@@ -12,7 +12,14 @@ import { EditBar } from '@/components/editor/EditBar';
 import { portfolioConfig } from '@/config/portfolio.config';
 import type { SearchRecord } from '@/lib/search';
 
-export function Shell({ index, children }: { index: SearchRecord[]; children: React.ReactNode }) {
+interface ShellProps {
+  index: SearchRecord[];
+  children: React.ReactNode;
+  profile: { name: string; avatar?: string };
+  startupName?: string;
+}
+
+export function Shell({ index, children, profile, startupName }: ShellProps) {
   const [searchOpen, setSearchOpen] = useState(false);
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
@@ -32,7 +39,7 @@ export function Shell({ index, children }: { index: SearchRecord[]; children: Re
   return (
     <div className="shell">
       <a className="skip-link" href="#main">Skip to content</a>
-      <Rail onOpenSearch={openSearch} />
+      <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} />
       <div className="shell__main">
         <main id="main" tabIndex={-1}>{children}</main>
       </div>

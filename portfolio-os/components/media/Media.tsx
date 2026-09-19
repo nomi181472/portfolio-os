@@ -86,12 +86,26 @@ function isVideoHost(url: string): boolean {
 
 function Frame({ item, children }: { item: Media; children: React.ReactNode }) {
   const isPortrait = item.ratio && item.ratio < 1;
+  const isIframe = item.type === 'iframe' || item.type === 'embed';
   return (
     <figure className="vitrine" style={isPortrait ? { maxWidth: '440px', margin: '0 auto' } : undefined}>
-      <div className="vitrine__body" style={{ aspectRatio: item.ratio ?? RATIO_DEFAULT }}>{children}</div>
+      <div className="vitrine__body" style={{ aspectRatio: item.ratio ?? RATIO_DEFAULT, minHeight: isIframe ? '480px' : undefined }}>{children}</div>
       {item.title || item.caption ? (
         <figcaption className="vitrine__caption">
-          <span>{item.title}</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between' }}>
+            <span>{item.title}</span>
+            {isIframe ? (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                className="link"
+                style={{ fontSize: 'var(--text-fine)', whiteSpace: 'nowrap' }}
+              >
+                Open directly ↗
+              </a>
+            ) : null}
+          </span>
           {item.caption ? <span style={{ color: 'var(--ink-faint)' }}>{item.caption}</span> : null}
         </figcaption>
       ) : null}
@@ -195,6 +209,7 @@ export function MediaRenderer({ item }: { item: Media }) {
             src={item.url}
             title={item.title ?? 'Embedded application'}
             loading="lazy"
+            allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
             referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-scripts allow-forms allow-popups allow-same-origin"
             style={{ width: '100%', height: '100%', border: 0, background: 'var(--surface-sunk)' }}

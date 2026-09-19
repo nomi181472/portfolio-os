@@ -17,18 +17,18 @@ import styles from './Rail.module.css';
 
 interface RailItem { href: string; label: string; mark: MarkName }
 
-function itemsFor(ids: string[]): RailItem[] {
+function itemsFor(ids: string[], startupName?: string): RailItem[] {
   return ids.flatMap((id) => {
     if (id === 'copy') return [{ href: '/copy', label: 'Copy this OS', mark: 'copy' as MarkName }];
     if (id === 'future') return [{ href: '/future', label: 'Trajectory', mark: 'trajectory' as MarkName }];
-    if (id === 'startup') return [{ href: '/startup', label: 'Botonetics', mark: 'incubator' as MarkName }];
+    if (id === 'startup') return [{ href: '/startup', label: startupName || 'Startup', mark: 'incubator' as MarkName }];
     const category = CATEGORIES[id as keyof typeof CATEGORIES];
     if (!category) return [];
     return [{ href: `/${category.kind}`, label: category.label, mark: category.mark }];
   });
 }
 
-export function Rail({ onOpenSearch }: { onOpenSearch: () => void }) {
+export function Rail({ onOpenSearch, profile, startupName }: { onOpenSearch: () => void; profile: { name: string; avatar?: string }; startupName?: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(true);
 
@@ -55,11 +55,12 @@ export function Rail({ onOpenSearch }: { onOpenSearch: () => void }) {
     });
   };
 
-  const primary = itemsFor(portfolioConfig.navigation.primary);
+  const primary = itemsFor(portfolioConfig.navigation.primary, startupName);
   const secondary = itemsFor(
     [...portfolioConfig.navigation.secondary, 'startup', 'future', 'copy'].filter(
       (id) => !portfolioConfig.navigation.primary.includes(id),
     ),
+    startupName,
   );
 
   const isCurrent = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -79,7 +80,11 @@ export function Rail({ onOpenSearch }: { onOpenSearch: () => void }) {
             display: 'inline-flex',
           }}
         >
-          <img src="/media/profilep.jpeg" alt="Noman Ali" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          {profile.avatar ? (
+            <img src={profile.avatar} alt={profile.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          ) : (
+            <span style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 600, color: 'var(--ink-quiet)' }}>{profile.name.charAt(0)}</span>
+          )}
         </span>
         <span className={styles.itemLabel}>Surface</span>
       </Link>
@@ -125,7 +130,7 @@ export function Rail({ onOpenSearch }: { onOpenSearch: () => void }) {
         <span className={styles.itemLabel}>{open ? 'Collapse' : 'Show names'}</span>
       </button>
     </nav>
-    <MobileNav onOpenSearch={onOpenSearch} />
+    <MobileNav onOpenSearch={onOpenSearch} profile={profile} startupName={startupName} />
     </>
   );
 }

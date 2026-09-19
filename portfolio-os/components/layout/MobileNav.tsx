@@ -10,9 +10,11 @@ import styles from './MobileNav.module.css';
 
 interface MobileNavProps {
   onOpenSearch: () => void;
+  profile: { name: string; avatar?: string };
+  startupName?: string;
 }
 
-export function MobileNav({ onOpenSearch }: MobileNavProps) {
+export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -49,7 +51,7 @@ export function MobileNav({ onOpenSearch }: MobileNavProps) {
     { href: '/experience', label: 'Experience', desc: 'Engineering route', mark: 'route' as MarkName },
     { href: '/products', label: 'Products', desc: 'Artifact vault', mark: 'artifact' as MarkName },
     { href: '/projects', label: 'Projects', desc: 'Lab experiments', mark: 'experiment' as MarkName },
-    { href: '/startup', label: 'Botonetics', desc: 'AI Incubator', mark: 'incubator' as MarkName },
+    { href: '/startup', label: startupName || 'Startup', desc: 'Incubator', mark: 'incubator' as MarkName },
     { href: '/research', label: 'Research', desc: 'Open enquiries', mark: 'notebook' as MarkName },
     { href: '/skills', label: 'Skills', desc: 'Technical matrix', mark: 'instrument' as MarkName },
     { href: '/awards', label: 'Awards', desc: 'Honors & recognition', mark: 'milestone' as MarkName },
@@ -81,7 +83,11 @@ export function MobileNav({ onOpenSearch }: MobileNavProps) {
               display: 'inline-flex',
             }}
           >
-            <img src="/media/profilep.jpeg" alt="Noman Ali" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            {profile.avatar ? (
+              <img src={profile.avatar} alt={profile.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <span style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 600, color: 'var(--ink-quiet)' }}>{profile.name.charAt(0)}</span>
+            )}
           </span>
           <span>PORTFOLIO OS</span>
         </Link>
