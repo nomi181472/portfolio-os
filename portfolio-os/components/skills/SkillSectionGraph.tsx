@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import styles from './SkillSectionGraph.module.css';
 
 export interface GraphSkillNode {
@@ -28,6 +29,11 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
   const [collapsed, setCollapsed] = useState(false);
   const [hoveredSkillId, setHoveredSkillId] = useState<string | null>(null);
   const [hoveredTargetId, setHoveredTargetId] = useState<string | null>(null);
+
+  // Mobile / Android interaction state
+  const [mobileMode, setMobileMode] = useState<'by-skill' | 'by-deliverable'>('by-skill');
+  const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
+  const [selectedTargetId, setSelectedTargetId] = useState<string | null>(null);
 
   // Filter skills that have at least one product/project target, plus list other standalone skills
   const connectedSkills = useMemo(() => skills.filter((s) => s.targets.length > 0), [skills]);
@@ -106,6 +112,28 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
 
   const isAnyHovered = Boolean(hoveredSkillId || hoveredTargetId);
 
+  // Derive active items for mobile view
+  const activeMobileSkill = useMemo(() => {
+    if (selectedSkillId) {
+      const found = connectedSkills.find((s) => s.id === selectedSkillId);
+      if (found) return found;
+    }
+    return connectedSkills[0] || null;
+  }, [selectedSkillId, connectedSkills]);
+
+  const activeMobileTarget = useMemo(() => {
+    if (selectedTargetId) {
+      const found = uniqueTargets.find((t) => t.id === selectedTargetId);
+      if (found) return found;
+    }
+    return uniqueTargets[0] || null;
+  }, [selectedTargetId, uniqueTargets]);
+
+  const deliverableSkills = useMemo(() => {
+    if (!activeMobileTarget) return [];
+    return connectedSkills.filter((s) => s.targets.some((t) => t.id === activeMobileTarget.id));
+  }, [activeMobileTarget, connectedSkills]);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -126,12 +154,13 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
       </div>
 
       {!collapsed ? (
-        <div className={styles.canvasWrapper}>
-          <svg
-            className={styles.svgCanvas}
-            viewBox={`0 0 ${totalWidth} ${canvasHeight}`}
-            style={{ height: `${canvasHeight}px` }}
-          >
+        <>
+          <div className={styles.desktopCanvasWrapper}>
+            <svg
+              className={styles.svgCanvas}
+              viewBox={`0 0 ${totalWidth} ${canvasHeight}`}
+              style={{ height: `${canvasHeight}px` }}
+            >
             <defs>
               <linearGradient id="silverGlow" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
@@ -280,7 +309,168 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
               })}
             </g>
           </svg>
-        </div>
+          </div>
+
+          {/* Mobile / Android Touch Connectivity Navigator (<= 768px) */}
+          <div className={styles.mobileViewWrapper}>
+            {/* Segmented Mode Controller */}
+            <div className={styles.mobileSegmentControl}>
+              <button
+                type="button"
+                className={`${styles.mobileSegmentBtn} ${
+                  mobileMode === 'by-skill' ? styles.mobileSegmentBtnActive : ''
+                }`}
+                onClick={() => setMobileMode('by-skill')}
+              >
+                By Skill ({connectedSkills.length})
+              </button>
+              <button
+                type="button"
+                className={`${styles.mobileSegmentBtn} ${
+                  mobileMode === 'by-deliverable' ? styles.mobileSegmentBtnActive : ''
+                }`}
+                onClick={() => setMobileMode('by-deliverable')}
+              >
+                By Deliverable ({uniqueTargets.length})
+              </button>
+            </div>
+
+            {mobileMode === 'by-skill' ? (
+              <>
+                {/* Horizontal scroll chips for skills */}
+                <div className={styles.mobileChipScroll}>
+                  {connectedSkills.map((s) => {
+                    const isSelected = (activeMobileSkill?.id ?? connectedSkills[0]?.id) === s.id;
+                    return (
+                      <button
+                        key={s.id}
+                        type="button"
+                        className={`${styles.mobileChip} ${isSelected ? styles.mobileChipActive : ''}`}
+                        onClick={() => setSelectedSkillId(s.id)}
+                      >
+                        <span className={styles.mobileChipDot} />
+                        <span className={styles.mobileChipText}>{s.name}</span>
+                        <span className={styles.mobileChipCount}>{s.targets.length}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Selected Skill Active Bridge Card */}
+                {activeMobileSkill ? (
+                  <div className={styles.mobileActiveCard}>
+                    <div className={styles.mobileActiveCardHeader}>
+                      <div className={styles.mobileActiveTitleBlock}>
+                        <span className={styles.mobileActiveSubLabel}>ACTIVE SKILL</span>
+                        <h4 className={styles.mobileActiveTitle}>{activeMobileSkill.name}</h4>
+                      </div>
+                      <Link href={activeMobileSkill.href} className={styles.mobileActiveLink}>
+                        Explore Skill ↗
+                      </Link>
+                    </div>
+
+                    <div className={styles.mobileConnectionsSection}>
+                      <div className={styles.mobileConnectionsHeader}>
+                        <span>CONNECTED DELIVERABLES</span>
+                        <span className={styles.mobileConnectionsCount}>
+                          {activeMobileSkill.targets.length}
+                        </span>
+                      </div>
+
+                      <div className={styles.mobileTargetList}>
+                        {activeMobileSkill.targets.map((target) => (
+                          <Link
+                            key={target.id}
+                            href={target.href}
+                            className={styles.mobileTargetItem}
+                          >
+                            <div className={styles.mobileTargetLeft}>
+                              <span
+                                className={`${styles.mobileTargetBadge} ${
+                                  target.kind === 'products'
+                                    ? styles.mobileTargetBadgeProduct
+                                    : styles.mobileTargetBadgeProject
+                                }`}
+                              >
+                                {target.kind === 'products' ? 'PRODUCT' : 'PROJECT'}
+                              </span>
+                              <span className={styles.mobileTargetName}>{target.name}</span>
+                            </div>
+                            <span className={styles.mobileTargetArrow}>→</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <>
+                {/* Horizontal scroll chips for deliverables */}
+                <div className={styles.mobileChipScroll}>
+                  {uniqueTargets.map((t) => {
+                    const isSelected = (activeMobileTarget?.id ?? uniqueTargets[0]?.id) === t.id;
+                    const shortName = t.name.split('—')[0]?.trim() || t.name;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        className={`${styles.mobileChip} ${isSelected ? styles.mobileChipActive : ''}`}
+                        onClick={() => setSelectedTargetId(t.id)}
+                      >
+                        <span className={styles.mobileChipDot} />
+                        <span className={styles.mobileChipText}>{shortName}</span>
+                        <span className={styles.mobileChipCount}>{t.count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Selected Deliverable Active Bridge Card */}
+                {activeMobileTarget ? (
+                  <div className={styles.mobileActiveCard}>
+                    <div className={styles.mobileActiveCardHeader}>
+                      <div className={styles.mobileActiveTitleBlock}>
+                        <span className={styles.mobileActiveSubLabel}>
+                          {activeMobileTarget.kind === 'products' ? 'PRODUCT ARCHITECTURE' : 'PROJECT AUDIT'}
+                        </span>
+                        <h4 className={styles.mobileActiveTitle}>{activeMobileTarget.name}</h4>
+                      </div>
+                      <Link href={activeMobileTarget.href} className={styles.mobileActiveLink}>
+                        Open Deliverable ↗
+                      </Link>
+                    </div>
+
+                    <div className={styles.mobileConnectionsSection}>
+                      <div className={styles.mobileConnectionsHeader}>
+                        <span>SKILLS UTILIZED ({sectionTitle.toUpperCase()})</span>
+                        <span className={styles.mobileConnectionsCount}>
+                          {deliverableSkills.length}
+                        </span>
+                      </div>
+
+                      <div className={styles.mobileTargetList}>
+                        {deliverableSkills.map((skill) => (
+                          <Link
+                            key={skill.id}
+                            href={skill.href}
+                            className={styles.mobileTargetItem}
+                          >
+                            <div className={styles.mobileTargetLeft}>
+                              <span className={styles.mobileTargetBadgeSkill}>SKILL</span>
+                              <span className={styles.mobileTargetName}>{skill.name}</span>
+                            </div>
+                            <span className={styles.mobileTargetArrow}>→</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </>
+            )}
+          </div>
+        </>
       ) : null}
     </div>
   );

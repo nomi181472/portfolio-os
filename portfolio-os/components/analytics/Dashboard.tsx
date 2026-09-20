@@ -11,6 +11,7 @@ import { HeatmapChart } from './charts/HeatmapChart';
 interface DashboardProps {
   initialSummary: Summary;
   initialTimeseries: SeriesPoint[];
+  initialHourlyTimeseries?: SeriesPoint[];
   deployments: { id: string; firstSeenAt: number }[];
   adminEmail: string;
 }
@@ -32,11 +33,13 @@ function formatDuration(ms: number): string {
 export function AnalyticsDashboard({
   initialSummary,
   initialTimeseries,
+  initialHourlyTimeseries = [],
   deployments,
   adminEmail,
 }: DashboardProps) {
   const [summary, setSummary] = useState<Summary>(initialSummary);
   const [timeseries, setTimeseries] = useState<SeriesPoint[]>(initialTimeseries);
+  const [hourlyTimeseries, setHourlyTimeseries] = useState<SeriesPoint[]>(initialHourlyTimeseries);
   const [live, setLive] = useState(initialSummary.live);
 
   const [selectedRange, setSelectedRange] = useState<TimeRangePreset>('7d');
@@ -99,10 +102,13 @@ export function AnalyticsDashboard({
         if (newDep) query.set('deploymentId', newDep);
         if (from) query.set('from', String(from));
 
-        const [sumRes, timeRes] = await Promise.all([
+        const [sumRes, timeRes, hourlyRes] = await Promise.all([
           fetch(`/api/analytics/admin/summary?${query.toString()}`),
           fetch(
             `/api/analytics/admin/timeseries?${query.toString()}&granularity=${granularity}`
+          ),
+          fetch(
+            `/api/analytics/admin/timeseries?${query.toString()}&granularity=hour`
           ),
         ]);
 
@@ -114,6 +120,11 @@ export function AnalyticsDashboard({
         if (timeRes.ok) {
           const timeData = await timeRes.json();
           if (timeData.timeseries) setTimeseries(timeData.timeseries);
+        }
+
+        if (hourlyRes.ok) {
+          const hourlyData = await hourlyRes.json();
+          if (hourlyData.timeseries) setHourlyTimeseries(hourlyData.timeseries);
         }
       } catch (err) {
         console.error('Failed to update analytics filter', err);
@@ -729,7 +740,7 @@ export function AnalyticsDashboard({
         }}
       >
         <HeatmapChart
-          hourlyData={timeseries}
+          hourlyData={hourlyTimeseries}
           title="Weekly Activity Pattern (7 Days × 24 Hours)"
         />
       </section>

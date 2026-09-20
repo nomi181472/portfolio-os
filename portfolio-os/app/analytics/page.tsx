@@ -33,6 +33,10 @@ export default async function AnalyticsPage() {
     deploymentId: currentDep,
     granularity: 'day',
   });
+  const initialHourlyTimeseries = manager.getTimeseries({
+    deploymentId: currentDep,
+    granularity: 'hour',
+  });
 
   return (
     <div className="page" style={{ maxWidth: '1100px' }}>
@@ -66,6 +70,7 @@ export default async function AnalyticsPage() {
       <AnalyticsDashboard
         initialSummary={initialSummary}
         initialTimeseries={initialTimeseries}
+        initialHourlyTimeseries={initialHourlyTimeseries}
         deployments={deployments}
         adminEmail={email}
       />

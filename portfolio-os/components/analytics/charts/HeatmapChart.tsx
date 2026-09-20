@@ -20,25 +20,58 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
     y: number;
   } | null>(null);
 
-  // Build a 7 x 24 matrix
+  // Build a 7 x 24 matrix (7 days of week, 24 hours of day)
   const matrix: number[][] = Array.from({ length: 7 }, () =>
     Array.from({ length: 24 }, () => 0)
   );
 
   let maxCount = 1;
+  let totalEvents = 0;
 
   for (const pt of hourlyData) {
-    // Expected key format: 'YYYY-MM-DDTHH' or ISO-like
-    const date = new Date(pt.label.includes('T') ? pt.label : `${pt.label}:00`);
-    if (!isNaN(date.getTime())) {
-      const day = date.getDay(); // 0-6
-      const hour = date.getHours(); // 0-23
+    if (!pt || !pt.label) continue;
+
+    // Supports:
+    // 1. 'YYYY-MM-DDTHH' (hour bucket)
+    // 2. 'YYYY-MM-DD' (day bucket)
+    // 3. Full ISO timestamp
+    const label = String(pt.label).trim();
+    const match = label.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{1,2}))?/);
+
+    let day = -1;
+    let hour = 0;
+
+    if (match && match[1] && match[2] && match[3]) {
+      const year = parseInt(match[1], 10);
+      const month = parseInt(match[2], 10) - 1;
+      const dayOfMonth = parseInt(match[3], 10);
+      const hourOfDay = match[4] !== undefined ? parseInt(match[4], 10) : 12;
+
+      const d = new Date(Date.UTC(year, month, dayOfMonth, hourOfDay));
+      if (!isNaN(d.getTime())) {
+        day = d.getUTCDay();
+        hour = match[4] !== undefined ? parseInt(match[4], 10) : 0;
+      }
+    } else {
+      const fallback = new Date(label);
+      if (!isNaN(fallback.getTime())) {
+        day = fallback.getUTCDay();
+        hour = fallback.getUTCHours();
+      }
+    }
+
+    if (day >= 0 && day < 7 && hour >= 0 && hour < 24) {
       const count = pt.pageViews ?? pt.visitors ?? 0;
       const row = matrix[day];
-      if (row && row[hour] !== undefined) {
-        row[hour] += count;
-        if (row[hour] > maxCount) {
-          maxCount = row[hour];
+      if (row) {
+        const current = row[hour];
+        if (typeof current === 'number') {
+          const nextVal = current + count;
+          row[hour] = nextVal;
+          totalEvents += count;
+          if (nextVal > maxCount) {
+            maxCount = nextVal;
+          }
         }
       }
     }
@@ -46,47 +79,64 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
 
   const cellSize = 18;
   const cellGap = 3;
-  const labelWidth = 32;
-  const labelHeight = 20;
+  const labelWidth = 34;
+  const labelHeight = 22;
 
   const totalWidth = labelWidth + 24 * (cellSize + cellGap);
   const totalHeight = labelHeight + 7 * (cellSize + cellGap);
 
-  // Color intensity calculation
+  // Strict 2-color monochrome luminescence (Obsidian Substrate + Crisp Silver/White)
   const getCellColor = (count: number) => {
-    if (count === 0) return 'var(--surface-raised)';
+    if (count === 0) return 'rgba(255, 255, 255, 0.03)';
     const ratio = count / maxCount;
-    if (ratio < 0.25) return 'rgba(207, 163, 95, 0.25)';
-    if (ratio < 0.5) return 'rgba(207, 163, 95, 0.5)';
-    if (ratio < 0.75) return 'rgba(207, 163, 95, 0.75)';
-    return 'var(--signal)';
+    if (ratio < 0.25) return 'rgba(255, 255, 255, 0.20)';
+    if (ratio < 0.5) return 'rgba(255, 255, 255, 0.45)';
+    if (ratio < 0.75) return 'rgba(255, 255, 255, 0.75)';
+    return '#ffffff';
   };
 
   return (
     <div style={{ position: 'relative', width: '100%', overflowX: 'auto' }}>
-      {title && (
-        <div
-          style={{
-            fontWeight: 500,
-            fontSize: 'var(--text-small)',
-            color: 'var(--ink)',
-            marginBottom: 'var(--space-tight)',
-          }}
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 'var(--space-tight)',
+          flexWrap: 'wrap',
+          gap: 'var(--space-tight)',
+        }}
+      >
+        {title && (
+          <div
+            style={{
+              fontWeight: 500,
+              fontSize: 'var(--text-small)',
+              color: 'var(--ink-bright)',
+              fontFamily: 'var(--font-display)',
+            }}
+          >
+            {title}
+          </div>
+        )}
+        <span
+          className="meta"
+          style={{ fontSize: '11px', color: 'var(--ink-quiet)' }}
         >
-          {title}
-        </div>
-      )}
+          {totalEvents} {totalEvents === 1 ? 'total recorded event' : 'total recorded events'}
+        </span>
+      </div>
 
       <svg
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
         style={{
           width: '100%',
-          minWidth: '540px',
+          minWidth: '560px',
           height: 'auto',
           display: 'block',
         }}
       >
-        {/* Hour Header Labels (every 3 hours: 0, 3, 6, 9, 12, 15, 18, 21) */}
+        {/* Hour Header Labels (every 3 hours: 00, 03, 06, 09, 12, 15, 18, 21, 23) */}
         {HOURS.map((h) => {
           if (h % 3 !== 0 && h !== 23) return null;
           const x = labelWidth + h * (cellSize + cellGap) + cellSize / 2;
@@ -94,7 +144,7 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
             <text
               key={h}
               x={x}
-              y={labelHeight - 6}
+              y={labelHeight - 7}
               textAnchor="middle"
               fontSize="9"
               fontFamily="var(--font-data)"
@@ -112,8 +162,8 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
             <g key={dayName}>
               {/* Day label */}
               <text
-                x={labelWidth - 6}
-                y={y + cellSize / 2 + 3}
+                x={labelWidth - 8}
+                y={y + cellSize / 2 + 3.5}
                 textAnchor="end"
                 fontSize="10"
                 fontFamily="var(--font-data)"
@@ -136,15 +186,20 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
                     y={y}
                     width={cellSize}
                     height={cellSize}
-                    rx="2"
-                    ry="2"
+                    rx="3"
+                    ry="3"
                     fill={getCellColor(count)}
-                    stroke={isHovered ? 'var(--signal)' : 'var(--rule)'}
-                    strokeWidth={isHovered ? 1.5 : 0.5}
+                    stroke={
+                      isHovered
+                        ? '#ffffff'
+                        : count > 0
+                        ? 'rgba(255, 255, 255, 0.3)'
+                        : 'rgba(255, 255, 255, 0.07)'
+                    }
+                    strokeWidth={isHovered ? 1.5 : 0.75}
                     style={{
                       cursor: 'pointer',
-                      transition:
-                        'transform var(--dur-instant) var(--ease-out)',
+                      transition: 'all 120ms ease-out',
                     }}
                     onMouseEnter={() =>
                       setHovered({
@@ -172,23 +227,23 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
             left: `${hovered.x}px`,
             top: `${hovered.y}px`,
             transform: 'translate(-50%, -100%)',
-            background: 'var(--surface-vitrine)',
-            border: 'var(--border-hair) solid var(--rule-strong)',
-            boxShadow: 'var(--lift)',
-            borderRadius: 'var(--radius-control)',
-            padding: '4px 8px',
+            background: '#141820',
+            border: '1px solid rgba(255, 255, 255, 0.25)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.15)',
+            borderRadius: '6px',
+            padding: '5px 9px',
             fontSize: '11px',
             fontFamily: 'var(--font-data)',
-            color: 'var(--ink-bright)',
+            color: '#ffffff',
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
-            zIndex: 10,
+            zIndex: 20,
           }}
         >
-          <div>
-            {hovered.day} {hovered.hour.toString().padStart(2, '0')}:00
+          <div style={{ color: 'var(--ink-quiet)' }}>
+            {hovered.day} at {hovered.hour.toString().padStart(2, '0')}:00 UTC
           </div>
-          <div style={{ color: 'var(--signal)', fontWeight: 600 }}>
+          <div style={{ color: '#ffffff', fontWeight: 600, marginTop: '2px' }}>
             {hovered.count} {hovered.count === 1 ? 'event' : 'events'}
           </div>
         </div>
@@ -212,24 +267,16 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
           style={{
             width: '10px',
             height: '10px',
-            background: 'var(--surface-raised)',
+            background: 'rgba(255, 255, 255, 0.03)',
             borderRadius: '2px',
-            border: '0.5px solid var(--rule)',
+            border: '0.75px solid rgba(255, 255, 255, 0.07)',
           }}
         />
         <span
           style={{
             width: '10px',
             height: '10px',
-            background: 'rgba(207, 163, 95, 0.25)',
-            borderRadius: '2px',
-          }}
-        />
-        <span
-          style={{
-            width: '10px',
-            height: '10px',
-            background: 'rgba(207, 163, 95, 0.5)',
+            background: 'rgba(255, 255, 255, 0.20)',
             borderRadius: '2px',
           }}
         />
@@ -237,7 +284,7 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
           style={{
             width: '10px',
             height: '10px',
-            background: 'rgba(207, 163, 95, 0.75)',
+            background: 'rgba(255, 255, 255, 0.45)',
             borderRadius: '2px',
           }}
         />
@@ -245,7 +292,15 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
           style={{
             width: '10px',
             height: '10px',
-            background: 'var(--signal)',
+            background: 'rgba(255, 255, 255, 0.75)',
+            borderRadius: '2px',
+          }}
+        />
+        <span
+          style={{
+            width: '10px',
+            height: '10px',
+            background: '#ffffff',
             borderRadius: '2px',
           }}
         />
