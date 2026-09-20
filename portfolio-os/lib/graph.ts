@@ -22,6 +22,7 @@ const REFERENCE_FIELDS: Record<string, EntityKind> = {
   relatedPublications: 'publications',
   relatedExperience: 'experience',
   relatedEducation: 'education',
+  relatedAwards: 'awards',
 };
 
 export function hrefFor(kind: EntityKind, slug: string): string {

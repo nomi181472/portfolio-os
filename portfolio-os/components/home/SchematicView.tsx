@@ -55,18 +55,29 @@ export function SchematicView({
   cy,
 }: SchematicViewProps) {
   const [hoveredKind, setHoveredKind] = useState<EntityKind | null>(null);
+  const [selectedKind, setSelectedKind] = useState<EntityKind | null>(null);
 
-  // Compute set of connected kinds when a node is hovered
+  const activeKind = hoveredKind || selectedKind;
+
+  // Compute set of connected kinds when a node is active
   const connectedKinds = new Set<EntityKind>();
-  if (hoveredKind) {
-    connectedKinds.add(hoveredKind);
+  if (activeKind) {
+    connectedKinds.add(activeKind);
     for (const edge of edges) {
-      if (edge.fromKind === hoveredKind) connectedKinds.add(edge.toKind);
-      if (edge.toKind === hoveredKind) connectedKinds.add(edge.fromKind);
+      if (edge.fromKind === activeKind) connectedKinds.add(edge.toKind);
+      if (edge.toKind === activeKind) connectedKinds.add(edge.fromKind);
     }
   }
 
-  const isHoverActive = hoveredKind !== null;
+  const isInspectionActive = activeKind !== null;
+  const activeNode = nodes.find((n) => n.kind === activeKind);
+
+  // Connected category labels for the inspector
+  const connectedNames = activeKind
+    ? nodes
+        .filter((n) => n.kind !== activeKind && connectedKinds.has(n.kind))
+        .map((n) => n.label)
+    : [];
 
   return (
     <div className={styles.frame}>
@@ -75,6 +86,12 @@ export function SchematicView({
         className={styles.svg}
         role="img"
         aria-label={`Schematic of ${name}'s work: ${nodes.map((node) => `${node.count} ${node.label.toLowerCase()}`).join(', ')}.`}
+        onClick={(e) => {
+          // Clicking on the backdrop clears selection
+          if (e.target === e.currentTarget || (e.target as SVGElement).tagName === 'line') {
+            setSelectedKind(null);
+          }
+        }}
       >
         <defs>
           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -97,8 +114,8 @@ export function SchematicView({
         <g aria-hidden="true">
           {edges.map((edge) => {
             const isConnected =
-              isHoverActive && (edge.fromKind === hoveredKind || edge.toKind === hoveredKind);
-            const isDimmed = isHoverActive && !isConnected;
+              isInspectionActive && (edge.fromKind === activeKind || edge.toKind === activeKind);
+            const isDimmed = isInspectionActive && !isConnected;
 
             let edgeClass = styles.edge;
             if (isConnected) edgeClass += ` ${styles.edgeHighlighted}`;
@@ -120,8 +137,8 @@ export function SchematicView({
 
           {/* Central spokes */}
           {spokes.map((spoke) => {
-            const isSpokeActive = isHoverActive && spoke.kind === hoveredKind;
-            const isSpokeDimmed = isHoverActive && !isSpokeActive;
+            const isSpokeActive = isInspectionActive && spoke.kind === activeKind;
+            const isSpokeDimmed = isInspectionActive && !isSpokeActive;
 
             let spokeClass = styles.spoke;
             if (isSpokeActive) spokeClass += ` ${styles.spokeHighlighted}`;
@@ -142,7 +159,7 @@ export function SchematicView({
         </g>
 
         {/* Centre aperture / core */}
-        <g aria-hidden="true" className={`${styles.core} ${isHoverActive ? styles.coreHovered : ''}`}>
+        <g aria-hidden="true" className={`${styles.core} ${isInspectionActive ? styles.coreHovered : ''}`}>
           <circle cx={cx} cy={cy} r="26" />
           <circle cx={cx} cy={cy} r="16" className={styles.coreInner} />
           <circle cx={cx} cy={cy} r="3.5" className={styles.coreDot} />
@@ -150,9 +167,9 @@ export function SchematicView({
 
         {/* Interactive nodes */}
         {nodes.map((node, index) => {
-          const isTarget = hoveredKind === node.kind;
-          const isNeighbor = isHoverActive && !isTarget && connectedKinds.has(node.kind);
-          const isDimmed = isHoverActive && !isTarget && !isNeighbor;
+          const isTarget = activeKind === node.kind;
+          const isNeighbor = isInspectionActive && !isTarget && connectedKinds.has(node.kind);
+          const isDimmed = isInspectionActive && !isTarget && !isNeighbor;
 
           let nodeClass = styles.node;
           if (isTarget) nodeClass += ` ${styles.nodeActive}`;
@@ -169,8 +186,15 @@ export function SchematicView({
               onMouseLeave={() => setHoveredKind(null)}
               onFocus={() => setHoveredKind(node.kind)}
               onBlur={() => setHoveredKind(null)}
+              onClick={(e) => {
+                // On first touch/tap on mobile, inspect connections instead of navigating immediately
+                if (selectedKind !== node.kind) {
+                  e.preventDefault();
+                  setSelectedKind(node.kind);
+                }
+              }}
             >
-              {/* Outer ripple halo on active hover */}
+              {/* Outer ripple halo on active state */}
               {isTarget && (
                 <circle
                   cx={node.x}
@@ -188,11 +212,11 @@ export function SchematicView({
                 className={styles.nodeShape}
               />
 
-              {/* Extended invisible touch/pointer hit area */}
+              {/* Extended touch/pointer hit area (44px min touch target compliant) */}
               <circle
                 cx={node.x}
                 cy={node.y}
-                r={node.radius + 14}
+                r={node.radius + 18}
                 className={styles.nodeHit}
               />
 
@@ -219,6 +243,26 @@ export function SchematicView({
           );
         })}
       </svg>
+
+      {/* Floating Inspection Bar for Touch / Active Node */}
+      {activeNode ? (
+        <div className={styles.inspector} role="status">
+          <div className={styles.inspectorInfo}>
+            <div className={styles.inspectorTitle}>
+              {activeNode.label} · {activeNode.count} {activeNode.count === 1 ? 'record' : 'records'}
+            </div>
+            <div className={styles.inspectorSubtitle}>
+              {connectedNames.length > 0
+                ? `Connected to ${connectedNames.join(', ')}`
+                : 'Central System Node'}
+            </div>
+          </div>
+          <Link href={`/${activeNode.kind}`} className={styles.inspectorAction}>
+            <span>Explore</span>
+            <span>→</span>
+          </Link>
+        </div>
+      ) : null}
     </div>
   );
 }

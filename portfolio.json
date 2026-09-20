@@ -4,7 +4,7 @@
   "profile": {
     "name": "Noman Ali",
     "discipline": "Solutions Architecture & Distributed Systems",
-    "positioning": "Solutions Architect with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms. Skilled at decomposing legacy monoliths into scalable, multi-tenant architectures and modernizing enterprise systems for demanding real-time workloads, with a focus on reliability, performance, and scalability.",
+    "positioning": "Software Engineer with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms. Skilled at decomposing legacy monoliths into scalable, multi-tenant architectures and modernizing enterprise systems for demanding real-time workloads, with a focus on reliability, performance, and scalability.",
     "location": "Karachi, Pakistan",
     "avatar": "/media/profilep.jpeg",
     "email": "nomansoomro51@gmail.com",
@@ -89,6 +89,9 @@
         "proj-quant-rl-trading",
         "proj-need",
         "proj-resume-hr"
+      ],
+      "relatedPublications": [
+        "pub-ieee-2021"
       ]
     },
     {
@@ -120,9 +123,18 @@
         "Object-Oriented Programming",
         "Async/Await"
       ],
+      "relatedProducts": [
+        "prod-verseye",
+        "prod-ajeek",
+        "prod-blue",
+        "prod-ktrade",
+        "prod-learn-to-invest"
+      ],
       "relatedProjects": [
         "proj-zero-shots-trackers",
-        "proj-resume-hr"
+        "proj-resume-hr",
+        "proj-microservices-template",
+        "proj-payment-middleware"
       ],
       "relatedExperience": [
         "exp-ktrade",
@@ -156,10 +168,17 @@
         "Node.js",
         "Type Systems"
       ],
+      "relatedProducts": [
+        "prod-verseye",
+        "prod-ajeek",
+        "prod-blue"
+      ],
       "relatedProjects": [
         "proj-zero-shots-trackers",
         "proj-tracker-simulator",
-        "proj-lab"
+        "proj-lab",
+        "proj-bscs-fyp",
+        "proj-resume-hr"
       ]
     },
     {
@@ -190,6 +209,9 @@
         "Memory Management",
         "Pointers",
         "Algorithms"
+      ],
+      "relatedProjects": [
+        "proj-navirox"
       ],
       "relatedEducation": [
         "edu-bs"
@@ -224,8 +246,8 @@
         "Concurrency",
         "Microservices"
       ],
-      "relatedProjects": [
-        "proj-zero-shots-trackers"
+      "relatedProducts": [
+        "prod-verseye"
       ]
     },
     {
@@ -255,6 +277,12 @@
         "Async Streams",
         "Isolates",
         "OOP"
+      ],
+      "relatedProducts": [
+        "prod-verseye"
+      ],
+      "relatedProjects": [
+        "proj-navirox"
       ]
     },
     {
@@ -292,6 +320,13 @@
         "OpenIddict",
         "Entity Framework",
         "Kestrel"
+      ],
+      "relatedProducts": [
+        "prod-verseye",
+        "prod-ajeek",
+        "prod-blue",
+        "prod-ktrade",
+        "prod-learn-to-invest"
       ],
       "relatedProjects": [
         "proj-zero-shots-trackers",
@@ -336,7 +371,10 @@
       ],
       "relatedProjects": [
         "proj-zero-shots-trackers",
-        "proj-tracker-simulator"
+        "proj-tracker-simulator",
+        "proj-navirox",
+        "proj-resume-hr",
+        "proj-quant-rl-trading"
       ]
     },
     {
@@ -370,8 +408,8 @@
         "REST APIs",
         "Microservices"
       ],
-      "relatedProjects": [
-        "proj-zero-shots-trackers"
+      "relatedProducts": [
+        "prod-verseye"
       ]
     },
     {
@@ -405,9 +443,17 @@
         "HTML/CSS",
         "npm"
       ],
+      "relatedProducts": [
+        "prod-verseye",
+        "prod-lockkeyz",
+        "prod-klystr",
+        "prod-ajeek"
+      ],
       "relatedProjects": [
         "proj-zero-shots-trackers",
-        "proj-tracker-simulator"
+        "proj-tracker-simulator",
+        "proj-resume-hr",
+        "proj-need"
       ]
     },
     {
@@ -466,6 +512,9 @@
         "State Management",
         "Dart",
         "Cross-Platform"
+      ],
+      "relatedProducts": [
+        "prod-verseye"
       ],
       "relatedProjects": [
         "proj-navirox"
@@ -533,7 +582,11 @@
       ],
       "relatedProjects": [
         "proj-zero-shots-trackers",
-        "proj-need"
+        "proj-need",
+        "proj-tracker-simulator"
+      ],
+      "relatedPublications": [
+        "pub-ieee-2021"
       ]
     },
     {
@@ -592,9 +645,6 @@
         "ONNX Runtime",
         "Model Export",
         "Cross-Platform Inference"
-      ],
-      "relatedProjects": [
-        "proj-zero-shots-trackers"
       ]
     },
     {
@@ -656,6 +706,12 @@
         "On-Device Inference",
         "Edge AI",
         "Quantization"
+      ],
+      "relatedProducts": [
+        "prod-verseye"
+      ],
+      "relatedProjects": [
+        "proj-navirox"
       ]
     },
     {
@@ -928,8 +984,15 @@
         "PgBouncer",
         "Partitioning"
       ],
+      "relatedProducts": [
+        "prod-verseye",
+        "prod-ajeek",
+        "prod-blue",
+        "prod-ktrade"
+      ],
       "relatedProjects": [
-        "proj-quant-rl-trading"
+        "proj-quant-rl-trading",
+        "proj-payment-middleware"
       ],
       "relatedExperience": [
         "exp-ktrade",
@@ -1196,6 +1259,38 @@
       ]
     },
     {
+      "id": "sk-neo4j",
+      "slug": "neo4j-graph-database",
+      "name": "Neo4j Graph Database",
+      "category": "Databases & Storage",
+      "design": "9/10",
+      "support": "8/10",
+      "depth": "specialist",
+      "firstUsed": "2023",
+      "context": "Design: 9/10 \u00b7 Support: 8/10 | Type: Native Graph Database & Cypher Query Engine | Focus: Connected Knowledge Graphs, Traversal & Property Graphs",
+      "summary": "Design: 9/10 \u00b7 Support: 8/10 \u2014 graph database architecture, Cypher query optimization, labeled property graph modeling, and relationship traversal.",
+      "description": "Specialist proficiency in Neo4j graph database engineering (Design: 9/10, Support: 8/10). Designing labeled property graph schemas, writing optimized Cypher traversal queries, modeling complex interconnected business topologies, and deploying high-availability Neo4j clusters for real-time relational pattern matching.",
+      "featured": true,
+      "tags": [
+        "Graph Database",
+        "Neo4j",
+        "Cypher",
+        "Knowledge Graph",
+        "NoSQL",
+        "Graph Analytics"
+      ],
+      "technologies": [
+        "Neo4j",
+        "Cypher",
+        "Graph Traversal",
+        "Property Graphs",
+        "Graph Modeling"
+      ],
+      "relatedProducts": [
+        "prod-ajeek"
+      ]
+    },
+    {
       "id": "sk-aws-eventbridge",
       "slug": "aws-eventbridge-eventbus",
       "name": "AWS EventBridge (Event Bus)",
@@ -1255,6 +1350,10 @@
         "Pub/Sub",
         "Distributed Messaging",
         "Go"
+      ],
+      "relatedProducts": [
+        "prod-ajeek",
+        "prod-ktrade"
       ]
     },
     {
@@ -1382,8 +1481,7 @@
         "AWS"
       ],
       "relatedProjects": [
-        "proj-zero-shots-trackers",
-        "proj-microservices-template"
+        "proj-zero-shots-trackers"
       ],
       "relatedProducts": [
         "prod-verseye",
@@ -1423,11 +1521,12 @@
       "slug": "git-version-control-monorepo",
       "name": "Git, GitHub & Monorepo Architecture",
       "category": "DevOps & Cloud",
+      "handling": "9/10",
       "depth": "specialist",
       "firstUsed": "2019",
-      "context": "Type: Version Control System | Workflows: Git, GitHub, Monorepo Management",
-      "summary": "Distributed version control, multi-project monorepo structures, branch policies, and GitOps automation.",
-      "description": "Proficient in modern Git version control, maintaining multi-service and monorepo architectures, subproject isolation, code review workflows, semantic versioning, and CI/CD triggers.",
+      "context": "Handling: 9/10 | Type: Version Control System | Workflows: Git, GitHub, Monorepo Management",
+      "summary": "Handling: 9/10 \u2014 distributed version control, multi-project monorepo structures, branch policies, and GitOps automation.",
+      "description": "Specialist proficiency in Git, GitHub, and Monorepo Architecture (Handling: 9/10). Maintaining multi-service and monorepo architectures, subproject isolation, code review workflows, semantic versioning, and GitOps automation.",
       "featured": false,
       "tags": [
         "Version Control System",
@@ -1475,7 +1574,8 @@
         "OpenCV VideoIO"
       ],
       "relatedProjects": [
-        "proj-zero-shots-trackers"
+        "proj-zero-shots-trackers",
+        "proj-navirox"
       ]
     },
     {
@@ -1882,7 +1982,6 @@
         "sk-microservices",
         "sk-csharp",
         "sk-dotnet",
-        "sk-go",
         "sk-python",
         "sk-cpp",
         "sk-fastapi",
@@ -1907,6 +2006,9 @@
         "proj-microservices-template",
         "proj-payment-middleware",
         "proj-resume-hr"
+      ],
+      "relatedAwards": [
+        "award-best-lead"
       ],
       "featured": true
     },
@@ -2253,7 +2355,13 @@
         "sk-k8s",
         "sk-leadership",
         "sk-video-streaming",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-frontend-nextjs",
+        "sk-typescript",
+        "sk-fiber",
+        "sk-dart",
+        "sk-flutter",
+        "sk-litert"
       ],
       "featured": true
     },
@@ -2331,6 +2439,9 @@
           "label": "Security Standard",
           "value": "Enterprise SSO"
         }
+      ],
+      "relatedSkills": [
+        "sk-frontend-nextjs"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2430,7 +2541,14 @@
         "sk-microservices",
         "sk-leadership",
         "sk-arch",
-        "sk-rest-apis"
+        "sk-rest-apis",
+        "sk-frontend-nextjs",
+        "sk-csharp",
+        "sk-postgres",
+        "sk-nats",
+        "sk-dotnet",
+        "sk-typescript",
+        "sk-neo4j"
       ],
       "relatedProjects": [
         "proj-microservices-template"
@@ -2562,6 +2680,9 @@
           "type": "repository"
         }
       ],
+      "relatedSkills": [
+        "sk-frontend-nextjs"
+      ],
       "relatedExperience": [],
       "featured": true
     },
@@ -2631,7 +2752,12 @@
         "Customer Management",
         "Closed-Loop"
       ],
-      "relatedSkills": [],
+      "relatedSkills": [
+        "sk-csharp",
+        "sk-postgres",
+        "sk-dotnet",
+        "sk-typescript"
+      ],
       "relatedExperience": [
         "exp-qbs"
       ],
@@ -2721,6 +2847,7 @@
         "sk-redis",
         "sk-nodejs",
         "sk-k8s",
+        "sk-csharp",
         "sk-dotnet",
         "sk-postgres",
         "sk-nats",
@@ -2799,6 +2926,7 @@
         "PSX"
       ],
       "relatedSkills": [
+        "sk-csharp",
         "sk-dotnet",
         "sk-memorydb",
         "sk-dynamodb",
@@ -3004,10 +3132,15 @@
       ],
       "relatedSkills": [
         "sk-python",
+        "sk-cpp",
+        "sk-dart",
+        "sk-fastapi",
         "sk-pytorch-cuda",
         "sk-tensorrt",
         "sk-mqtt",
         "sk-flutter",
+        "sk-litert",
+        "sk-video-streaming",
         "sk-arch",
         "sk-async-processing"
       ],
@@ -3094,7 +3227,6 @@
         "sk-python",
         "sk-csharp",
         "sk-dotnet",
-        "sk-go",
         "sk-typescript",
         "sk-pytorch-cuda",
         "sk-fastapi",
@@ -3106,8 +3238,7 @@
         "sk-testing-pytest",
         "sk-pgvector",
         "sk-qdrant",
-        "sk-tensorrt",
-        "sk-onnx"
+        "sk-tensorrt"
       ],
       "featured": true
     },
@@ -3201,7 +3332,12 @@
         "sk-async-processing",
         "sk-frontend-nextjs",
         "sk-typescript",
-        "sk-docker-compose"
+        "sk-docker-compose",
+        "sk-pytorch-cuda"
+      ],
+      "relatedProjects": [
+        "proj-resume-hr",
+        "proj-quant-rl-trading"
       ],
       "featured": true
     },
@@ -3257,8 +3393,8 @@
       "relatedSkills": [
         "sk-microservices",
         "sk-arch",
+        "sk-csharp",
         "sk-dotnet",
-        "sk-go",
         "sk-ocelot",
         "sk-iam",
         "sk-rest-apis"
@@ -3321,8 +3457,14 @@
         "sk-python",
         "sk-csharp",
         "sk-dotnet",
+        "sk-fastapi",
         "sk-langchain",
-        "sk-rag"
+        "sk-rag",
+        "sk-frontend-nextjs",
+        "sk-typescript"
+      ],
+      "relatedProjects": [
+        "proj-tracker-simulator"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -3404,10 +3546,14 @@
         "sk-pytorch-cuda",
         "sk-jax",
         "sk-evotorch",
-        "sk-ray"
+        "sk-ray",
+        "sk-frontend-nextjs"
       ],
       "relatedEducation": [
         "edu-ms"
+      ],
+      "relatedResearch": [
+        "res-neuroevolution"
       ],
       "featured": true
     },
@@ -3456,7 +3602,9 @@
       "relatedSkills": [
         "sk-rest-apis",
         "sk-microservices",
-        "sk-arch"
+        "sk-arch",
+        "sk-csharp",
+        "sk-postgres"
       ],
       "relatedProducts": [
         "prod-blue"
@@ -3515,9 +3663,13 @@
       ],
       "relatedSkills": [
         "sk-python",
+        "sk-fastapi",
         "sk-timescaledb",
         "sk-redis",
         "sk-postgres"
+      ],
+      "relatedProjects": [
+        "proj-tracker-simulator"
       ],
       "relatedExperience": [
         "exp-ktrade"
@@ -3587,8 +3739,14 @@
           ]
         }
       ],
+      "relatedSkills": [
+        "sk-typescript"
+      ],
       "relatedEducation": [
         "edu-bs"
+      ],
+      "relatedPublications": [
+        "pub-ieee-2021"
       ],
       "featured": true
     }
@@ -3619,6 +3777,9 @@
         "PyTorch",
         "Python",
         "Genetic Algorithms"
+      ],
+      "relatedProjects": [
+        "proj-need"
       ],
       "featured": true
     }
@@ -3879,6 +4040,13 @@
           ]
         }
       ],
+      "relatedProjects": [
+        "proj-bscs-fyp"
+      ],
+      "relatedSkills": [
+        "sk-python",
+        "sk-pytorch-cuda"
+      ],
       "featured": true
     }
   ],
@@ -3915,6 +4083,9 @@
         "Microservices",
         "Go",
         ".NET Core"
+      ],
+      "relatedExperience": [
+        "exp-qbs"
       ],
       "featured": true
     }

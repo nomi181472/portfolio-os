@@ -196,6 +196,7 @@ export const EntitySchema = z.object({
   relatedPublications: z.array(z.string()).default([]),
   relatedExperience: z.array(z.string()).default([]),
   relatedEducation: z.array(z.string()).default([]),
+  relatedAwards: z.array(z.string()).default([]),
 });
 
 /* ----------------------------------------------------------- collections */

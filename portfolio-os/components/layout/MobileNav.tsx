@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
@@ -14,14 +14,83 @@ interface MobileNavProps {
   startupName?: string;
 }
 
+interface Ripple {
+  id: string;
+  x: number;
+  y: number;
+}
+
 export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [dragOffsetY, setDragOffsetY] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [ripples, setRipples] = useState<Ripple[]>([]);
+
+  const touchStartY = useRef<number>(0);
+  const touchStartTime = useRef<number>(0);
+  const currentDeltaY = useRef<number>(0);
+  const drawerBodyRef = useRef<HTMLDivElement>(null);
 
   // Close drawer on navigation
   useEffect(() => {
     setDrawerOpen(false);
+    setDragOffsetY(0);
+    setIsDragging(false);
   }, [pathname]);
+
+  // Touch gesture handlers for dragging sheet down
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    touchStartY.current = touch.clientY;
+    touchStartTime.current = Date.now();
+    currentDeltaY.current = 0;
+    setIsDragging(true);
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    const currentY = touch.clientY;
+    const delta = currentY - touchStartY.current;
+    if (delta > 0) {
+      currentDeltaY.current = delta;
+      setDragOffsetY(delta);
+    } else {
+      // Rubber-band resistance when pulling up
+      const resisted = delta * 0.2;
+      currentDeltaY.current = resisted;
+      setDragOffsetY(resisted);
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    setIsDragging(false);
+    const delta = currentDeltaY.current;
+    const elapsed = Math.max(1, Date.now() - touchStartTime.current);
+    const velocity = delta / elapsed; // px per ms
+
+    if (delta > 80 || velocity > 0.45) {
+      // Dismiss threshold met
+      setDrawerOpen(false);
+    }
+    setDragOffsetY(0);
+    currentDeltaY.current = 0;
+  }, []);
+
+  // Ripple feedback for tab touches
+  const triggerRipple = useCallback((id: string, e: React.TouchEvent<HTMLElement>) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    setRipples((prev) => [...prev, { id: `${id}-${Date.now()}`, x, y }]);
+    setTimeout(() => {
+      setRipples((prev) => prev.slice(1));
+    }, 450);
+  }, []);
 
   // Prevent background scrolling when drawer is open
   useEffect(() => {
@@ -125,6 +194,7 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
       <nav className={styles.bottomBar} aria-label="Mobile application navigation">
         {primaryDestinations.map((tab) => {
           const active = isCurrent(tab.href);
+          const tabRipples = ripples.filter((r) => r.id.startsWith(tab.href));
           return (
             <Link
               key={tab.href}
@@ -132,7 +202,11 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
               className={styles.tabItem}
               data-active={active}
               aria-current={active ? 'page' : undefined}
+              onTouchStart={(e) => triggerRipple(tab.href, e)}
             >
+              {tabRipples.map((r) => (
+                <span key={r.id} className={styles.tabRipple} style={{ left: r.x, top: r.y }} />
+              ))}
               <span className={styles.tabIcon}>
                 <MetaphorMark name={tab.mark} size={18} />
               </span>
@@ -147,8 +221,12 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
           className={styles.tabItem}
           data-active={drawerOpen}
           onClick={() => setDrawerOpen((v) => !v)}
+          onTouchStart={(e) => triggerRipple('menu-tab', e)}
           aria-label="Open App Menu"
         >
+          {ripples.filter((r) => r.id.startsWith('menu-tab')).map((r) => (
+            <span key={r.id} className={styles.tabRipple} style={{ left: r.x, top: r.y }} />
+          ))}
           <span className={styles.tabIcon}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <line x1="4" y1="6" x2="20" y2="6" strokeLinecap="round" />
@@ -168,10 +246,38 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
         aria-hidden={!drawerOpen}
       />
 
-      {/* Slide-up App Drawer Sheet */}
-      <div className={styles.drawer} data-open={drawerOpen} role="dialog" aria-modal="true" aria-label="App Navigation">
-        <div className={styles.handleBar} />
-        <div className={styles.drawerHeader}>
+      {/* Slide-up App Drawer Sheet with Touch Gesture Drag-to-Dismiss */}
+      <div
+        className={styles.drawer}
+        data-open={drawerOpen}
+        data-dragging={isDragging}
+        style={{
+          transform: drawerOpen
+            ? dragOffsetY !== 0
+              ? `translateY(${Math.max(0, dragOffsetY)}px)`
+              : undefined
+            : undefined,
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-label="App Navigation"
+      >
+        <div
+          className={styles.handleContainer}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+        >
+          <div className={styles.handleBar} />
+        </div>
+        <div
+          className={styles.drawerHeader}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={handleTouchEnd}
+        >
           <span className={styles.drawerTitle}>All Sections & Tools</span>
           <button
             type="button"
@@ -183,7 +289,7 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
           </button>
         </div>
 
-        <div className={styles.drawerBody}>
+        <div className={styles.drawerBody} ref={drawerBodyRef}>
           <button
             type="button"
             className={styles.searchLauncher}

@@ -89,10 +89,10 @@ function Frame({ item, children }: { item: Media; children: React.ReactNode }) {
   const isIframe = item.type === 'iframe' || item.type === 'embed';
   return (
     <figure className="vitrine" style={isPortrait ? { maxWidth: '440px', margin: '0 auto' } : undefined}>
-      <div className="vitrine__body" style={{ aspectRatio: item.ratio ?? RATIO_DEFAULT, minHeight: isIframe ? '480px' : undefined }}>{children}</div>
+      <div className="vitrine__body" style={{ aspectRatio: item.ratio ?? RATIO_DEFAULT, minHeight: isIframe ? 'clamp(240px, 46vh, 480px)' : undefined }}>{children}</div>
       {item.title || item.caption ? (
         <figcaption className="vitrine__caption">
-          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
             <span>{item.title}</span>
             {isIframe ? (
               <a
@@ -110,6 +110,68 @@ function Frame({ item, children }: { item: Media; children: React.ReactNode }) {
         </figcaption>
       ) : null}
     </figure>
+  );
+}
+
+function IframeWithLoader({
+  url,
+  title,
+  sandbox,
+  allow,
+  onError,
+}: {
+  url: string;
+  title: string;
+  sandbox: string;
+  allow: string;
+  onError: () => void;
+}) {
+  const [loading, setLoading] = useState(true);
+
+  return (
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      {loading ? (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'var(--surface-sunk)',
+            color: 'var(--ink-faint)',
+            gap: 8,
+            fontSize: 'var(--text-fine)',
+            zIndex: 1,
+            pointerEvents: 'none',
+          }}
+        >
+          <div
+            style={{
+              width: 22,
+              height: 22,
+              border: '2px solid var(--rule-strong)',
+              borderTopColor: 'var(--signal)',
+              borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+            }}
+          />
+          <span>Connecting embed...</span>
+        </div>
+      ) : null}
+      <iframe
+        src={url}
+        title={title}
+        loading="lazy"
+        allow={allow}
+        referrerPolicy="strict-origin-when-cross-origin"
+        sandbox={sandbox}
+        style={{ width: '100%', height: '100%', border: 0, background: 'var(--surface-sunk)', display: 'block' }}
+        onLoad={() => setLoading(false)}
+        onError={onError}
+      />
+    </div>
   );
 }
 
@@ -205,14 +267,11 @@ export function MediaRenderer({ item }: { item: Media }) {
     case 'embed':
       return (
         <Frame item={item}>
-          <iframe
-            src={item.url}
+          <IframeWithLoader
+            url={item.url}
             title={item.title ?? 'Embedded application'}
-            loading="lazy"
             allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture; fullscreen"
-            referrerPolicy="strict-origin-when-cross-origin"
             sandbox="allow-scripts allow-forms allow-popups allow-same-origin"
-            style={{ width: '100%', height: '100%', border: 0, background: 'var(--surface-sunk)' }}
             onError={() => setFailed(true)}
           />
         </Frame>

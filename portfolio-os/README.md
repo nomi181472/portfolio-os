@@ -272,6 +272,22 @@ Any host that runs Next.js 15. Vercel needs no configuration; set `NEXT_PUBLIC_P
 
 Fully static export works too if you keep `dataSource: { type: 'local' }`, since every route is prerendered.
 
+### Admin dashboard
+
+An optional private analytics view ships in this repo; it needs no external service and no build config. Sign in at `/admin/login`; the read-only view is `/admin/dashboard`. Both are server components, and auth is enforced server-side: the session is a signed, HttpOnly, SameSite=Strict cookie, and the dashboard re-verifies it on every render. There is no client-side gate you could bypass.
+
+It is **disabled by default** and stays disabled until you set these in the environment.
+
+| variable | purpose |
+| --- | --- |
+| `ANALYTICS_ADMIN_EMAIL` | login credential, half of the constant-time gate |
+| `ANALYTICS_ADMIN_PASSWORD` | the other half |
+| `ANALYTICS_ADMIN_SECRET` | recommended. If unset, the signing secret is derived from the two credentials, which is stable while they are unchanged |
+
+**On Vercel:** set the three above under Settings -> Environment Variables (Production, and Preview too if you want it in preview deployments). No `vercel.json` and no middleware are required; the routes are ordinary server-rendered pages. In production the cookie is automatically `Secure; HttpOnly; SameSite=Strict`. Three variables, that is the whole deployment surface.
+
+**Restart behaviour (the honest serverless truth):** the dashboard reads the in-memory aggregate, which is memory-only by design (no disk, no network, no store write on read, strictly bounded). On every host it survives a same-process restart. On Vercel the functions are ephemeral, so the aggregate survives **restarts within a warm instance**; a cold start resets it to zero and it re-accumulates. The optional `ANALYTICS_SNAPSHOT_DIR=/tmp/analytics` restores from a per-instance snapshot file across warm restarts, but it cannot give global cross-instance state without a network store, which this repo deliberately does not use. If you need true cross-instance persistence, you would be adding a store the design explicitly refuses; nothing here does that silently.
+
 ---
 
 ## Forking

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Profile, DataSourceState } from '@/types/portfolio';
 import { portfolioConfig } from '@/config/portfolio.config';
+import { adminLoginEnabled } from '@/lib/analytics/auth';
 
 /** Quiet by design (§113). Contact, provenance, and the way out. */
 export function Footer({ profile, source }: { profile: Profile; source: DataSourceState }) {
@@ -32,6 +33,11 @@ export function Footer({ profile, source }: { profile: Profile; source: DataSour
           <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>
             <Link href="/colophon" className="link" style={{ borderBottom: 0 }}>How this site is built</Link>
           </p>
+          {adminLoginEnabled() ? (
+            <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>
+              <Link href="/admin/dashboard" className="link" style={{ borderBottom: 0 }}>Analytics</Link>
+            </p>
+          ) : null}
           <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>{portfolioConfig.site.title}</p>
         </div>
       </div>

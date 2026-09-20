@@ -287,8 +287,8 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-snug)', flexWrap: 'wrap' }}>
           {entity.data.media?.find((m) => m.url.includes('logo')) ? (
             <div style={{
-              width: 48,
-              height: 48,
+              width: 'clamp(36px, 8vw, 48px)',
+              height: 'clamp(36px, 8vw, 48px)',
               borderRadius: '12px',
               background: '#091015',
               border: '1px solid var(--rule-strong)',
@@ -362,6 +362,8 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
                 fontWeight: 600,
                 display: 'inline-flex',
                 gap: 6,
+                flexWrap: 'wrap',
+                maxWidth: '100%',
               }}
             >
               <span>Design: {String(data.design)}</span>
@@ -380,6 +382,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
                 display: 'inline-flex',
                 gap: 6,
                 flexWrap: 'wrap',
+                maxWidth: '100%',
               }}
             >
               <span>Agentic Development: {String(data.agentic)}</span>
@@ -399,6 +402,8 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
                 fontWeight: 600,
                 display: 'inline-flex',
                 gap: 6,
+                flexWrap: 'wrap',
+                maxWidth: '100%',
               }}
             >
               <span>Reading: {String(data.reading)}</span>
@@ -414,6 +419,8 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
                 border: '1px solid rgba(56, 189, 248, 0.3)',
                 color: '#38bdf8',
                 fontWeight: 600,
+                flexWrap: 'wrap',
+                maxWidth: '100%',
               }}
             >
               Handling: {String(data.handling)}

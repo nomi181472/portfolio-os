@@ -62,7 +62,7 @@ export function Workbench() {
       summary: '',
       tags: [], technologies: [], links: [], media: [], evidence: [], timeline: [],
       relatedSkills: [], relatedProducts: [], relatedProjects: [], relatedResearch: [],
-      relatedPublications: [], relatedExperience: [], relatedEducation: [],
+      relatedPublications: [], relatedExperience: [], relatedEducation: [], relatedAwards: [],
       featured: false,
     }];
     mutateCollection(next);

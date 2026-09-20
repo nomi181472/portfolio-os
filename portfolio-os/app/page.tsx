@@ -42,8 +42,8 @@ export default async function SurfacePage() {
           {profile.avatar ? (
             <div
               style={{
-                width: 88,
-                height: 88,
+                width: 'clamp(64px, 14vw, 88px)',
+                height: 'clamp(64px, 14vw, 88px)',
                 borderRadius: '50%',
                 overflow: 'hidden',
                 border: '2px solid var(--rule-strong)',
@@ -186,13 +186,14 @@ export default async function SurfacePage() {
                 <Link
                   href={route.href}
                   style={{
-                    display: 'flex', alignItems: 'baseline', justifyContent: 'space-between',
-                    gap: 'var(--space)', padding: 'var(--space) 0', borderTop: '1px solid var(--rule)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    gap: 'var(--space)', padding: '0.85rem 0', borderTop: '1px solid var(--rule)',
+                    minHeight: '44px',
                   }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-snug)' }}>
                     <MetaphorMark name={mark} size={18} />
-                    <span className="title" style={{ fontSize: 'var(--text-lead)' }}>{route.question}</span>
+                    <span className="title" style={{ fontSize: 'var(--text-lead)', wordBreak: 'break-word' }}>{route.question}</span>
                   </span>
                   <span className="meta">{count}</span>
                 </Link>

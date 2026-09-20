@@ -340,8 +340,39 @@ a.tech:hover { color: var(--signal); border-color: var(--signal); }
   transition: color var(--dur-quick) var(--ease-out);
 }
 .disclosure__trigger:hover { color: var(--ink-bright); }
-.disclosure__sign { color: var(--ink-faint); font-family: var(--font-data); font-size: var(--text-fine); }
-.disclosure__trigger[aria-expanded='true'] .disclosure__sign { color: var(--signal); }
+.disclosure__sign {
+  color: var(--ink-faint);
+  font-family: var(--font-data);
+  font-size: var(--text-small);
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--rule);
+  background: var(--surface-sunk);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+.disclosure__trigger[aria-expanded='true'] .disclosure__sign {
+  color: var(--signal);
+  border-color: var(--signal-quiet);
+  transform: rotate(90deg);
+}
+
+.disclosure__panelWrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease-out;
+  opacity: 0;
+}
+.disclosure__panelWrapper[data-open='true'] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.disclosure__panelInner {
+  overflow: hidden;
+}
 .disclosure__panel { padding-bottom: var(--space-loose); }
 .disclosure__panel[hidden] { display: none; }
 
@@ -467,6 +498,11 @@ a.tech:hover { color: var(--signal); border-color: var(--signal); }
 
 .enter { animation: rise var(--dur-deliberate) var(--ease-out) backwards; }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 1ms !important;
@@ -477,10 +513,56 @@ a.tech:hover { color: var(--signal); border-color: var(--signal); }
 }
 
 /* ==========================================================================
-   Mobile: the rail becomes a bottom bar, the column takes the full width.
-   Deliberately re-laid out, not shrunk.
+   Tactile Touch & Micro-Interactions (Mobile & Desktop)
    ========================================================================== */
 
+.row {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.row:active {
+  background: color-mix(in oklab, var(--surface-raised) 75%, transparent);
+  transform: scale(0.995);
+  transition: transform var(--dur-instant) var(--ease-out), background var(--dur-instant) var(--ease-out);
+}
+
+.control {
+  -webkit-tap-highlight-color: transparent;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+
+.control:active {
+  transform: scale(0.96);
+  border-color: var(--signal);
+  color: var(--signal);
+}
+
+.link:active {
+  color: var(--signal);
+  opacity: 0.85;
+}
+
+.tech:active {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+.disclosure__trigger {
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--dur-quick) var(--ease-out), transform var(--dur-instant) var(--ease-out);
+}
+
+.disclosure__trigger:active {
+  transform: scale(0.99);
+  color: var(--signal);
+}
+
+/* ==========================================================================
+   Mobile & Responsive Breakpoints
+   Deliberately re-laid out across viewport tiers, not merely shrunk.
+   ========================================================================== */
+
+/* Tablet & Large Mobile (<= 56rem / 896px) */
 @media (max-width: 56rem) {
   .shell { grid-template-columns: minmax(0, 1fr); }
   .shell__main {
@@ -489,6 +571,91 @@ a.tech:hover { color: var(--signal); border-color: var(--signal); }
     padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
   }
   .page { padding-inline: var(--gutter); }
-  .row { grid-template-columns: 1.75rem minmax(0, 1fr); }
-  .row__aside { grid-column: 2; align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; gap: var(--space-snug); }
+  .row {
+    grid-template-columns: 1.75rem minmax(0, 1fr);
+    gap: var(--space-snug);
+  }
+  .row__aside {
+    grid-column: 2;
+    align-items: flex-start;
+    text-align: left;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-snug);
+    margin-top: var(--space-tight);
+  }
+  .gallery {
+    grid-template-columns: 1fr;
+  }
 }
+
+/* Intermediate Small Tablet / Phone (<= 48rem / 768px) */
+@media (max-width: 48rem) {
+  .section__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-tight);
+  }
+  .vitrine__caption {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-tight);
+  }
+}
+
+/* Standard Mobile (<= 30rem / 480px) */
+@media (max-width: 30rem) {
+  .row {
+    grid-template-columns: 1fr;
+    gap: var(--space-tight);
+    padding: var(--space) 0;
+  }
+  .row__mark {
+    display: none;
+  }
+  .row__aside {
+    grid-column: 1;
+  }
+  .row__name {
+    font-size: 1.25rem;
+  }
+  .display {
+    font-size: clamp(1.75rem, 1.25rem + 3.5vw, 2.75rem);
+  }
+  .heading {
+    font-size: clamp(1.35rem, 1.1rem + 2vw, 2rem);
+  }
+  .control {
+    min-height: var(--touch-target-min, 44px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .disclosure__trigger {
+    min-height: var(--touch-target-min, 44px);
+  }
+}
+
+/* Small Phones / Narrow Screens (<= 23rem / 368px) */
+@media (max-width: 23rem) {
+  .page {
+    padding-inline: 0.75rem;
+  }
+  .row {
+    padding: 0.85rem 0;
+  }
+  .row__name {
+    font-size: 1.1rem;
+  }
+  .row__tech {
+    gap: 4px;
+  }
+  .tech {
+    font-size: 10px;
+    padding: 1px 4px;
+  }
+  .badge {
+    font-size: 10px;
+  }
+}
+

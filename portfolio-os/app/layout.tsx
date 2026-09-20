@@ -6,6 +6,7 @@ import 'highlight.js/styles/github-dark-dimmed.css';
 
 import { Shell } from '@/components/layout/Shell';
 import { Footer } from '@/components/layout/Footer';
+import { AdminCorner } from '@/components/layout/AdminCorner';
 import { EditorProvider } from '@/components/editor/store';
 import { getGraph } from '@/lib/source';
 import { buildIndex } from '@/lib/search';
@@ -94,6 +95,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </div>
           </Shell>
         </EditorProvider>
+        <AdminCorner />
       </body>
     </html>
   );

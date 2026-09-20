@@ -7,7 +7,7 @@ portfolio = {
   "profile": {
     "name": "Noman Ali",
     "discipline": "Solutions Architecture & Distributed Systems",
-    "positioning": "Solutions Architect with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms. Skilled at decomposing legacy monoliths into scalable, multi-tenant architectures and modernizing enterprise systems for demanding real-time workloads, with a focus on reliability, performance, and scalability.",
+    "positioning": "Software Engineer with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms. Skilled at decomposing legacy monoliths into scalable, multi-tenant architectures and modernizing enterprise systems for demanding real-time workloads, with a focus on reliability, performance, and scalability.",
     "location": "Karachi, Pakistan",
     "avatar": "/media/profilep.jpeg",
     "email": "nomansoomro51@gmail.com",
@@ -72,7 +72,8 @@ portfolio = {
       "featured": True,
       "tags": ["Programming Language", "Language", "Python", "AsyncIO", "Deep Learning", "Pydantic", "uv"],
       "technologies": ["Python", "AsyncIO", "uv", "Pydantic", "PyTorch", "OpenCV"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator", "proj-quant-rl-trading", "proj-need", "proj-resume-hr"]
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator", "proj-quant-rl-trading", "proj-need", "proj-resume-hr"],
+      "relatedPublications": ["pub-ieee-2021"]
     },
     {
       "id": "sk-csharp",
@@ -89,7 +90,8 @@ portfolio = {
       "featured": True,
       "tags": ["Programming Language", "Language", "C#", "OOP", "Strongly Typed", "LINQ", "AsyncIO"],
       "technologies": ["C#", "LINQ", "Type Systems", "Object-Oriented Programming", "Async/Await"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-resume-hr"],
+      "relatedProducts": ["prod-verseye", "prod-ajeek", "prod-blue", "prod-ktrade", "prod-learn-to-invest"],
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-resume-hr", "proj-microservices-template", "proj-payment-middleware"],
       "relatedExperience": ["exp-ktrade", "exp-qbs"]
     },
     {
@@ -107,7 +109,8 @@ portfolio = {
       "featured": True,
       "tags": ["Programming Language", "Language", "TypeScript", "JavaScript", "Static Typing", "Node.js"],
       "technologies": ["TypeScript", "JavaScript", "Node.js", "Type Systems"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator", "proj-lab"]
+      "relatedProducts": ["prod-verseye", "prod-ajeek", "prod-blue"],
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator", "proj-lab", "proj-bscs-fyp", "proj-resume-hr"]
     },
     {
       "id": "sk-cpp",
@@ -124,6 +127,7 @@ portfolio = {
       "featured": True,
       "tags": ["Programming Language", "Language", "C++", "Systems Programming", "RAII", "STL", "Memory Management"],
       "technologies": ["C++", "STL", "Memory Management", "Pointers", "Algorithms"],
+      "relatedProjects": ["proj-navirox"],
       "relatedEducation": ["edu-bs"]
     },
     {
@@ -141,7 +145,7 @@ portfolio = {
       "featured": True,
       "tags": ["Programming Language", "Language", "Go", "Golang", "gRPC", "Concurrency", "Microservices"],
       "technologies": ["Go", "Golang", "gRPC", "Concurrency", "Microservices"],
-      "relatedProjects": ["proj-zero-shots-trackers"]
+      "relatedProducts": ["prod-verseye"]
     },
     {
       "id": "sk-dart",
@@ -157,7 +161,9 @@ portfolio = {
       "description": "Strong code reading (9/10) and code writing (7/10) proficiency in Dart. Experienced with sound null safety, streams, isolates for background concurrency, mixins, factory constructors, and reactive architectures for multi-platform applications.",
       "featured": True,
       "tags": ["Programming Language", "Language", "Dart", "OOP", "Null Safety", "Mobile"],
-      "technologies": ["Dart", "Sound Null Safety", "Async Streams", "Isolates", "OOP"]
+      "technologies": ["Dart", "Sound Null Safety", "Async Streams", "Isolates", "OOP"],
+      "relatedProducts": ["prod-verseye"],
+      "relatedProjects": ["proj-navirox"]
     },
 
     # ── 2. FRAMEWORKS ────────────────────────────────────────────────
@@ -177,6 +183,7 @@ portfolio = {
       "featured": True,
       "tags": ["Enterprise Framework", "Web Framework", ".NET Core", ".NET 3.1", ".NET 6", ".NET 8", "ASP.NET Core", "OpenIddict", "Entity Framework", "Microservices"],
       "technologies": [".NET Core", ".NET 3.1", ".NET 6", ".NET 8", "ASP.NET Core", "OpenIddict", "Entity Framework", "Kestrel"],
+      "relatedProducts": ["prod-verseye", "prod-ajeek", "prod-blue", "prod-ktrade", "prod-learn-to-invest"],
       "relatedProjects": ["proj-zero-shots-trackers", "proj-microservices-template", "proj-resume-hr"],
       "relatedExperience": ["exp-ktrade", "exp-qbs"]
     },
@@ -196,7 +203,7 @@ portfolio = {
       "featured": True,
       "tags": ["API Framework", "FastAPI", "Uvicorn", "REST APIs", "Python", "ASGI", "AsyncIO", "Pydantic"],
       "technologies": ["FastAPI", "Uvicorn", "REST APIs", "AsyncIO", "Pydantic"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator"]
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator", "proj-navirox", "proj-resume-hr", "proj-quant-rl-trading"]
     },
     {
       "id": "sk-fiber",
@@ -214,7 +221,7 @@ portfolio = {
       "featured": True,
       "tags": ["Framework", "Web Framework", "Fiber", "Go", "Golang", "Fasthttp", "REST APIs", "Microservices"],
       "technologies": ["Fiber", "Go", "Fasthttp", "REST APIs", "Microservices"],
-      "relatedProjects": ["proj-zero-shots-trackers"]
+      "relatedProducts": ["prod-verseye"]
     },
     {
       "id": "sk-frontend-nextjs",
@@ -232,7 +239,8 @@ portfolio = {
       "featured": True,
       "tags": ["Frontend Framework", "UI Library", "Next.js", "React", "HTML/CSS", "npm", "Interactive Canvas"],
       "technologies": ["Next.js", "React", "TypeScript", "JavaScript", "HTML/CSS", "npm"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator"]
+      "relatedProducts": ["prod-verseye", "prod-lockkeyz", "prod-klystr", "prod-ajeek"],
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-tracker-simulator", "proj-resume-hr", "proj-need"]
     },
     {
       "id": "sk-mfe",
@@ -267,6 +275,7 @@ portfolio = {
       "featured": True,
       "tags": ["Framework", "UI Framework", "Flutter", "BLoC", "Cubit", "State Management", "Mobile", "Cross-Platform"],
       "technologies": ["Flutter", "BLoC", "Cubit", "State Management", "Dart", "Cross-Platform"],
+      "relatedProducts": ["prod-verseye"],
       "relatedProjects": ["proj-navirox"]
     },
     {
@@ -303,7 +312,8 @@ portfolio = {
       "featured": True,
       "tags": ["Deep Learning Framework", "GPU Acceleration", "PyTorch", "CUDA", "Tensors", "Mixed Precision", "Neural Networks"],
       "technologies": ["PyTorch", "CUDA", "NVIDIA GPU", "Autograd", "Mixed Precision"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-need"]
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-need", "proj-tracker-simulator"],
+      "relatedPublications": ["pub-ieee-2021"]
     },
     {
       "id": "sk-tensorrt",
@@ -334,8 +344,7 @@ portfolio = {
       "description": "Hands-on experience with ONNX and ONNX Runtime (7/10). Exporting PyTorch computation graphs to standardized ONNX formats, verifying graph consistency, applying graph-level optimizations, and executing inference with CUDA and CPU Execution Providers across production runtimes.",
       "featured": True,
       "tags": ["Inference Runtime", "ONNX", "ONNX Runtime", "Model Export", "Graph Optimization", "Cross-Platform AI"],
-      "technologies": ["ONNX", "ONNX Runtime", "Model Export", "Cross-Platform Inference"],
-      "relatedProjects": ["proj-zero-shots-trackers"]
+      "technologies": ["ONNX", "ONNX Runtime", "Model Export", "Cross-Platform Inference"]
     },
     {
       "id": "sk-jax",
@@ -366,7 +375,9 @@ portfolio = {
       "description": "Hands-on experience with LiteRT (7/10), Google's next-generation lightweight on-device AI runtime (formerly TensorFlow Lite). Deploying low-latency quantized vision models onto edge hardware, configuring delegates (NNAPI, GPU, XNNPACK), and optimizing memory footprint for constrained environments.",
       "featured": True,
       "tags": ["Edge AI", "LiteRT", "TFLite", "On-Device Inference", "Model Quantization", "Mobile AI", "Embedded AI"],
-      "technologies": ["LiteRT", "TensorFlow Lite", "On-Device Inference", "Edge AI", "Quantization"]
+      "technologies": ["LiteRT", "TensorFlow Lite", "On-Device Inference", "Edge AI", "Quantization"],
+      "relatedProducts": ["prod-verseye"],
+      "relatedProjects": ["proj-navirox"]
     },
     {
       "id": "sk-tensorflow",
@@ -506,7 +517,8 @@ portfolio = {
       "featured": True,
       "tags": ["Relational Database", "SQL", "PostgreSQL", "Schema Design", "Partitioning", "Indexing", "ACID", "Database Administration"],
       "technologies": ["PostgreSQL", "SQL", "Query Optimization", "PgBouncer", "Partitioning"],
-      "relatedProjects": ["proj-quant-rl-trading"],
+      "relatedProducts": ["prod-verseye", "prod-ajeek", "prod-blue", "prod-ktrade"],
+      "relatedProjects": ["proj-quant-rl-trading", "proj-payment-middleware"],
       "relatedExperience": ["exp-ktrade", "exp-qbs"]
     },
     {
@@ -640,6 +652,23 @@ portfolio = {
       "technologies": ["MinIO", "MinIO SDK", "S3 API", "Object Storage", "Distributed Systems"],
       "relatedProducts": ["prod-verseye"]
     },
+    {
+      "id": "sk-neo4j",
+      "slug": "neo4j-graph-database",
+      "name": "Neo4j Graph Database",
+      "category": "Databases & Storage",
+      "design": "9/10",
+      "support": "8/10",
+      "depth": "specialist",
+      "firstUsed": "2023",
+      "context": "Design: 9/10 · Support: 8/10 | Type: Native Graph Database & Cypher Query Engine | Focus: Connected Knowledge Graphs, Traversal & Property Graphs",
+      "summary": "Design: 9/10 · Support: 8/10 — graph database architecture, Cypher query optimization, labeled property graph modeling, and relationship traversal.",
+      "description": "Specialist proficiency in Neo4j graph database engineering (Design: 9/10, Support: 8/10). Designing labeled property graph schemas, writing optimized Cypher traversal queries, modeling complex interconnected business topologies, and deploying high-availability Neo4j clusters for real-time relational pattern matching.",
+      "featured": True,
+      "tags": ["Graph Database", "Neo4j", "Cypher", "Knowledge Graph", "NoSQL", "Graph Analytics"],
+      "technologies": ["Neo4j", "Cypher", "Graph Traversal", "Property Graphs", "Graph Modeling"],
+      "relatedProducts": ["prod-ajeek"]
+    },
 
     # ── 6. MESSAGE BROKERS & EVENT HANDLERS ───────────────────────────
     {
@@ -671,7 +700,8 @@ portfolio = {
       "description": "Expert mastery in NATS and JetStream (Proficiency: 5/5). Architecting sub-millisecond distributed message fabrics across polyglot microservices (Go, Python, .NET). Leveraging NATS Core for high-frequency pub/sub, request-reply semantics, NATS JetStream for guaranteed at-least-once message persistence, deduplication, stream consumers, and decentralized multi-cluster leaf nodes.",
       "featured": True,
       "tags": ["Message Broker", "NATS", "JetStream", "Distributed Systems", "PubSub", "Low Latency", "Microservices"],
-      "technologies": ["NATS", "NATS JetStream", "Pub/Sub", "Distributed Messaging", "Go"]
+      "technologies": ["NATS", "NATS JetStream", "Pub/Sub", "Distributed Messaging", "Go"],
+      "relatedProducts": ["prod-ajeek", "prod-ktrade"]
     },
     {
       "id": "sk-mqtt",
@@ -736,7 +766,7 @@ portfolio = {
       "featured": True,
       "tags": ["Container Orchestration", "Cloud Platform", "Kubernetes", "Amazon EKS", "Docker", "Helm", "CI/CD", "AWS"],
       "technologies": ["Kubernetes", "Amazon EKS", "Docker", "Helm", "CI/CD", "AWS"],
-      "relatedProjects": ["proj-zero-shots-trackers", "proj-microservices-template"],
+      "relatedProjects": ["proj-zero-shots-trackers"],
       "relatedProducts": ["prod-verseye", "prod-klystr"]
     },
     {
@@ -759,11 +789,12 @@ portfolio = {
       "slug": "git-version-control-monorepo",
       "name": "Git, GitHub & Monorepo Architecture",
       "category": "DevOps & Cloud",
+      "handling": "9/10",
       "depth": "specialist",
       "firstUsed": "2019",
-      "context": "Type: Version Control System | Workflows: Git, GitHub, Monorepo Management",
-      "summary": "Distributed version control, multi-project monorepo structures, branch policies, and GitOps automation.",
-      "description": "Proficient in modern Git version control, maintaining multi-service and monorepo architectures, subproject isolation, code review workflows, semantic versioning, and CI/CD triggers.",
+      "context": "Handling: 9/10 | Type: Version Control System | Workflows: Git, GitHub, Monorepo Management",
+      "summary": "Handling: 9/10 — distributed version control, multi-project monorepo structures, branch policies, and GitOps automation.",
+      "description": "Specialist proficiency in Git, GitHub, and Monorepo Architecture (Handling: 9/10). Maintaining multi-service and monorepo architectures, subproject isolation, code review workflows, semantic versioning, and GitOps automation.",
       "featured": False,
       "tags": ["Version Control System", "Developer Tooling", "Git", "GitHub", "Monorepo", "GitOps"],
       "technologies": ["Git", "GitHub", "Monorepo Architecture", "GitOps"],
@@ -784,7 +815,7 @@ portfolio = {
       "featured": True,
       "tags": ["Multimedia Framework", "Streaming Protocol", "FFmpeg", "Real-Time Video Streaming", "MJPEG", "RTSP", "RTMP"],
       "technologies": ["FFmpeg", "Real-Time Video Streaming", "MJPEG", "RTSP", "OpenCV VideoIO"],
-      "relatedProjects": ["proj-zero-shots-trackers"]
+      "relatedProjects": ["proj-zero-shots-trackers", "proj-navirox"]
     },
 
     # ── 8. TESTING & QUALITY ─────────────────────────────────────────
@@ -986,9 +1017,10 @@ portfolio = {
       ],
       "systems": ["VERSEYE AI Platform", "NAVIROX Unmanned Vessels CV & LiDAR Fusion", "Amazon EKS", "AJEEK Maintenance Platform", "LOCKKEYZ IAM", "BLUE Logistics Platform", "ResumeHR Agentic Platform", "Temporal.io Workflows"],
       "technologies": ["Kubernetes", "Amazon EKS", ".NET Core", "Go", "Python", "C++", "OpenIddict", "Temporal.io", "React", "Docker", "MinIO SDK", "FastAPI", "PyTorch", "TensorRT", "ONNX", "gRPC", "LiDAR", "MQTT", "Jetson", "Ocelot API Gateway"],
-      "relatedSkills": ["sk-leadership", "sk-k8s", "sk-arch", "sk-microservices", "sk-csharp", "sk-dotnet", "sk-go", "sk-python", "sk-cpp", "sk-fastapi", "sk-pytorch-cuda", "sk-tensorrt", "sk-onnx", "sk-mfe", "sk-grpc", "sk-minio", "sk-mqtt", "sk-flutter", "sk-ocelot"],
+      "relatedSkills": ["sk-leadership", "sk-k8s", "sk-arch", "sk-microservices", "sk-csharp", "sk-dotnet", "sk-python", "sk-cpp", "sk-fastapi", "sk-pytorch-cuda", "sk-tensorrt", "sk-onnx", "sk-mfe", "sk-grpc", "sk-minio", "sk-mqtt", "sk-flutter", "sk-ocelot"],
       "relatedProducts": ["prod-verseye", "prod-lockkeyz", "prod-ajeek", "prod-blue"],
       "relatedProjects": ["proj-navirox", "proj-microservices-template", "proj-payment-middleware", "proj-resume-hr"],
+      "relatedAwards": ["award-best-lead"],
       "featured": True
     },
     {
@@ -1235,7 +1267,13 @@ portfolio = {
         "sk-k8s",
         "sk-leadership",
         "sk-video-streaming",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-frontend-nextjs",
+        "sk-typescript",
+        "sk-fiber",
+        "sk-dart",
+        "sk-flutter",
+        "sk-litert"
       ],
       "featured": True
     },
@@ -1279,6 +1317,7 @@ portfolio = {
         { "label": "Integrations", "value": "SAP IAS, Azure AD, FortiGate" },
         { "label": "Security Standard", "value": "Enterprise SSO" }
       ],
+      "relatedSkills": ["sk-frontend-nextjs"],
       "relatedExperience": ["exp-qbs"],
       "featured": True
     },
@@ -1361,7 +1400,14 @@ portfolio = {
         "sk-microservices",
         "sk-leadership",
         "sk-arch",
-        "sk-rest-apis"
+        "sk-rest-apis",
+        "sk-frontend-nextjs",
+        "sk-csharp",
+        "sk-postgres",
+        "sk-nats",
+        "sk-dotnet",
+        "sk-typescript",
+        "sk-neo4j"
       ],
       "relatedProjects": ["proj-microservices-template"],
       "relatedExperience": ["exp-qbs"],
@@ -1450,6 +1496,7 @@ portfolio = {
           "type": "repository"
         }
       ],
+      "relatedSkills": ["sk-frontend-nextjs"],
       "relatedExperience": [],
       "featured": True
     },
@@ -1519,7 +1566,12 @@ portfolio = {
         "Customer Management",
         "Closed-Loop"
       ],
-      "relatedSkills": [],
+      "relatedSkills": [
+        "sk-csharp",
+        "sk-postgres",
+        "sk-dotnet",
+        "sk-typescript"
+      ],
       "relatedExperience": ["exp-qbs"],
       "relatedProjects": ["proj-payment-middleware"],
       "featured": True
@@ -1588,6 +1640,7 @@ portfolio = {
         "sk-redis",
         "sk-nodejs",
         "sk-k8s",
+        "sk-csharp",
         "sk-dotnet",
         "sk-postgres",
         "sk-nats",
@@ -1662,6 +1715,7 @@ portfolio = {
         "PSX"
       ],
       "relatedSkills": [
+        "sk-csharp",
         "sk-dotnet",
         "sk-memorydb",
         "sk-dynamodb",
@@ -1830,10 +1884,15 @@ portfolio = {
       "relatedExperience": ["exp-qbs"],
       "relatedSkills": [
         "sk-python",
+        "sk-cpp",
+        "sk-dart",
+        "sk-fastapi",
         "sk-pytorch-cuda",
         "sk-tensorrt",
         "sk-mqtt",
         "sk-flutter",
+        "sk-litert",
+        "sk-video-streaming",
         "sk-arch",
         "sk-async-processing"
       ],
@@ -1920,7 +1979,6 @@ portfolio = {
         "sk-python",
         "sk-csharp",
         "sk-dotnet",
-        "sk-go",
         "sk-typescript",
         "sk-pytorch-cuda",
         "sk-fastapi",
@@ -1932,8 +1990,7 @@ portfolio = {
         "sk-testing-pytest",
         "sk-pgvector",
         "sk-qdrant",
-        "sk-tensorrt",
-        "sk-onnx"
+        "sk-tensorrt"
       ],
       "featured": True
     },
@@ -2027,7 +2084,12 @@ portfolio = {
         "sk-async-processing",
         "sk-frontend-nextjs",
         "sk-typescript",
-        "sk-docker-compose"
+        "sk-docker-compose",
+        "sk-pytorch-cuda"
+      ],
+      "relatedProjects": [
+        "proj-resume-hr",
+        "proj-quant-rl-trading"
       ],
       "featured": True
     },
@@ -2083,8 +2145,8 @@ portfolio = {
       "relatedSkills": [
         "sk-microservices",
         "sk-arch",
+        "sk-csharp",
         "sk-dotnet",
-        "sk-go",
         "sk-ocelot",
         "sk-iam",
         "sk-rest-apis"
@@ -2143,8 +2205,14 @@ portfolio = {
         "sk-python",
         "sk-csharp",
         "sk-dotnet",
+        "sk-fastapi",
         "sk-langchain",
-        "sk-rag"
+        "sk-rag",
+        "sk-frontend-nextjs",
+        "sk-typescript"
+      ],
+      "relatedProjects": [
+        "proj-tracker-simulator"
       ],
       "relatedExperience": ["exp-qbs"],
       "featured": True
@@ -2224,9 +2292,11 @@ portfolio = {
         "sk-pytorch-cuda",
         "sk-jax",
         "sk-evotorch",
-        "sk-ray"
+        "sk-ray",
+        "sk-frontend-nextjs"
       ],
       "relatedEducation": ["edu-ms"],
+      "relatedResearch": ["res-neuroevolution"],
       "featured": True
     },
     {
@@ -2274,7 +2344,9 @@ portfolio = {
       "relatedSkills": [
         "sk-rest-apis",
         "sk-microservices",
-        "sk-arch"
+        "sk-arch",
+        "sk-csharp",
+        "sk-postgres"
       ],
       "relatedProducts": ["prod-blue"],
       "relatedExperience": ["exp-qbs"],
@@ -2329,9 +2401,13 @@ portfolio = {
       ],
       "relatedSkills": [
         "sk-python",
+        "sk-fastapi",
         "sk-timescaledb",
         "sk-redis",
         "sk-postgres"
+      ],
+      "relatedProjects": [
+        "proj-tracker-simulator"
       ],
       "relatedExperience": ["exp-ktrade"],
       "featured": False
@@ -2399,7 +2475,9 @@ portfolio = {
           ]
         }
       ],
+      "relatedSkills": ["sk-typescript"],
       "relatedEducation": ["edu-bs"],
+      "relatedPublications": ["pub-ieee-2021"],
       "featured": True
     }
   ],
@@ -2426,6 +2504,7 @@ portfolio = {
         }
       ],
       "technologies": ["PyTorch", "Python", "Genetic Algorithms"],
+      "relatedProjects": ["proj-need"],
       "featured": True
     }
   ],
@@ -2673,6 +2752,8 @@ portfolio = {
           ]
         }
       ],
+      "relatedProjects": ["proj-bscs-fyp"],
+      "relatedSkills": ["sk-python", "sk-pytorch-cuda"],
       "featured": True
     }
   ],
@@ -2710,6 +2791,7 @@ portfolio = {
         "Go",
         ".NET Core"
       ],
+      "relatedExperience": ["exp-qbs"],
       "featured": True
     }
   ],

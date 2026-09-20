@@ -49,23 +49,26 @@ export function PrevNext({ previous, next }: { previous?: ResolvedEntity; next?:
     <nav
       aria-label="Adjacent entries"
       style={{
-        display: 'flex', justifyContent: 'space-between', gap: 'var(--space-loose)',
-        paddingTop: 'var(--space-loose)', borderTop: '1px solid var(--rule)',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))',
+        gap: 'var(--space)',
+        paddingTop: 'var(--space-loose)',
+        borderTop: '1px solid var(--rule)',
       }}
     >
       <div>
         {previous ? (
-          <Link href={previous.href} style={{ display: 'block' }}>
+          <Link href={previous.href} style={{ display: 'block', minHeight: '44px' }}>
             <span className="meta">Previous</span>
-            <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)' }}>{previous.data.name}</span>
+            <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)', wordBreak: 'break-word' }}>{previous.data.name}</span>
           </Link>
         ) : null}
       </div>
-      <div style={{ textAlign: 'right' }}>
+      <div style={{ textAlign: next ? 'right' : 'left' }}>
         {next ? (
-          <Link href={next.href} style={{ display: 'block' }}>
+          <Link href={next.href} style={{ display: 'block', minHeight: '44px' }}>
             <span className="meta">Next</span>
-            <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)' }}>{next.data.name}</span>
+            <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)', wordBreak: 'break-word' }}>{next.data.name}</span>
           </Link>
         ) : null}
       </div>

@@ -251,15 +251,80 @@
 
 @media (max-width: 40rem) {
   .nodeLabel {
-    font-size: 15px;
+    font-size: 13px;
   }
   .nodeCount {
-    font-size: 14px;
+    font-size: 12px;
   }
   .nodeActive .nodeLabel {
-    font-size: 16px;
+    font-size: 14px;
   }
   .nodeActive .nodeCount {
-    font-size: 15px;
+    font-size: 13px;
   }
 }
+
+/* Touch Inspection Bar */
+.inspector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-snug);
+  padding: 0.75rem 1rem;
+  background: var(--surface-raised);
+  border-top: 1px solid var(--rule-strong);
+  font-family: var(--font-ui);
+  animation: inspectorSlide 0.22s var(--ease-out);
+}
+
+@keyframes inspectorSlide {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.inspectorInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.inspectorTitle {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--ink-bright);
+}
+
+.inspectorSubtitle {
+  font-size: var(--text-fine);
+  color: var(--signal);
+  font-family: var(--font-data);
+}
+
+.inspectorAction {
+  font-size: var(--text-fine);
+  color: var(--signal);
+  border: 1px solid var(--signal-quiet);
+  background: var(--signal-wash);
+  padding: 6px 12px;
+  border-radius: var(--radius-control);
+  text-decoration: none;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+.inspectorAction:active {
+  transform: scale(0.96);
+  background: var(--signal);
+  color: var(--surface-sunk);
+}
+

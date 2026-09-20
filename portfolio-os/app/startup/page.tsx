@@ -47,16 +47,17 @@ export default async function StartupPage() {
           {/* Logo */}
           <div
             style={{
-              width: 80,
-              height: 80,
-              borderRadius: '20px',
+              width: 'clamp(56px, 14vw, 80px)',
+              height: 'clamp(56px, 14vw, 80px)',
+              borderRadius: '16px',
               background: '#091015',
               border: '1.5px solid var(--rule-strong)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              padding: '16px',
+              padding: '12px',
               boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+              flexShrink: 0,
             }}
           >
             {startup.logo ? (
@@ -66,7 +67,7 @@ export default async function StartupPage() {
                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
               />
             ) : (
-              <span style={{ fontSize: '2rem', fontWeight: 700, color: 'var(--signal)' }}>{startup.name.charAt(0)}</span>
+              <span style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--signal)' }}>{startup.name.charAt(0)}</span>
             )}
           </div>
 
@@ -75,11 +76,11 @@ export default async function StartupPage() {
             <p className="meta" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-tight)', margin: 0, marginBottom: 'var(--space-hair)' }}>
               <MetaphorMark name="incubator" size={14} /> Upcoming Startup
             </p>
-            <h1 className="heading" style={{ margin: 0, fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', letterSpacing: '-0.02em' }}>
+            <h1 className="heading" style={{ margin: 0, fontSize: 'clamp(1.8rem, 5vw, 3.2rem)', letterSpacing: '-0.02em', wordBreak: 'break-word' }}>
               {startup.name}
             </h1>
             {startup.vision ? (
-              <p className="lead" style={{ margin: 0, marginTop: 'var(--space-tight)', color: 'var(--signal)', fontSize: '1.25rem', fontWeight: 500 }}>
+              <p className="lead" style={{ margin: 0, marginTop: 'var(--space-tight)', color: 'var(--signal)', fontSize: 'clamp(1.05rem, 2.5vw, 1.25rem)', fontWeight: 500 }}>
                 {startup.vision}
               </p>
             ) : null}
@@ -118,6 +119,7 @@ export default async function StartupPage() {
               fontWeight: 600,
               textDecoration: 'none',
               fontSize: '0.95rem',
+              minHeight: '44px',
               transition: 'transform 0.15s ease, filter 0.15s ease',
             }}
           >
@@ -142,7 +144,7 @@ export default async function StartupPage() {
         <div
           style={{
             width: '100%',
-            height: '620px',
+            height: 'clamp(320px, 60vh, 620px)',
             border: '1px solid var(--rule-strong)',
             borderRadius: 'var(--radius-frame)',
             overflow: 'hidden',
