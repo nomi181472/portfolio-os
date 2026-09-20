@@ -13,95 +13,93 @@ const MINIMAL_STARTER = JSON.stringify(
     schemaVersion: '1.0',
     exampleContent: false,
     profile: {
-      name: 'Your Name',
-      discipline: 'Software Engineering & Systems Architecture',
-      positioning: 'A short summary of what you build, how you think, and what you care about.',
-      location: 'City, Country',
-      email: 'you@example.com',
+      name: 'Noman Ali',
+      discipline: 'Solutions Architecture & Distributed Systems',
+      positioning: 'Software Engineer with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms.',
+      location: 'Karachi, Pakistan',
+      email: 'nomansoomro51@gmail.com',
       briefing: {
-        focus: 'High-impact production systems',
+        focus: 'Designing and engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
         yearsActive: 5,
-        domains: ['Frontend', 'Backend', 'Distributed Systems', 'Cloud'],
-        philosophy: 'Write down the failure modes and operating bounds before writing code.',
-        specialisation: 'Full-stack architectures and resilient edge services.',
-        leadership: 'Lead by tackling the hardest architectural interfaces and documenting them thoroughly.',
-        industries: ['Enterprise Software', 'Logistics', 'AI']
+        domains: ['Distributed Systems Architecture', 'Cloud & Container Platforms', 'Computer Vision & Deep Learning', 'Enterprise Security & IAM'],
+        philosophy: 'Resilient systems prioritize clear service boundaries, predictable failure modes, end-to-end telemetry, and rigorous security boundaries.',
+        specialisation: 'Solutions Architecture, .NET Core, Go, Python, Kubernetes EKS, SAML 2.0 / OIDC, and multi-tenant AI tracking pipelines.',
+        leadership: 'Technical leadership across multi-tenant SaaS, cross-functional squads, microservice standardization, and modern cloud migrations.',
+        industries: ['Enterprise SaaS', 'Computer Vision & AI', 'Securities & Fintech', 'Retail AI Auditing']
       },
       links: [
-        { label: 'GitHub', url: 'https://github.com/your-username', type: 'repository' },
-        { label: 'LinkedIn', url: 'https://linkedin.com/in/your-profile', type: 'website' }
+        { label: 'LinkedIn Profile', url: 'https://www.linkedin.com/in/noman-a-70604a175', type: 'contact' },
+        { label: 'GitHub Profile', url: 'https://github.com/noman-ali', type: 'repository' },
+        { label: 'Google Scholar', url: 'https://scholar.google.com/citations?user=SFLfK9oAAAAJ&hl=en', type: 'website' },
+        { label: 'Direct Email', url: 'mailto:nomansoomro51@gmail.com', type: 'contact' }
       ]
     },
     products: [
       {
-        id: 'my-product',
-        slug: 'my-product',
-        name: 'My Flagship Product',
-        tagline: 'A one-line description of the product.',
-        summary: 'Summary of what it achieves for users.',
-        description: 'Detailed explanation of the technical problem, why it exists, and how this solves it.',
+        id: 'prod-verseye',
+        slug: 'verseye',
+        name: 'VERSEYE',
+        tagline: 'Production-Grade Computer Vision & Multi-Tenant Video AI Platform',
+        summary: 'Architected high-throughput AI computer vision pipeline ingesting 100+ camera streams in real-time.',
+        description: 'Engineered an end-to-end distributed video analytics architecture utilizing deep neural networks for real-time tracking, edge inference, and event notification.',
         status: 'live',
         featured: true,
-        category: 'Web Application',
-        technologies: ['TypeScript', 'Next.js', 'PostgreSQL'],
-        period: { startDate: '2024-01', ongoing: true },
+        category: 'Computer Vision & AI Platform',
+        technologies: ['Python', 'PyTorch', 'TensorRT', 'FastAPI', 'Redis', 'Docker', 'Kafka'],
+        period: { startDate: '2021-11', ongoing: true },
         features: [
-          { name: 'Core capability', detail: 'Specific technical detail of this feature.' }
+          { name: 'Multi-Camera Tracking', detail: 'Real-time multi-target multi-camera video inference with low-latency event emission.' }
         ],
         metrics: [
-          { label: 'Daily active users', value: '10k+' }
+          { label: 'Tracking Uptime', value: '99.7%' },
+          { label: 'Pipeline Latency', value: '<45ms' }
         ],
-        media: [
-          {
-            type: 'iframe',
-            url: 'https://example.com/demo',
-            title: 'Interactive Demo',
-            caption: 'Live embedded preview. Replace with your live URL.',
-            ratio: 1.777,
-            order: 0,
-            visibility: 'public'
-          }
-        ],
-        links: [
-          { label: 'Live Website', url: 'https://example.com', type: 'website' }
-        ],
-        relatedSkills: ['typescript', 'fullstack']
+        media: [],
+        links: [],
+        relatedSkills: ['sk-python', 'sk-redis', 'sk-docker']
       }
     ],
-    projects: [],
+    projects: [
+      {
+        id: 'proj-planogram-pipeline',
+        slug: 'retail-planogram-audit-pipeline',
+        name: 'Retail Planogram Audit Pipeline',
+        category: 'Applied AI & Computer Vision',
+        summary: 'Multimodal agentic computer vision pipeline combining object detection, SKU recognition, and LLM reasoning for retail compliance.',
+        technologies: ['Python', 'PyTorch', 'LangChain', 'FastAPI', 'Docker'],
+        period: { startDate: '2024-01', ongoing: true },
+        featured: true
+      }
+    ],
     research: [],
     experience: [
       {
-        id: 'current-role',
-        slug: 'current-role',
-        name: 'Lead Software Engineer',
-        organisation: 'Tech Company',
-        summary: 'Led architecture of core systems.',
-        period: { startDate: '2023-01', ongoing: true },
+        id: 'exp-qbs',
+        slug: 'qbs-co',
+        name: 'Lead Software Engineer / Solutions Architect',
+        organisation: 'QBS Co.',
+        summary: 'Architecting polyglot microservices (Go, C#, Python) and enterprise identity platforms on Kubernetes.',
+        period: { startDate: '2024-02', ongoing: true },
         featured: true,
-        technologies: ['TypeScript', 'React', 'Node.js'],
-        responsibilities: [
-          'Architected core services',
-          'Mentored team of engineers'
-        ]
+        technologies: ['Go', 'C#', '.NET Core', 'Kubernetes', 'PostgreSQL', 'Redis']
       }
     ],
     skills: [
       {
-        id: 'typescript',
-        slug: 'typescript',
-        name: 'TypeScript',
-        category: 'language',
-        depth: 'applied',
-        summary: 'End-to-end typed applications.'
+        id: 'sk-python',
+        slug: 'python',
+        name: 'Python',
+        category: 'Programming Languages',
+        depth: 'specialist',
+        summary: 'Core language for deep learning architectures, asynchronous web microservices, and CV pipelines.'
       },
       {
-        id: 'fullstack',
-        slug: 'fullstack',
-        name: 'Full-Stack Development',
-        category: 'domain',
-        depth: 'applied',
-        summary: 'Building complete, data-driven web applications.'
+        id: 'sk-csharp',
+        slug: 'csharp',
+        name: 'C#',
+        category: 'Programming Languages',
+        depth: 'specialist',
+        summary: 'High-throughput enterprise services, distributed API gateways, and IAM infrastructure.'
       }
     ],
     publications: [],
@@ -118,26 +116,27 @@ const MINIMAL_STARTER = JSON.stringify(
 
 const CONFIG_SAMPLE = `export const portfolioConfig = {
   site: {
-    url: 'https://yourdomain.com',
-    title: 'Your Name — Portfolio OS',
-    description: 'Data-driven personal technology portfolio.',
+    url: 'https://nomanali.online',
+    title: 'Noman Ali — Solutions Architecture & Distributed Systems',
+    description: 'Software Engineer & Solutions Architect with 5+ years of experience engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
     locale: 'en',
   },
-  dataSource: { type: 'local' }, // or { type: 'remote', url: 'https://raw.githubusercontent.com/...' }
+  dataSource: { type: 'local' }, // or { type: 'remote', url: 'https://raw.githubusercontent.com/nomi181472/portfolio-os/main/content/portfolio.json' }
   theme: {
-    primary: 'oklch(0.205 0.034 218)',   // Main background ink tone
-    secondary: 'oklch(0.765 0.108 78)',  // Brass highlight & active state
+    primary: 'oklch(0.12 0.005 260)',   // Obsidian substrate (deep architectural black)
+    secondary: 'oklch(0.98 0.002 260)',  // Crisp Silver / Luminescent White signal
     defaultAppearance: 'dark',
   },
   features: {
     editMode: true,
     search: true,
     graph: true,
+    analytics: true,
     exampleNotice: false,
   },
   navigation: {
-    primary: ['products', 'projects', 'research', 'experience', 'skills'],
-    secondary: ['publications', 'education', 'leadership', 'awards', 'certifications'],
+    primary: ['experience', 'products', 'projects', 'startup', 'research', 'skills', 'awards'],
+    secondary: ['publications', 'education', 'leadership', 'certifications', 'volunteering', 'languages'],
   },
 };`;
 
@@ -341,7 +340,7 @@ export function CopyHub({ rawJson }: CopyHubProps) {
                   style={{ fontSize: '11px' }}
                   onClick={() =>
                     copyToClipboard(
-                      'git clone https://github.com/noman/noman-portfolio.git my-portfolio',
+                      'git clone https://github.com/nomi181472/portfolio-os.git my-portfolio',
                       'cmd1'
                     )
                   }
@@ -350,7 +349,7 @@ export function CopyHub({ rawJson }: CopyHubProps) {
                 </button>
               </div>
               <div className={styles.commandBox}>
-                <code>git clone https://github.com/noman/noman-portfolio.git my-portfolio</code>
+                <code>git clone https://github.com/nomi181472/portfolio-os.git my-portfolio</code>
               </div>
             </li>
 

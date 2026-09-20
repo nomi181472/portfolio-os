@@ -52,9 +52,9 @@ export interface PortfolioConfig {
 
 export const portfolioConfig: PortfolioConfig = {
   site: {
-    url: 'https://example.com',
-    title: 'Portfolio OS',
-    description: 'A data-driven portfolio operating system.',
+    url: 'https://nomanali.online',
+    title: 'Noman Ali — Solutions Architecture & Distributed Systems',
+    description: 'Software Engineer & Solutions Architect with 5+ years of experience engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
     locale: 'en',
   },
 

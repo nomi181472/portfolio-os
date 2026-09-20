@@ -4,7 +4,7 @@ A portfolio framework for engineers whose work does not fit on a resume.
 
 It is built on one idea: **the content is a JSON file, and the application is a renderer for it.** Nothing about any particular person exists in the React tree. You fork this, replace one file, and it is your portfolio — a product vault, a laboratory, a research archive and an engineering history, linked to each other by a relationship graph and navigable at whatever depth the visitor wants.
 
-The shipped content is a worked example (a fictional engineer, Nadia Verrall) so that the design can be judged against real-shaped material rather than lorem ipsum. It is flagged in the JSON and the site says so on every page.
+The portfolio contains authentic, validated production data for Noman Ali (Solutions Architecture & Distributed Systems) representing distributed systems, computer vision platforms, enterprise identity providers, and research publications. All relationships are validated on build and resolved into an interactive directed graph.
 
 ---
 
@@ -321,4 +321,4 @@ If you would rather keep content separate from code, put `portfolio.json` in its
 
 ## Licence
 
-MIT. The framework is yours to fork. The example content describes a person who does not exist; replace it.
+MIT. Portfolio framework for engineering architecture and systems showcase.
