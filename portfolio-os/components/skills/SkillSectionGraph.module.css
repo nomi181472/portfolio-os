@@ -1,0 +1,156 @@
+.container {
+  margin-bottom: var(--space-loose);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  background: var(--plate-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+  transition: border-color var(--duration-fast) var(--ease-snappy);
+}
+
+.container:hover {
+  border-color: var(--rule-strong);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-tight) var(--space);
+  border-bottom: 1px solid var(--rule-faint);
+  background: rgba(255, 255, 255, 0.015);
+  user-select: none;
+}
+
+.metaInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-snug);
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  letter-spacing: 0.04em;
+}
+
+.pulseDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ink-bright);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  display: inline-block;
+}
+
+.toggleButton {
+  background: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-snappy);
+}
+
+.toggleButton:hover {
+  color: var(--ink-bright);
+  border-color: var(--ink-bright);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.canvasWrapper {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  padding: var(--space) var(--space-tight);
+}
+
+.svgCanvas {
+  display: block;
+  width: 100%;
+  min-width: 680px;
+}
+
+.edge {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.12);
+  stroke-width: 1.2px;
+  transition: stroke var(--duration-fast) var(--ease-snappy), stroke-width var(--duration-fast) var(--ease-snappy), opacity var(--duration-fast) var(--ease-snappy);
+}
+
+.edgeDimmed {
+  opacity: 0.08;
+  stroke-width: 1px;
+}
+
+.edgeActive {
+  stroke: #ffffff;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.7));
+  opacity: 1;
+}
+
+.nodeGroup {
+  cursor: pointer;
+  transition: transform var(--duration-fast) var(--ease-snappy);
+}
+
+.nodeGroup:hover {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
+}
+
+.nodeRect {
+  fill: #0c0e13;
+  stroke: rgba(255, 255, 255, 0.18);
+  stroke-width: 1px;
+  rx: 6px;
+  ry: 6px;
+  transition: all var(--duration-fast) var(--ease-snappy);
+}
+
+.nodeRectActive {
+  stroke: #ffffff;
+  fill: #141820;
+  stroke-width: 1.5px;
+}
+
+.nodeText {
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  fill: var(--ink-bright);
+  dominant-baseline: central;
+}
+
+.nodeMeta {
+  font-family: var(--font-data);
+  font-size: 10px;
+  fill: var(--ink-quiet);
+  dominant-baseline: central;
+}
+
+.countBadge {
+  fill: rgba(255, 255, 255, 0.08);
+  stroke: rgba(255, 255, 255, 0.15);
+  rx: 4px;
+  ry: 4px;
+}
+
+.countBadgeActive {
+  fill: #ffffff;
+  stroke: #ffffff;
+}
+
+.countText {
+  font-family: var(--font-data);
+  font-size: 9.5px;
+  font-weight: 600;
+  fill: var(--ink-quiet);
+  dominant-baseline: central;
+  text-anchor: middle;
+}
+
+.countTextActive {
+  fill: #000000;
+}

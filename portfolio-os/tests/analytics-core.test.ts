@@ -94,3 +94,15 @@ test('session metric helpers return expected values', () => {
   assert.equal(averageSessionDurationMs(120_000, 4), 30_000);
   assert.equal(returningPercent(30, 100), 30);
 });
+
+test('auth: issueSessionToken and verifySessionToken roundtrip', async () => {
+  const { issueSessionToken, verifySessionToken } = await import('../lib/analytics/auth');
+  const email = 'admin@example.com';
+  const { token } = issueSessionToken(email);
+  assert.ok(token);
+  const verified = verifySessionToken(token);
+  assert.equal(verified, email);
+  assert.equal(verifySessionToken('tampered.token'), null);
+  assert.equal(verifySessionToken(null), null);
+});
+

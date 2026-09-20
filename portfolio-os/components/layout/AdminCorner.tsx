@@ -20,7 +20,7 @@ export async function AdminCorner() {
   if (!adminLoginEnabled()) return null;
   const store = await cookies();
   const token = store.get(adminCookieName)?.value;
-  const authed = token ? await verifySessionToken(token) : false;
+  const authed = token ? Boolean(verifySessionToken(token)) : false;
   const href = authed ? '/admin/dashboard' : '/admin/login';
 
   return (

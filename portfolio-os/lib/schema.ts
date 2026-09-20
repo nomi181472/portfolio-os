@@ -263,6 +263,14 @@ export const ArchitectureSchema = z.object({
     .default([]),
 });
 
+export const IntegrationSchema = z.object({
+  name: z.string().min(1),
+  type: z.string().min(1),
+  status: z.string().default('Active'),
+  detail: z.string().min(1),
+  url: safeUrl.optional(),
+});
+
 export const ProductSchema = EntitySchema.extend({
   tagline: z.string().optional(),
   category: z.string().optional(),
@@ -270,6 +278,7 @@ export const ProductSchema = EntitySchema.extend({
   features: z
     .array(z.object({ name: z.string().min(1), detail: z.string().optional() }))
     .default([]),
+  integrations: z.array(IntegrationSchema).default([]),
   architecture: ArchitectureSchema.optional(),
   metrics: z.array(z.object({ label: z.string(), value: z.string(), note: z.string().optional() })).default([]),
 });

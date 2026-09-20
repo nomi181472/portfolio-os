@@ -30,7 +30,7 @@ export function Related({ edges, title = 'Connected work' }: { edges: RelationEd
               <ul style={{ listStyle: 'none', padding: 0, marginTop: 'var(--space-tight)', display: 'grid', gap: 'var(--space-hair)' }}>
                 {group.map((edge) => (
                   <li key={`${edge.kind}:${edge.id}`}>
-                    <Link href={edge.href} className="link">{edge.name}</Link>
+                    <Link href={edge.href} scroll={true} className="link">{edge.name}</Link>
                   </li>
                 ))}
               </ul>
@@ -58,7 +58,7 @@ export function PrevNext({ previous, next }: { previous?: ResolvedEntity; next?:
     >
       <div>
         {previous ? (
-          <Link href={previous.href} style={{ display: 'block', minHeight: '44px' }}>
+          <Link href={previous.href} scroll={true} style={{ display: 'block', minHeight: '44px' }}>
             <span className="meta">Previous</span>
             <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)', wordBreak: 'break-word' }}>{previous.data.name}</span>
           </Link>
@@ -66,7 +66,7 @@ export function PrevNext({ previous, next }: { previous?: ResolvedEntity; next?:
       </div>
       <div style={{ textAlign: next ? 'right' : 'left' }}>
         {next ? (
-          <Link href={next.href} style={{ display: 'block', minHeight: '44px' }}>
+          <Link href={next.href} scroll={true} style={{ display: 'block', minHeight: '44px' }}>
             <span className="meta">Next</span>
             <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)', wordBreak: 'break-word' }}>{next.data.name}</span>
           </Link>

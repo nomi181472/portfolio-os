@@ -10,7 +10,7 @@ export function Breadcrumbs({ trail }: { trail: Crumb[] }) {
           <li key={`${crumb.label}-${index}`} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-tight)' }}>
             {index > 0 ? <span aria-hidden="true" style={{ color: 'var(--rule-strong)' }}>/</span> : null}
             {crumb.href ? (
-              <Link href={crumb.href} className="link" style={{ borderBottom: 0, wordBreak: 'break-word' }}>{crumb.label}</Link>
+              <Link href={crumb.href} scroll={true} className="link" style={{ borderBottom: 0, wordBreak: 'break-word' }}>{crumb.label}</Link>
             ) : (
               <span style={{ color: 'var(--ink-quiet)', wordBreak: 'break-word' }}>{crumb.label}</span>
             )}

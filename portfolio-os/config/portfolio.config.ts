@@ -39,6 +39,7 @@ export interface PortfolioConfig {
     editMode: boolean;
     search: boolean;
     graph: boolean;
+    analytics: boolean;
     /** Show the banner explaining that shipped content is a sample. */
     exampleNotice: boolean;
   };
@@ -52,9 +53,8 @@ export interface PortfolioConfig {
 export const portfolioConfig: PortfolioConfig = {
   site: {
     url: 'https://example.com',
-    title: 'Noman Ali — Solutions Architect & Technical Lead',
-    description:
-      'Solutions Architect with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms. Skilled at decomposing legacy monoliths into scalable, multi-tenant architectures and modernizing enterprise systems for demanding real-time workloads, with a focus on reliability, performance, and scalability.',
+    title: 'Portfolio OS',
+    description: 'A data-driven portfolio operating system.',
     locale: 'en',
   },
 
@@ -63,10 +63,10 @@ export const portfolioConfig: PortfolioConfig = {
   dataSource: { type: 'local' },
 
   theme: {
-    // Petrol ink. Reads as instrument housing and deep water rather than "dark mode".
-    primary: 'oklch(0.205 0.034 218)',
-    // Brass. An instrument marking, not a highlighter. Used sparingly, on purpose.
-    secondary: 'oklch(0.765 0.108 78)',
+    // Obsidian substrate. Deep, architectural black tone.
+    primary: 'oklch(0.12 0.005 260)',
+    // Crisp Silver / Luminescent White. Clear, high-contrast signal.
+    secondary: 'oklch(0.98 0.002 260)',
     defaultAppearance: 'dark',
   },
 
@@ -74,6 +74,7 @@ export const portfolioConfig: PortfolioConfig = {
     editMode: true,
     search: true,
     graph: true,
+    analytics: true,
     exampleNotice: false,
   },
 

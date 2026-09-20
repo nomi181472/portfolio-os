@@ -52,6 +52,7 @@ export type DetailSection =
   | 'systems'
   | 'achievements'
   | 'features'
+  | 'integrations'
   | 'architecture'
   | 'metrics'
   | 'lab-notes'
@@ -79,7 +80,7 @@ export const CATEGORIES: Record<EntityKind, CategoryDefinition> = {
     mark: 'artifact',
     question: 'What have I built?',
     note: 'Things built to be used by someone other than me. A product has users, a status, and a stated source position.',
-    sections: ['description', 'features', 'architecture', 'metrics', ...COMMON],
+    sections: ['description', 'features', 'integrations', 'architecture', 'metrics', ...COMMON],
   },
   projects: {
     kind: 'projects',

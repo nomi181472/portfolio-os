@@ -41,7 +41,7 @@ export function Shell({ index, children, profile, startupName }: ShellProps) {
       <a className="skip-link" href="#main">Skip to content</a>
       <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} />
       <div className="shell__main">
-        <main id="main" tabIndex={-1}>{children}</main>
+        <main id="main">{children}</main>
       </div>
       {portfolioConfig.features.search ? (
         <CommandMenu index={index} open={searchOpen} onClose={() => setSearchOpen(false)} />

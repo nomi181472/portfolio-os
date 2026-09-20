@@ -53,19 +53,18 @@ export function OrganisationBadge({ organisation }: { organisation?: string }) {
           gap: 6,
           fontFamily: 'var(--font-data)',
           fontSize: 'var(--text-fine)',
-          fontWeight: 700,
+          fontWeight: 600,
           letterSpacing: '0.04em',
           textTransform: 'uppercase',
-          padding: '2px 9px',
+          padding: '2px 8px',
           borderRadius: '4px',
-          background: 'rgba(56, 189, 248, 0.12)',
-          border: '1px solid rgba(56, 189, 248, 0.45)',
-          color: '#38bdf8',
-          boxShadow: '0 0 10px rgba(56, 189, 248, 0.15)',
+          background: 'rgba(255, 255, 255, 0.04)',
+          border: '1px solid rgba(255, 255, 255, 0.16)',
+          color: 'var(--ink-quiet)',
           whiteSpace: 'nowrap',
         }}
       >
-        <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#38bdf8', boxShadow: '0 0 6px #38bdf8' }} />
+        <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--ink-quiet)' }} />
         {organisation}
       </span>
     );
@@ -79,19 +78,19 @@ export function OrganisationBadge({ organisation }: { organisation?: string }) {
         gap: 6,
         fontFamily: 'var(--font-data)',
         fontSize: 'var(--text-fine)',
-        fontWeight: 700,
+        fontWeight: 600,
         letterSpacing: '0.04em',
         textTransform: 'uppercase',
-        padding: '2px 9px',
+        padding: '2px 8px',
         borderRadius: '4px',
-        background: 'rgba(245, 158, 11, 0.15)',
-        border: '1px solid rgba(245, 158, 11, 0.5)',
-        color: '#fbbf24',
-        boxShadow: '0 0 10px rgba(245, 158, 11, 0.15)',
+        background: 'rgba(255, 255, 255, 0.08)',
+        border: '1px solid rgba(255, 255, 255, 0.28)',
+        color: 'var(--ink-bright)',
+        boxShadow: '0 0 10px rgba(255, 255, 255, 0.05)',
         whiteSpace: 'nowrap',
       }}
     >
-      <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#fbbf24', boxShadow: '0 0 6px #fbbf24' }} />
+      <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ffffff', boxShadow: '0 0 6px rgba(255, 255, 255, 0.8)' }} />
       Company · {organisation}
     </span>
   );

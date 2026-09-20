@@ -49,6 +49,40 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
   const category = CATEGORIES[entity.kind];
   const period = formatPeriod(entity.data.period);
   const duration = formatDuration(entity.data.period);
+
+  if (entity.data.slug === 'klystr') {
+    return (
+      <div style={{ width: '100%' }}>
+        <header style={{ marginBottom: 'var(--space-loose)' }}>
+          <p className="meta" style={{ marginBottom: 'var(--space-tight)' }}>{category.singular}</p>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space)' }}>
+            <h1 className="heading" style={{ margin: 0 }}>{entity.data.name}</h1>
+            <div style={{ display: 'flex', gap: 'var(--space-snug)', alignItems: 'center', flexWrap: 'wrap' }}>
+              <StatusBadge status={entity.data.status} />
+              <SourceBadge source={data.source as never} />
+              <a
+                href="https://tools.klystr.botonetics.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="control"
+                style={{ textDecoration: 'none' }}
+              >
+                Open Fullscreen Workspace ↗
+              </a>
+            </div>
+          </div>
+          {entity.data.summary ? (
+            <p className="lead" style={{ marginTop: 'var(--space-tight)' }}>{entity.data.summary}</p>
+          ) : null}
+        </header>
+
+        <div style={{ width: '100%', marginTop: 'var(--space)' }}>
+          <MediaGallery items={entity.data.media} />
+        </div>
+      </div>
+    );
+  }
+
   const sections: Record<DetailSection, React.ReactNode> = {
     description: (entity.data.description || ('reason' in data && data.reason)) ? (
       <div style={{ display: 'grid', gap: 'var(--space-loose)' }}>
@@ -78,11 +112,13 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
     ) : null,
 
     impact: data.impact ? (
-      <p className="lead" style={{ color: 'var(--ink-bright)', fontFamily: 'var(--font-display)' }}>{String(data.impact)}</p>
+      <Block title="Impact">
+        <p className="lead" style={{ color: 'var(--ink-bright)' }}>{String(data.impact)}</p>
+      </Block>
     ) : null,
 
     responsibilities: list(data.responsibilities).length ? (
-      <Disclosure label="What I owned" hint={`${list(data.responsibilities).length} areas`}>
+      <Disclosure label="Responsibilities" defaultOpen>
         <Bullets items={list(data.responsibilities)} />
       </Disclosure>
     ) : null,
@@ -110,6 +146,60 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
           ))}
         </dl>
       </Disclosure>
+    ) : null,
+
+    integrations: Array.isArray(data.integrations) && data.integrations.length ? (
+      <section style={{ marginTop: 'var(--space-loose)', marginBottom: 'var(--space-loose)', padding: 'var(--space)', border: '1px solid var(--rule-strong)', borderRadius: '10px', background: 'var(--surface-raised)' }}>
+        <h3 className="label" style={{ color: 'var(--ink-bright)', marginBottom: 'var(--space-snug)', display: 'flex', alignItems: 'center', gap: 'var(--space-tight)' }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ffffff', boxShadow: '0 0 6px rgba(255, 255, 255, 0.6)' }} />
+          <span>External Ecosystem & Market Integrations</span>
+        </h3>
+        <p className="meta" style={{ marginBottom: 'var(--space)', color: 'var(--ink-quiet)' }}>
+          High-availability connectivity with external partner ecosystems, live exchanges, and enterprise gateways.
+        </p>
+        <div style={{ display: 'grid', gap: 'var(--space-snug)' }}>
+          {(data.integrations as Array<{ name: string; type: string; status?: string; detail: string; url?: string }>).map((item) => (
+            <div
+              key={item.name}
+              style={{
+                padding: 'var(--space)',
+                border: '1px solid var(--rule)',
+                borderRadius: '8px',
+                background: 'var(--surface-base)',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-snug)' }}>
+                <span className="title" style={{ fontSize: 'var(--text-lead)', color: 'var(--ink-bright)' }}>{item.name}</span>
+                <span
+                  className="badge"
+                  style={{
+                    fontFamily: 'var(--font-data)',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    color: '#ffffff',
+                    fontSize: 'var(--text-fine)',
+                  }}
+                >
+                  {item.status || 'Active Integration'}
+                </span>
+              </div>
+              <p className="meta" style={{ marginTop: 'var(--space-hair)', color: 'var(--ink-quiet)' }}>
+                {item.type}
+              </p>
+              <p style={{ marginTop: 'var(--space-tight)', fontSize: 'var(--text-body)', color: 'var(--ink-soft)' }}>
+                {item.detail}
+              </p>
+              {item.url ? (
+                <p style={{ marginTop: 'var(--space-tight)' }}>
+                  <a href={item.url} target="_blank" rel="noreferrer" className="link" style={{ fontSize: 'var(--text-fine)' }}>
+                    External Gateway Reference ↗
+                  </a>
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </div>
+      </section>
     ) : null,
 
     architecture: data.architecture ? (
@@ -285,7 +375,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
       <header style={{ marginBottom: 'var(--space-wide)' }}>
         <p className="meta" style={{ marginBottom: 'var(--space-tight)' }}>{category.singular}</p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-snug)', flexWrap: 'wrap' }}>
-          {entity.data.media?.find((m) => m.url.includes('logo')) ? (
+          {entity.data.media?.find((m) => m.url.includes('logo')) && entity.data.slug !== 'klystr' ? (
             <div style={{
               width: 'clamp(36px, 8vw, 48px)',
               height: 'clamp(36px, 8vw, 48px)',
@@ -356,10 +446,10 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               className="badge"
               style={{
                 fontFamily: 'var(--font-data)',
-                background: 'rgba(56, 189, 248, 0.12)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: '#38bdf8',
-                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
+                color: 'var(--ink-bright)',
+                fontWeight: 500,
                 display: 'inline-flex',
                 gap: 6,
                 flexWrap: 'wrap',
@@ -375,10 +465,10 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               className="badge"
               style={{
                 fontFamily: 'var(--font-data)',
-                background: 'rgba(56, 189, 248, 0.12)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: '#38bdf8',
-                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
+                color: 'var(--ink-bright)',
+                fontWeight: 500,
                 display: 'inline-flex',
                 gap: 6,
                 flexWrap: 'wrap',
@@ -396,10 +486,10 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               className="badge"
               style={{
                 fontFamily: 'var(--font-data)',
-                background: 'rgba(56, 189, 248, 0.12)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: '#38bdf8',
-                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
+                color: 'var(--ink-bright)',
+                fontWeight: 500,
                 display: 'inline-flex',
                 gap: 6,
                 flexWrap: 'wrap',
@@ -415,10 +505,10 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               className="badge"
               style={{
                 fontFamily: 'var(--font-data)',
-                background: 'rgba(56, 189, 248, 0.12)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: '#38bdf8',
-                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
+                color: 'var(--ink-bright)',
+                fontWeight: 500,
                 flexWrap: 'wrap',
                 maxWidth: '100%',
               }}
@@ -430,10 +520,10 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               className="badge"
               style={{
                 fontFamily: 'var(--font-data)',
-                background: 'rgba(56, 189, 248, 0.12)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: '#38bdf8',
-                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
+                color: 'var(--ink-bright)',
+                fontWeight: 500,
               }}
             >
               Proficiency: {String(data.proficiency)}
@@ -443,10 +533,10 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               className="badge"
               style={{
                 fontFamily: 'var(--font-data)',
-                background: 'rgba(56, 189, 248, 0.12)',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: '#38bdf8',
-                fontWeight: 600,
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.16)',
+                color: 'var(--ink-bright)',
+                fontWeight: 500,
               }}
             >
               Level: {String(data.level)}

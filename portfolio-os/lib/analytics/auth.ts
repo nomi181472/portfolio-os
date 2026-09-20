@@ -52,7 +52,9 @@ function hmac(body: string): string {
 export function issueSessionToken(email: string): { token: string; expiresAt: number } {
   const expiresAt = Date.now() + SESSION_TTL_MS;
   const body = `${email}\n${expiresAt}`;
-  return { token: `${Buffer.from(body).toString('base64url')}.${hmac(body)}`, expiresAt };
+  const encodedBody = Buffer.from(body).toString('base64url');
+  const signature = hmac(encodedBody);
+  return { token: `${encodedBody}.${signature}`, expiresAt };
 }
 
 export function verifySessionToken(token: string | null | undefined): string | null {
@@ -63,7 +65,9 @@ export function verifySessionToken(token: string | null | undefined): string | n
   const signature = token.slice(lastDot + 1);
   if (!body || !signature) return null;
   const expected = hmac(body);
-  if (!timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
+  const sigBuf = Buffer.from(signature);
+  const expBuf = Buffer.from(expected);
+  if (sigBuf.length !== expBuf.length || !timingSafeEqual(sigBuf, expBuf)) return null;
   const decoded = Buffer.from(body, 'base64url').toString('utf8');
   const newline = decoded.indexOf('\n');
   const email = newline >= 0 ? decoded.slice(0, newline) : '';

@@ -33,6 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
   };
 }
 
+import { SkillSectionGraph, type GraphSkillNode } from '@/components/skills/SkillSectionGraph';
+
 const SKILL_CATEGORY_ORDER: string[] = [
   'Programming Languages',
   'Frameworks',
@@ -94,12 +96,37 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
       </header>
 
       {grouped ? (
-        sortedGroups.map(([group, items]) => (
-          <section key={group} style={{ marginBottom: 'var(--space-wide)' }}>
-            <h2 className="title" style={{ fontSize: 'var(--text-lead)', marginBottom: 'var(--space-tight)' }}>{group}</h2>
-            <Rows entities={items} showPeriod={false} />
-          </section>
-        ))
+        sortedGroups.map(([group, items]) => {
+          const skillsForGraph: GraphSkillNode[] = items.map((item) => {
+            const neighbours = graph.neighbours(item);
+            const targets = neighbours
+              .filter((n) => n.kind === 'products' || n.kind === 'projects')
+              .map((t) => ({
+                id: t.id,
+                name: t.name,
+                kind: t.kind as 'products' | 'projects',
+                href: t.href,
+              }));
+            return {
+              id: item.data.id,
+              name: item.data.name,
+              slug: item.data.slug,
+              href: item.href,
+              targets,
+            };
+          });
+
+          return (
+            <section key={group} style={{ marginBottom: 'var(--space-wide)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-tight)' }}>
+                <h2 className="title" style={{ fontSize: 'var(--text-lead)', margin: 0 }}>{group}</h2>
+                <span className="meta">{items.length} {items.length === 1 ? 'skill' : 'skills'}</span>
+              </div>
+              <SkillSectionGraph sectionTitle={group} skills={skillsForGraph} />
+              <Rows entities={items} showPeriod={false} />
+            </section>
+          );
+        })
       ) : (
         <Rows entities={entities} />
       )}

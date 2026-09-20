@@ -21,7 +21,10 @@ function itemsFor(ids: string[], startupName?: string): RailItem[] {
   return ids.flatMap((id) => {
     if (id === 'copy') return [{ href: '/copy', label: 'Copy this OS', mark: 'copy' as MarkName }];
     if (id === 'future') return [{ href: '/future', label: 'Trajectory', mark: 'trajectory' as MarkName }];
-    if (id === 'startup') return [{ href: '/startup', label: startupName || 'Startup', mark: 'incubator' as MarkName }];
+    if (id === 'startup') {
+      if (!startupName) return [];
+      return [{ href: '/startup', label: startupName, mark: 'incubator' as MarkName }];
+    }
     const category = CATEGORIES[id as keyof typeof CATEGORIES];
     if (!category) return [];
     return [{ href: `/${category.kind}`, label: category.label, mark: category.mark }];

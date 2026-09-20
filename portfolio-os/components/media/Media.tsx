@@ -88,12 +88,27 @@ function Frame({ item, children }: { item: Media; children: React.ReactNode }) {
   const isPortrait = item.ratio && item.ratio < 1;
   const isIframe = item.type === 'iframe' || item.type === 'embed';
   return (
-    <figure className="vitrine" style={isPortrait ? { maxWidth: '440px', margin: '0 auto' } : undefined}>
-      <div className="vitrine__body" style={{ aspectRatio: item.ratio ?? RATIO_DEFAULT, minHeight: isIframe ? 'clamp(240px, 46vh, 480px)' : undefined }}>{children}</div>
+    <figure
+      className="vitrine"
+      style={{
+        ...(isPortrait ? { maxWidth: '440px', margin: '0 auto' } : { width: '100%' }),
+        ...(isIframe ? { border: '1px solid var(--rule-strong)', boxShadow: 'var(--lift)' } : {}),
+      }}
+    >
+      <div
+        className="vitrine__body"
+        style={{
+          aspectRatio: isIframe ? '16 / 9.5' : (item.ratio ?? RATIO_DEFAULT),
+          minHeight: isIframe ? 'clamp(550px, 80vh, 920px)' : undefined,
+          width: '100%',
+        }}
+      >
+        {children}
+      </div>
       {item.title || item.caption ? (
         <figcaption className="vitrine__caption">
           <span style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-            <span>{item.title}</span>
+            <span style={{ fontWeight: 500, color: 'var(--ink-bright)' }}>{item.title}</span>
             {isIframe ? (
               <a
                 href={item.url}
@@ -106,7 +121,7 @@ function Frame({ item, children }: { item: Media; children: React.ReactNode }) {
               </a>
             ) : null}
           </span>
-          {item.caption ? <span style={{ color: 'var(--ink-faint)' }}>{item.caption}</span> : null}
+          {item.caption ? <span style={{ color: 'var(--ink-quiet)' }}>{item.caption}</span> : null}
         </figcaption>
       ) : null}
     </figure>

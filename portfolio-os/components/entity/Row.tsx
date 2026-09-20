@@ -35,12 +35,20 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
       : [];
 
   return (
-    <article className="row">
+    <article className="row" id={data.id}>
       <span className="row__mark"><MetaphorMark name={category.mark} /></span>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <h3 className="row__name" style={{ margin: 0 }}>
-            <Link href={href}>{data.name}</Link>
+            <Link
+              href={href}
+              scroll={true}
+              data-analytics-id={data.id}
+              data-analytics-type={kind}
+              data-analytics-namespace="entity"
+            >
+              {data.name}
+            </Link>
           </h3>
           {isDeliverable && org ? <OrganisationBadge organisation={org} /> : null}
         </div>
@@ -94,16 +102,16 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
               fontSize: 'var(--text-fine)',
               padding: '3px 8px',
               borderRadius: '4px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#38bdf8',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: 'var(--ink-bright)',
               flexWrap: 'wrap',
               maxWidth: '100%',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
               lineHeight: 1.4,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             <span>Design: {String(data.design)}</span>
@@ -117,16 +125,16 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
               fontSize: 'var(--text-fine)',
               padding: '3px 8px',
               borderRadius: '4px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#38bdf8',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: 'var(--ink-bright)',
               flexWrap: 'wrap',
               maxWidth: '100%',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
               lineHeight: 1.4,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             <span>Agentic: {String(data.agentic)}</span>
@@ -142,16 +150,16 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
               fontSize: 'var(--text-fine)',
               padding: '3px 8px',
               borderRadius: '4px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#38bdf8',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: 'var(--ink-bright)',
               flexWrap: 'wrap',
               maxWidth: '100%',
               display: 'inline-flex',
               alignItems: 'center',
               gap: 6,
               lineHeight: 1.4,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             <span>Reading: {String(data.reading)}</span>
@@ -165,15 +173,15 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
               fontSize: 'var(--text-fine)',
               padding: '3px 8px',
               borderRadius: '4px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#38bdf8',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: 'var(--ink-bright)',
               flexWrap: 'wrap',
               maxWidth: '100%',
               display: 'inline-flex',
               alignItems: 'center',
               lineHeight: 1.4,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             Handling: {String(data.handling)}
@@ -185,15 +193,15 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
               fontSize: 'var(--text-fine)',
               padding: '3px 8px',
               borderRadius: '4px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#38bdf8',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: 'var(--ink-bright)',
               flexWrap: 'wrap',
               maxWidth: '100%',
               display: 'inline-flex',
               alignItems: 'center',
               lineHeight: 1.4,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             Proficiency: {String(data.proficiency)}
@@ -205,15 +213,15 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
               fontSize: 'var(--text-fine)',
               padding: '3px 8px',
               borderRadius: '4px',
-              background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              color: '#38bdf8',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.16)',
+              color: 'var(--ink-bright)',
               flexWrap: 'wrap',
               maxWidth: '100%',
               display: 'inline-flex',
               alignItems: 'center',
               lineHeight: 1.4,
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             Level: {String(data.level)}
@@ -226,9 +234,9 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
               fontSize: 'var(--text-fine)',
               padding: '3px 8px',
               borderRadius: '4px',
-              background: org.toLowerCase().includes('independent') ? 'var(--surface-sunken)' : 'rgba(218, 165, 32, 0.12)',
-              border: `1px solid ${org.toLowerCase().includes('independent') ? 'var(--rule)' : 'var(--signal-quiet)'}`,
-              color: org.toLowerCase().includes('independent') ? 'var(--ink-quiet)' : 'var(--signal)',
+              background: org.toLowerCase().includes('independent') ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.08)',
+              border: `1px solid ${org.toLowerCase().includes('independent') ? 'var(--rule)' : 'var(--rule-strong)'}`,
+              color: org.toLowerCase().includes('independent') ? 'var(--ink-quiet)' : 'var(--ink-bright)',
               flexWrap: 'wrap',
               maxWidth: '100%',
               display: 'inline-flex',

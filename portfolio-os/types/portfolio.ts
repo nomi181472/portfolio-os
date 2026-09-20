@@ -20,6 +20,7 @@ import type {
   PeriodSchema,
   EvidenceSchema,
   TimelineEventSchema,
+  IntegrationSchema,
   ProfileSchema,
   ExperienceSchema,
   EducationSchema,
@@ -46,6 +47,7 @@ export type Source = z.infer<typeof SourceSchema>;
 export type Period = z.infer<typeof PeriodSchema>;
 export type Evidence = z.infer<typeof EvidenceSchema>;
 export type TimelineEvent = z.infer<typeof TimelineEventSchema>;
+export type Integration = z.infer<typeof IntegrationSchema>;
 
 export type Profile = z.infer<typeof ProfileSchema>;
 export type Experience = z.infer<typeof ExperienceSchema>;

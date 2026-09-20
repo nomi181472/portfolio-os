@@ -36,7 +36,7 @@ export default async function SurfacePage() {
     <div className="page">
       <SourceNotice source={bundle.source} exampleContent={bundle.data.exampleContent} />
 
-      <section className="enter">
+      <section className="enter" data-analytics-section="hero">
         <Ruler depth={0} label="Surface" />
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-loose)', marginTop: 'var(--space)', flexWrap: 'wrap' }}>
           {profile.avatar ? (
@@ -71,7 +71,7 @@ export default async function SurfacePage() {
         ) : null}
       </section>
 
-      <section style={{ marginTop: 'var(--space-wide)' }} aria-labelledby="map-heading">
+      <section style={{ marginTop: 'var(--space-wide)' }} aria-labelledby="map-heading" data-analytics-section="map">
         <h2 id="map-heading" className="visually-hidden">Map of this portfolio</h2>
         <Schematic graph={graph} name={profile.name} />
         <p className="meta" style={{ marginTop: 'var(--space-snug)' }}>
@@ -81,7 +81,7 @@ export default async function SurfacePage() {
       </section>
 
       {/* Mission briefing — layered, per §14. The first layer is four facts. */}
-      <section className="section" aria-labelledby="briefing-heading">
+      <section className="section" aria-labelledby="briefing-heading" data-analytics-section="briefing">
         <div className="section__head">
           <h2 id="briefing-heading" className="heading" style={{ fontSize: 'var(--text-title)' }}>Briefing</h2>
           <p className="section__note">Opened in layers. The first is enough to decide whether to keep reading.</p>
@@ -127,7 +127,7 @@ export default async function SurfacePage() {
       </section>
 
       {featured.length ? (
-        <section className="section" aria-labelledby="featured-heading">
+        <section className="section" aria-labelledby="featured-heading" data-analytics-section="featured">
           <div className="section__head">
             <h2 id="featured-heading" className="heading" style={{ fontSize: 'var(--text-title)' }}>Start here</h2>
             <p className="section__note">Four entries that show the range. Everything else is reachable from the map above.</p>
@@ -139,7 +139,7 @@ export default async function SurfacePage() {
       ) : null}
 
       {featuredAwards.length ? (
-        <section className="section" aria-labelledby="awards-heading">
+        <section className="section" aria-labelledby="awards-heading" data-analytics-section="recognition">
           <div className="section__head">
             <h2 id="awards-heading" className="heading" style={{ fontSize: 'var(--text-title)' }}>Recognition</h2>
             <p className="section__note">Leadership awards and technical achievements.</p>
@@ -151,7 +151,7 @@ export default async function SurfacePage() {
       ) : null}
 
       {openLines.length ? (
-        <section className="section" aria-labelledby="open-heading">
+        <section className="section" aria-labelledby="open-heading" data-analytics-section="open">
           <div className="section__head">
             <h2 id="open-heading" className="heading" style={{ fontSize: 'var(--text-title)' }}>Open right now</h2>
             <p className="section__note">
@@ -173,7 +173,7 @@ export default async function SurfacePage() {
         </section>
       ) : null}
 
-      <section className="section" aria-labelledby="explore-heading">
+      <section className="section" aria-labelledby="explore-heading" data-analytics-section="explore">
         <div className="section__head">
           <h2 id="explore-heading" className="heading" style={{ fontSize: 'var(--text-title)' }}>Or start from a question</h2>
         </div>

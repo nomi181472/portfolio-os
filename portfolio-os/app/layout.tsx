@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Newsreader, IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
+import { Inter, IBM_Plex_Mono } from 'next/font/google';
 import '@/styles/globals.css';
 import 'katex/dist/katex.min.css';
 import 'highlight.js/styles/github-dark-dimmed.css';
@@ -7,34 +7,34 @@ import 'highlight.js/styles/github-dark-dimmed.css';
 import { Shell } from '@/components/layout/Shell';
 import { Footer } from '@/components/layout/Footer';
 import { AdminCorner } from '@/components/layout/AdminCorner';
+import { AnalyticsProvider } from '@/components/analytics/Provider';
+import { ScrollManager } from '@/components/layout/ScrollManager';
 import { EditorProvider } from '@/components/editor/store';
 import { getGraph } from '@/lib/source';
 import { buildIndex } from '@/lib/search';
 import { portfolioConfig } from '@/config/portfolio.config';
 
 /**
- * Newsreader carries display and long-form reading: it is a text serif with
- * optical sizing, which is what a technical library and a laboratory notebook
- * both want. IBM Plex Sans runs the interface — it was drawn for an engineering
- * company and reads as instrumentation rather than as a product landing page.
- * Plex Mono appears only where something genuinely is data.
+ * Inter provides ultra-clean, architectural modern typography across display
+ * headings and UI controls. IBM Plex Mono carries technical metadata and telemetry.
  */
-const display = Newsreader({ subsets: ['latin'], variable: '--font-display-loaded', display: 'swap', axes: ['opsz'] });
-const ui = IBM_Plex_Sans({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-ui-loaded', display: 'swap' });
-const data = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400'], variable: '--font-data-loaded', display: 'swap' });
+const display = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'], variable: '--font-display-loaded', display: 'swap' });
+const ui = Inter({ subsets: ['latin'], weight: ['400', '500', '600'], variable: '--font-ui-loaded', display: 'swap' });
+const data = IBM_Plex_Mono({ subsets: ['latin'], weight: ['400', '500'], variable: '--font-data-loaded', display: 'swap' });
 
 export async function generateMetadata(): Promise<Metadata> {
   const { bundle } = await getGraph();
   const { profile } = bundle.data;
+  const fullTitle = profile.discipline ? `${profile.name} — ${profile.discipline}` : (profile.name || portfolioConfig.site.title);
   const title = profile.name || portfolioConfig.site.title;
   const description = profile.positioning ?? portfolioConfig.site.description;
 
   return {
     metadataBase: new URL(portfolioConfig.site.url),
-    title: { default: title, template: `%s — ${title}` },
+    title: { default: fullTitle, template: `%s — ${title}` },
     description,
     openGraph: {
-      title,
+      title: fullTitle,
       description,
       type: 'website',
       locale: portfolioConfig.site.locale,
@@ -58,8 +58,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#0e1a1f' },
-    { media: '(prefers-color-scheme: light)', color: '#f2f5f5' },
+    { media: '(prefers-color-scheme: dark)', color: '#090a0d' },
+    { media: '(prefers-color-scheme: light)', color: '#f8fafc' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -87,6 +87,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <style dangerouslySetInnerHTML={{ __html: brand }} />
       </head>
       <body>
+        <ScrollManager />
+        <AnalyticsProvider />
         <EditorProvider canonical={bundle.data}>
           <Shell index={index} profile={{ name: bundle.data.profile.name, avatar: bundle.data.profile.avatar }} startupName={bundle.data.startup?.name}>
             {children}

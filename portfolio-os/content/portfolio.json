@@ -62,8 +62,8 @@
       "writing": "9/10",
       "depth": "specialist",
       "firstUsed": "2020",
-      "context": "Code Reading: 10/10 \u00b7 Code Writing: 9/10 | Type: Multi-Paradigm, Scripting, Scientific & AI Engineering",
-      "summary": "Code reading: 10/10 \u00b7 Code writing: 9/10 \u2014 core language for deep learning architectures, asynchronous web microservices, computer vision pipelines, and test suites.",
+      "context": "Code Reading: 10/10 · Code Writing: 9/10 | Type: Multi-Paradigm, Scripting, Scientific & AI Engineering",
+      "summary": "Code reading: 10/10 · Code writing: 9/10 — core language for deep learning architectures, asynchronous web microservices, computer vision pipelines, and test suites.",
       "description": "Expert hands-on mastery in Python (Code reading: 10/10, Code writing: 9/10). Deep understanding of asynchronous event loops (asyncio, uvloop), memory-efficient tensor allocations in PyTorch, C-extension interfaces, type annotations (mypy, Pydantic), and modern packaging with uv.",
       "featured": true,
       "tags": [
@@ -103,8 +103,8 @@
       "writing": "9.5/10",
       "depth": "specialist",
       "firstUsed": "2019",
-      "context": "Code Reading: 10/10 \u00b7 Code Writing: 9.5/10 | Type: Object-Oriented, Strongly Typed, Systems & Enterprise",
-      "summary": "Code reading: 10/10 \u00b7 Code writing: 9.5/10 \u2014 type-safe, high-performance object-oriented programming for mission-critical trading engines and enterprise systems.",
+      "context": "Code Reading: 10/10 · Code Writing: 9.5/10 | Type: Object-Oriented, Strongly Typed, Systems & Enterprise",
+      "summary": "Code reading: 10/10 · Code writing: 9.5/10 — type-safe, high-performance object-oriented programming for mission-critical trading engines and enterprise systems.",
       "description": "Deep expertise in modern C# (Code reading: 10/10, Code writing: 9.5/10) including pattern matching, LINQ, async/await concurrency, Span/Memory performance primitives, record types, and generics across high-throughput financial architectures.",
       "featured": true,
       "tags": [
@@ -150,8 +150,8 @@
       "writing": "8/10",
       "depth": "specialist",
       "firstUsed": "2020",
-      "context": "Code Reading: 9/10 \u00b7 Code Writing: 8/10 | Type: Statically Typed JavaScript Superset, Full-Stack",
-      "summary": "Code reading: 9/10 \u00b7 Code writing: 8/10 \u2014 strictly typed full-stack development, React component contracts, Next.js App Router integrations, and AST tooling.",
+      "context": "Code Reading: 9/10 · Code Writing: 8/10 | Type: Statically Typed JavaScript Superset, Full-Stack",
+      "summary": "Code reading: 9/10 · Code writing: 8/10 — strictly typed full-stack development, React component contracts, Next.js App Router integrations, and AST tooling.",
       "description": "Extensive experience designing type-safe architectures in TypeScript (Code reading: 9/10, Code writing: 8/10). Utilizing advanced generics, mapped types, strict compiler configurations, interface contracts, and full-stack Next.js and Node.js systems.",
       "featured": true,
       "tags": [
@@ -190,8 +190,8 @@
       "writing": "7/10",
       "depth": "proficient",
       "firstUsed": "2018",
-      "context": "Code Reading: 9/10 \u00b7 Code Writing: 7/10 | Type: Systems Programming & Low-Level Architecture | Paradigms: RAII, Memory Management, STL",
-      "summary": "Code reading: 9/10 \u00b7 Code writing: 7/10 \u2014 systems programming, memory management, STL containers, pointers, RAII, and algorithmic problem solving.",
+      "context": "Code Reading: 9/10 · Code Writing: 7/10 | Type: Systems Programming & Low-Level Architecture | Paradigms: RAII, Memory Management, STL",
+      "summary": "Code reading: 9/10 · Code writing: 7/10 — systems programming, memory management, STL containers, pointers, RAII, and algorithmic problem solving.",
       "description": "Strong code reading (9/10) and solid code writing (7/10) competence in C++. Experienced with RAII memory lifecycle management, smart pointers, template metaprogramming, STL data structures, algorithmic problem solving (HackerRank C++ certified), and native performance optimization.",
       "featured": true,
       "tags": [
@@ -226,8 +226,8 @@
       "writing": "6/10",
       "depth": "deep",
       "firstUsed": "2021",
-      "context": "Code Reading: 9/10 \u00b7 Code Writing: 6/10 | Type: Concurrent, Compiled, Systems & Cloud-Native",
-      "summary": "Code reading: 9/10 \u00b7 Code writing: 6/10 \u2014 goroutines, concurrency channels, gRPC APIs, low-overhead microservices, and network tooling.",
+      "context": "Code Reading: 9/10 · Code Writing: 6/10 | Type: Concurrent, Compiled, Systems & Cloud-Native",
+      "summary": "Code reading: 9/10 · Code writing: 6/10 — goroutines, concurrency channels, gRPC APIs, low-overhead microservices, and network tooling.",
       "description": "Leveraged Go (Code reading: 9/10, Code writing: 6/10) for high-throughput stream ingestion, concurrent event handling, and cloud-native Kubernetes tooling where sub-millisecond execution is mandatory.",
       "featured": true,
       "tags": [
@@ -259,8 +259,8 @@
       "writing": "7/10",
       "depth": "proficient",
       "firstUsed": "2020",
-      "context": "Code Reading: 9/10 \u00b7 Code Writing: 7/10 | Type: Client-Optimized Language, Object-Oriented, Sound Null Safety",
-      "summary": "Code reading: 9/10 \u00b7 Code writing: 7/10 \u2014 strongly typed, client-optimized OOP language with sound null safety, async streams, and AOT/JIT compilation.",
+      "context": "Code Reading: 9/10 · Code Writing: 7/10 | Type: Client-Optimized Language, Object-Oriented, Sound Null Safety",
+      "summary": "Code reading: 9/10 · Code writing: 7/10 — strongly typed, client-optimized OOP language with sound null safety, async streams, and AOT/JIT compilation.",
       "description": "Strong code reading (9/10) and code writing (7/10) proficiency in Dart. Experienced with sound null safety, streams, isolates for background concurrency, mixins, factory constructors, and reactive architectures for multi-platform applications.",
       "featured": true,
       "tags": [
@@ -295,8 +295,8 @@
       "independent": "9.5/10",
       "depth": "specialist",
       "firstUsed": "2019",
-      "context": "Agentic Development: 10/10 \u00b7 AI-Assisted Development: 9.5/10 \u00b7 Independent Development: 9.5/10 | Type: Enterprise Application Framework & Web Runtime",
-      "summary": "Agentic: 10/10 \u00b7 AI-Assisted: 9.5/10 \u00b7 Independent: 9.5/10 \u2014 .NET Core (.NET 3.1, .NET 6, .NET 8), ASP.NET Core, enterprise backend services, microservices, clean architecture, CQRS, and EF Core.",
+      "context": "Agentic Development: 10/10 · AI-Assisted Development: 9.5/10 · Independent Development: 9.5/10 | Type: Enterprise Application Framework & Web Runtime",
+      "summary": "Agentic: 10/10 · AI-Assisted: 9.5/10 · Independent: 9.5/10 — .NET Core (.NET 3.1, .NET 6, .NET 8), ASP.NET Core, enterprise backend services, microservices, clean architecture, CQRS, and EF Core.",
       "description": "Architecting high-concurrency microservices and enterprise web APIs using .NET Core (.NET 3.1 / .NET 6 / .NET 8) and ASP.NET Core (Agentic: 10/10, AI-Assisted: 9.5/10, Independent: 9.5/10). Implementing custom middleware, authentication handlers with OpenIddict, EF Core relational queries, and low-latency response caching.",
       "featured": true,
       "tags": [
@@ -348,8 +348,8 @@
       "independent": "9.5/10",
       "depth": "specialist",
       "firstUsed": "2022",
-      "context": "Agentic Development: 10/10 \u00b7 AI-Assisted Development: 9.5/10 \u00b7 Independent Development: 9.5/10 | Type: High-Performance API Framework & ASGI Runtime",
-      "summary": "Agentic: 10/10 \u00b7 AI-Assisted: 9.5/10 \u00b7 Independent: 9.5/10 \u2014 FastAPI, Uvicorn ASGI server, asynchronous background workers, Pydantic schemas, and streaming endpoints.",
+      "context": "Agentic Development: 10/10 · AI-Assisted Development: 9.5/10 · Independent Development: 9.5/10 | Type: High-Performance API Framework & ASGI Runtime",
+      "summary": "Agentic: 10/10 · AI-Assisted: 9.5/10 · Independent: 9.5/10 — FastAPI, Uvicorn ASGI server, asynchronous background workers, Pydantic schemas, and streaming endpoints.",
       "description": "Engineered high-concurrency asynchronous REST APIs with FastAPI (Agentic: 10/10, AI-Assisted: 9.5/10, Independent: 9.5/10), implementing structured Pydantic schemas, streaming response endpoints (MJPEG), runtime session controls, and low-latency benchmark processing.",
       "featured": true,
       "tags": [
@@ -387,8 +387,8 @@
       "independent": "5/10",
       "depth": "proficient",
       "firstUsed": "2022",
-      "context": "Agentic Development: 9/10 \u00b7 AI-Assisted Development: 7/10 \u00b7 Independent Development: 5/10 | Type: Express-Inspired Web Framework on Fasthttp for Go",
-      "summary": "Agentic: 9/10 \u00b7 AI-Assisted: 7/10 \u00b7 Independent: 5/10 \u2014 high-performance, low-memory Go web framework built on Fasthttp for low-latency APIs and microservices.",
+      "context": "Agentic Development: 9/10 · AI-Assisted Development: 7/10 · Independent Development: 5/10 | Type: Express-Inspired Web Framework on Fasthttp for Go",
+      "summary": "Agentic: 9/10 · AI-Assisted: 7/10 · Independent: 5/10 — high-performance, low-memory Go web framework built on Fasthttp for low-latency APIs and microservices.",
       "description": "Building high-throughput microservices and REST APIs in Go using Fiber (Agentic: 9/10, AI-Assisted: 7/10, Independent: 5/10). Leveraging zero memory allocation routing, middleware chaining, WebSocket connections, and fast JSON encoding powered by Fasthttp.",
       "featured": true,
       "tags": [
@@ -422,8 +422,8 @@
       "independent": "6/10",
       "depth": "deep",
       "firstUsed": "2021",
-      "context": "Agentic Development: 9/10 \u00b7 AI-Assisted Development: 8/10 \u00b7 Independent Development: 6/10 | Type: React Production Framework & Full-Stack Web Architecture",
-      "summary": "Agentic: 9/10 \u00b7 AI-Assisted: 8/10 \u00b7 Independent: 6/10 \u2014 Next.js App Router, React Server Components, server actions, dynamic routing, and frontend architecture.",
+      "context": "Agentic Development: 9/10 · AI-Assisted Development: 8/10 · Independent Development: 6/10 | Type: React Production Framework & Full-Stack Web Architecture",
+      "summary": "Agentic: 9/10 · AI-Assisted: 8/10 · Independent: 6/10 — Next.js App Router, React Server Components, server actions, dynamic routing, and frontend architecture.",
       "description": "Architecting high-performance web frontends and interactive analytics dashboards using Next.js and React (Agentic: 9/10, AI-Assisted: 8/10, Independent: 6/10). Utilizing App Router, React Server Components, client-side canvas crop selectors, and optimized production builds.",
       "featured": true,
       "tags": [
@@ -466,8 +466,8 @@
       "independent": "6/10",
       "depth": "proficient",
       "firstUsed": "2023",
-      "context": "Agentic Development: 9/10 \u00b7 AI-Assisted Development: 8/10 \u00b7 Independent Development: 6/10 | Type: Microfrontend Architecture & Webpack Module Federation",
-      "summary": "Agentic: 9/10 \u00b7 AI-Assisted: 8/10 \u00b7 Independent: 6/10 \u2014 Module Federation, dynamic remotes, shared state orchestration, and isolated team frontends.",
+      "context": "Agentic Development: 9/10 · AI-Assisted Development: 8/10 · Independent Development: 6/10 | Type: Microfrontend Architecture & Webpack Module Federation",
+      "summary": "Agentic: 9/10 · AI-Assisted: 8/10 · Independent: 6/10 — Module Federation, dynamic remotes, shared state orchestration, and isolated team frontends.",
       "description": "Architected decoupled frontend micro-applications using Webpack 5 Module Federation (Agentic: 9/10, AI-Assisted: 8/10, Independent: 6/10), dynamic remote runtime loading, shared state orchestration, and isolated autonomous squad deployments.",
       "featured": true,
       "tags": [
@@ -491,8 +491,8 @@
       "independent": "7/10",
       "depth": "specialist",
       "firstUsed": "2020",
-      "context": "Agentic Development: 10/10 \u00b7 AI-Assisted Development: 9/10 \u00b7 Independent Development: 7/10 | Type: Multi-Platform UI Framework & State Architecture",
-      "summary": "Agentic: 10/10 \u00b7 AI-Assisted: 9/10 \u00b7 Independent: 7/10 \u2014 cross-platform UI framework, BLoC pattern, Cubit state management, clean architecture, and custom render trees.",
+      "context": "Agentic Development: 10/10 · AI-Assisted Development: 9/10 · Independent Development: 7/10 | Type: Multi-Platform UI Framework & State Architecture",
+      "summary": "Agentic: 10/10 · AI-Assisted: 9/10 · Independent: 7/10 — cross-platform UI framework, BLoC pattern, Cubit state management, clean architecture, and custom render trees.",
       "description": "Specialist expertise in Flutter with BLoC and Cubit state architecture (Agentic: 10/10, AI-Assisted: 9/10, Independent: 7/10). Designing reactive presentation layers, stream-driven state transitions, event-to-state transformations, repository patterns, custom animations, and native platform channels across iOS and Android.",
       "featured": true,
       "tags": [
@@ -530,8 +530,8 @@
       "independent": "7/10",
       "depth": "proficient",
       "firstUsed": "2020",
-      "context": "Agentic Development: 10/10 \u00b7 AI-Assisted Development: 9/10 \u00b7 Independent Development: 7/10 | Type: Server-Side JavaScript Runtime & Microservices",
-      "summary": "Agentic: 10/10 \u00b7 AI-Assisted: 9/10 \u00b7 Independent: 7/10 \u2014 Server-side JavaScript runtime, event-driven concurrency, REST APIs, and asynchronous microservices.",
+      "context": "Agentic Development: 10/10 · AI-Assisted Development: 9/10 · Independent Development: 7/10 | Type: Server-Side JavaScript Runtime & Microservices",
+      "summary": "Agentic: 10/10 · AI-Assisted: 9/10 · Independent: 7/10 — Server-side JavaScript runtime, event-driven concurrency, REST APIs, and asynchronous microservices.",
       "description": "Building backend microservices, real-time communication, and API services with Node.js (Agentic: 10/10, AI-Assisted: 9/10, Independent: 7/10). Utilizing event-driven concurrency, non-blocking I/O, and npm ecosystem packages.",
       "featured": true,
       "tags": [
@@ -561,7 +561,7 @@
       "depth": "specialist",
       "firstUsed": "2020",
       "context": "Level: 9/10 | Type: Deep Learning Framework & Tensor Acceleration | Ecosystem: Dynamic Computational Graphs, CUDA Kernels, TorchScript & PyTorch 2.x",
-      "summary": "9/10 level \u2014 dynamic computational graphs, CUDA GPU tensor acceleration, autograd, custom loss functions, mixed-precision inference, and zero-shot model execution.",
+      "summary": "9/10 level — dynamic computational graphs, CUDA GPU tensor acceleration, autograd, custom loss functions, mixed-precision inference, and zero-shot model execution.",
       "description": "Expert hands-on mastery in PyTorch (9/10). Designing, training, and serving neural network models on CUDA-accelerated hardware. Implementing memory-efficient inference pipelines, autograd mechanics, custom dataset loaders, tensor batching, model quantization, and distributed training primitives.",
       "featured": true,
       "tags": [
@@ -598,7 +598,7 @@
       "depth": "proficient",
       "firstUsed": "2022",
       "context": "Level: 7/10 | Type: High-Performance Deep Learning Inference SDK | Platform: NVIDIA GPUs, Engine Serialization & FP16/INT8 Quantization",
-      "summary": "7/10 level \u2014 NVIDIA TensorRT inference optimization, FP16/INT8 precision calibration, serialized engine building, and GPU inference acceleration.",
+      "summary": "7/10 level — NVIDIA TensorRT inference optimization, FP16/INT8 precision calibration, serialized engine building, and GPU inference acceleration.",
       "description": "Proficient in NVIDIA TensorRT (7/10) for maximizing GPU throughput and minimizing latency. Converting PyTorch and ONNX models into optimized TensorRT execution engines, layer fusion, kernel auto-tuning, and FP16/INT8 quantization for real-time computer vision inference.",
       "featured": true,
       "tags": [
@@ -629,7 +629,7 @@
       "depth": "proficient",
       "firstUsed": "2022",
       "context": "Level: 7/10 | Type: Open Neural Network Exchange & Inference Runtime | Platform: Cross-Platform Execution, Graph Optimization & Hardware Execution Providers",
-      "summary": "7/10 level \u2014 ONNX format conversion, cross-platform model interoperability, ONNX Runtime graph optimizations, and Execution Provider integration.",
+      "summary": "7/10 level — ONNX format conversion, cross-platform model interoperability, ONNX Runtime graph optimizations, and Execution Provider integration.",
       "description": "Hands-on experience with ONNX and ONNX Runtime (7/10). Exporting PyTorch computation graphs to standardized ONNX formats, verifying graph consistency, applying graph-level optimizations, and executing inference with CUDA and CPU Execution Providers across production runtimes.",
       "featured": true,
       "tags": [
@@ -656,7 +656,7 @@
       "depth": "proficient",
       "firstUsed": "2023",
       "context": "Level: 7/10 | Type: High-Performance Numerical Computing & ML Framework | Paradigm: Composable Function Transformations, Autograd & XLA Compilation",
-      "summary": "7/10 level \u2014 composable function transformations (grad, jit, vmap), XLA GPU compilation, functional pure-state ML modeling, and numerical research.",
+      "summary": "7/10 level — composable function transformations (grad, jit, vmap), XLA GPU compilation, functional pure-state ML modeling, and numerical research.",
       "description": "Competent experience in Google JAX (7/10). Utilizing functional transformations including automatic differentiation (grad), just-in-time compilation to XLA (jit), and vectorization batching (vmap) for accelerated research simulations and numerical computing.",
       "featured": true,
       "tags": [
@@ -688,7 +688,7 @@
       "depth": "proficient",
       "firstUsed": "2023",
       "context": "Level: 7/10 | Type: On-Device Lightweight Inference Runtime (formerly TFLite) | Target: Edge Devices, Mobile, Embedded & CPU/NPU Acceleration",
-      "summary": "7/10 level \u2014 Google LiteRT (formerly TensorFlow Lite) on-device runtime, post-training quantization, flatbuffer model deployment, and edge execution.",
+      "summary": "7/10 level — Google LiteRT (formerly TensorFlow Lite) on-device runtime, post-training quantization, flatbuffer model deployment, and edge execution.",
       "description": "Hands-on experience with LiteRT (7/10), Google's next-generation lightweight on-device AI runtime (formerly TensorFlow Lite). Deploying low-latency quantized vision models onto edge hardware, configuring delegates (NNAPI, GPU, XNNPACK), and optimizing memory footprint for constrained environments.",
       "featured": true,
       "tags": [
@@ -723,7 +723,7 @@
       "depth": "working",
       "firstUsed": "2020",
       "context": "Level: 5/10 | Type: Machine Learning & Deep Learning Ecosystem | Paradigm: Keras High-Level APIs, SavedModel Formats & Graph Execution",
-      "summary": "5/10 level \u2014 foundational TensorFlow / Keras layer architectures, SavedModel serialization, dataset pipelines, and legacy model migration.",
+      "summary": "5/10 level — foundational TensorFlow / Keras layer architectures, SavedModel serialization, dataset pipelines, and legacy model migration.",
       "description": "Working foundational knowledge in TensorFlow (5/10). Experience building baseline feedforward and convolutional models with tf.keras, manipulating tf.data input pipelines, serializing models via SavedModel format, and migrating legacy architectures to modern PyTorch/ONNX pipelines.",
       "featured": true,
       "tags": [
@@ -828,7 +828,8 @@
         "Structured Output Parsing"
       ],
       "relatedProjects": [
-        "proj-resume-hr"
+        "proj-resume-hr",
+        "proj-planogram-pipeline"
       ]
     },
     {
@@ -872,7 +873,7 @@
       "firstUsed": "2025",
       "context": "Type: Durable Workflow Orchestration | Ecosystem: Temporal.io, Python SDK, Activity Workers, Workflow Retries & State Persistence",
       "summary": "Durable, fault-tolerant workflow orchestration for long-running ML pipelines, automated retraining loops, and distributed background processing.",
-      "description": "Production experience with Temporal.io for building durable, fault-tolerant workflows across distributed systems. Applied in VERSEYE for orchestrating automated model retraining pipelines, genetic-algorithm-based ONNX pruning runs, and TensorRT calibration jobs \u2014 ensuring workflows survive crashes, retries, and partial failures without data loss. Leverages Temporal's activity, workflow, and worker model to decouple long-running AI pipeline stages and maintain audit trails across distributed compute.",
+      "description": "Production experience with Temporal.io for building durable, fault-tolerant workflows across distributed systems. Applied in VERSEYE for orchestrating automated model retraining pipelines, genetic-algorithm-based ONNX pruning runs, and TensorRT calibration jobs — ensuring workflows survive crashes, retries, and partial failures without data loss. Leverages Temporal's activity, workflow, and worker model to decouple long-running AI pipeline stages and maintain audit trails across distributed compute.",
       "featured": true,
       "tags": [
         "Temporal.io",
@@ -902,7 +903,7 @@
       "firstUsed": "2024",
       "context": "Type: AI Orchestration SDK | Ecosystem: Microsoft Semantic Kernel, .NET / Python, Plugins, Planners & Native Function Calling",
       "summary": "AI orchestration SDK for composing LLM-powered agents, plugins, and planners within .NET and Python ecosystems.",
-      "description": "Working knowledge of Microsoft Semantic Kernel for building AI-native applications that combine LLMs with business logic through a plugin architecture. Experience composing kernel functions, planners, and memory connectors to integrate large language models into .NET backends \u2014 enabling structured agent reasoning, retrieval-augmented pipelines, and function-calling workflows within enterprise C# / .NET Core services.",
+      "description": "Working knowledge of Microsoft Semantic Kernel for building AI-native applications that combine LLMs with business logic through a plugin architecture. Experience composing kernel functions, planners, and memory connectors to integrate large language models into .NET backends — enabling structured agent reasoning, retrieval-augmented pipelines, and function-calling workflows within enterprise C# / .NET Core services.",
       "featured": false,
       "tags": [
         "Semantic Kernel",
@@ -931,7 +932,7 @@
       "firstUsed": "2024",
       "context": "Type: Stateful Agent Graph Framework | Ecosystem: LangGraph, LangChain, Python, Cyclic Graphs & Checkpointing",
       "summary": "Stateful, cyclic multi-agent graph orchestration for building resilient, branching AI agent pipelines with checkpointing.",
-      "description": "Working experience with LangGraph for constructing stateful, cyclically-structured multi-agent workflows. Enables building agent pipelines with loops, conditional branching, and persistent state checkpointing \u2014 going beyond linear LangChain chains to support complex agentic reasoning patterns such as reflection agents, critic-reviewer loops, and tool-use with retry logic. Integrated within agentic AI platforms to coordinate multiple specialized LLM agents with shared memory and streaming execution graphs.",
+      "description": "Working experience with LangGraph for constructing stateful, cyclically-structured multi-agent workflows. Enables building agent pipelines with loops, conditional branching, and persistent state checkpointing — going beyond linear LangChain chains to support complex agentic reasoning patterns such as reflection agents, critic-reviewer loops, and tool-use with retry logic. Integrated within agentic AI platforms to coordinate multiple specialized LLM agents with shared memory and streaming execution graphs.",
       "featured": false,
       "tags": [
         "LangGraph",
@@ -963,8 +964,8 @@
       "support": "10/10",
       "depth": "specialist",
       "firstUsed": "2019",
-      "context": "Design: 10/10 \u00b7 Support: 10/10 | Type: Relational Database Management System (RDBMS)",
-      "summary": "Design: 10/10 \u00b7 Support: 10/10 \u2014 relational schema architecture, normalized design, complex query optimization, partitioning, and 24/7 mission-critical operational support.",
+      "context": "Design: 10/10 · Support: 10/10 | Type: Relational Database Management System (RDBMS)",
+      "summary": "Design: 10/10 · Support: 10/10 — relational schema architecture, normalized design, complex query optimization, partitioning, and 24/7 mission-critical operational support.",
       "description": "Expert mastery in SQL and PostgreSQL across architecture, schema design, and production support (Design: 10/10, Support: 10/10). Designing relational schemas, index tuning (B-Tree, GIN, GiST, BRIN), EXPLAIN ANALYZE query plan optimization, connection pooling with PgBouncer, vacuum tuning, table partitioning, backup/replication, and ACID transaction isolation for high-volume financial and enterprise systems.",
       "featured": true,
       "tags": [
@@ -1008,9 +1009,9 @@
       "support": "10/10",
       "depth": "specialist",
       "firstUsed": "2020",
-      "context": "Design: 10/10 \u00b7 Support: 10/10 | Type: NoSQL In-Memory Key-Value Data Store & Cache",
-      "summary": "Design: 10/10 \u00b7 Support: 10/10 \u2014 in-memory key-value data structure design, cache topology, sub-millisecond retrieval, cluster support, and high-throughput operational maintenance.",
-      "description": "Mastery in NoSQL key-value architecture with Redis across system design and production operational support (Design: 10/10, Support: 10/10). Architecting distributed in-memory cache layers, key eviction policies, Redis Cluster replication, pub/sub event streams, sorted sets for priority queues, sentinel failover, and operational monitoring under heavy transactional loads.",
+      "context": "Design: 10/10 · Support: 10/10 | Type: NoSQL In-Memory Key-Value Store & Distributed Cache",
+      "summary": "Design: 10/10 · Support: 10/10 — proficiency across all data structures (Strings, Hashes, Lists, Sets, Sorted Sets, Streams, Bitmaps), Redis Cluster master-slave replication, Sentinel failover, and high-throughput low-latency telemetry caching in VERSEYE.",
+      "description": "Deep architectural mastery (Design: 10/10, Support: 10/10) across all Redis data structures: Strings, Hashes, Lists, Sets, Sorted Sets (ZSETs), Streams, Bitmaps, HyperLogLogs, and Geospatial indexes. Extensive hands-on production experience managing Redis Cluster with multi-node Master-Slave replication, automatic Sentinel failover, sub-millisecond telemetry cache invalidation, and pub/sub event channels powering the VERSEYE enterprise AI vision platform under heavy concurrent loads.",
       "featured": true,
       "tags": [
         "NoSQL Database",
@@ -1019,7 +1020,10 @@
         "Distributed Caching",
         "PubSub",
         "Sorted Sets",
-        "Low Latency"
+        "Low Latency",
+        "Master-Slave Replication",
+        "Redis Cluster",
+        "Streams"
       ],
       "technologies": [
         "Redis",
@@ -1028,14 +1032,34 @@
         "In-Memory Caching",
         "Pub/Sub",
         "Data Structures",
-        "Redis Cluster"
+        "Redis Cluster",
+        "Strings",
+        "Hashes",
+        "Lists",
+        "Sets",
+        "Sorted Sets (ZSET)",
+        "Redis Streams",
+        "Bitmaps",
+        "Master-Slave Replication",
+        "Sentinel Failover"
       ],
       "relatedProjects": [
-        "proj-quant-rl-trading"
+        "proj-quant-rl-trading",
+        "proj-microservices-template",
+        "proj-resume-hr",
+        "proj-bscs-fyp"
       ],
       "relatedExperience": [
         "exp-ktrade",
         "exp-qbs"
+      ],
+      "relatedProducts": [
+        "prod-verseye",
+        "prod-lockkeyz",
+        "prod-ajeek",
+        "prod-blue",
+        "prod-ktrade",
+        "prod-learn-to-invest"
       ]
     },
     {
@@ -1047,8 +1071,8 @@
       "support": "8/10",
       "depth": "deep",
       "firstUsed": "2020",
-      "context": "Design: 9/10 \u00b7 Support: 8/10 | Type: NoSQL Document-Oriented Database",
-      "summary": "Design: 9/10 \u00b7 Support: 8/10 \u2014 flexible BSON document schema design, aggregation pipelines, compound indexing, and replica set operational support.",
+      "context": "Design: 9/10 · Support: 8/10 | Type: NoSQL Document-Oriented Database",
+      "summary": "Design: 9/10 · Support: 8/10 — flexible BSON document schema design, aggregation pipelines, compound indexing, and replica set operational support.",
       "description": "Proficiency in NoSQL document database engineering with MongoDB (Design: 9/10, Support: 8/10). Structuring flexible JSON/BSON document schemas, embedding vs referencing tradeoffs, multi-stage aggregation framework pipelines, compound and geospatial indexing, replica set configurations, and cluster support.",
       "featured": true,
       "tags": [
@@ -1074,7 +1098,7 @@
       "depth": "deep",
       "firstUsed": "2021",
       "context": "Level: 8/10 | Type: Fully Managed NoSQL Database | Focus: Single-Table Architecture, Composite Partition/Sort Keys & Sub-10ms Latency",
-      "summary": "8/10 level \u2014 Amazon DynamoDB single-table design, partition and sort key modeling, GSIs/LSIs, DynamoDB Streams, and auto-scaling throughput.",
+      "summary": "8/10 level — Amazon DynamoDB single-table design, partition and sort key modeling, GSIs/LSIs, DynamoDB Streams, and auto-scaling throughput.",
       "description": "Strong proficiency (8/10) in Amazon DynamoDB. Designing efficient single-table access patterns, composite primary keys (PK/SK), Global Secondary Indexes (GSIs), TTL expiration, and event-driven architectures integrating DynamoDB Streams with AWS Lambda.",
       "featured": true,
       "tags": [
@@ -1104,7 +1128,7 @@
       "depth": "specialist",
       "firstUsed": "2021",
       "context": "Type: In-Memory Database Service | Engine: Redis-Compatible, Multi-AZ Transaction Log",
-      "summary": "Amazon MemoryDB for Redis \u2014 ultra-fast in-memory performance with Multi-AZ durability and microsecond latency for trading and fintech workloads.",
+      "summary": "Amazon MemoryDB for Redis — ultra-fast in-memory performance with Multi-AZ durability and microsecond latency for trading and fintech workloads.",
       "description": "Hands-on experience with Amazon MemoryDB for Redis. Architecting ultra-fast, in-memory databases with durable transaction logs, Multi-AZ high availability, and sub-millisecond read/write performance for mission-critical fintech and trading states.",
       "featured": true,
       "tags": [
@@ -1136,8 +1160,8 @@
       "support": "8/10",
       "depth": "specialist",
       "firstUsed": "2022",
-      "context": "Design: 8/10 \u00b7 Support: 8/10 | Type: Time-Series Database & SQL Engine | Focus: PostgreSQL Hypertables, Chunk Compression & Continuous Aggregates",
-      "summary": "Design: 8/10 \u00b7 Support: 8/10 \u2014 TimescaleDB hypertables, high-frequency tick compression, continuous aggregates, and low-latency market data downsampling.",
+      "context": "Design: 8/10 · Support: 8/10 | Type: Time-Series Database & SQL Engine | Focus: PostgreSQL Hypertables, Chunk Compression & Continuous Aggregates",
+      "summary": "Design: 8/10 · Support: 8/10 — TimescaleDB hypertables, high-frequency tick compression, continuous aggregates, and low-latency market data downsampling.",
       "description": "Specialist proficiency in TimescaleDB for high-frequency financial and sensor time-series data (Design: 8/10, Support: 8/10). Designing partitioned hypertables, automated chunk compression policies, continuous aggregates for real-time OHLCV candlestick generation, and analytical window queries.",
       "featured": true,
       "tags": [
@@ -1168,8 +1192,8 @@
       "support": "10/10",
       "depth": "specialist",
       "firstUsed": "2023",
-      "context": "Design: 10/10 \u00b7 Support: 10/10 | Type: Vector Similarity Search Extension for PostgreSQL | Focus: HNSW & IVFFlat Indexes, Dense Vector Search & RAG Memory",
-      "summary": "Design: 10/10 \u00b7 Support: 10/10 \u2014 high-dimensional vector similarity search in PostgreSQL, HNSW / IVFFlat indexing, cosine distance, and multimodal embedding retrieval.",
+      "context": "Design: 10/10 · Support: 10/10 | Type: Vector Similarity Search Extension for PostgreSQL | Focus: HNSW & IVFFlat Indexes, Dense Vector Search & RAG Memory",
+      "summary": "Design: 10/10 · Support: 10/10 — high-dimensional vector similarity search in PostgreSQL, HNSW / IVFFlat indexing, cosine distance, and multimodal embedding retrieval.",
       "description": "Specialist proficiency in pgvector (Design: 10/10, Support: 10/10) for vector embeddings and similarity search inside PostgreSQL. Implementing HNSW and IVFFlat vector indexing, cosine/L2 distance calculations, hybrid search combining relational filters with dense embeddings, and RAG memory storage.",
       "featured": true,
       "tags": [
@@ -1203,8 +1227,8 @@
       "support": "8/10",
       "depth": "deep",
       "firstUsed": "2023",
-      "context": "Design: 9/10 \u00b7 Support: 8/10 | Type: Dedicated Vector Search Engine & Database | Focus: Payload-based Filtering, Fast Approximate Nearest Neighbor (ANN) & Collection Management",
-      "summary": "Design: 9/10 \u00b7 Support: 8/10 \u2014 Qdrant vector database, payload-based metadata filtering, approximate nearest neighbor (ANN) search, and multimodal search engines.",
+      "context": "Design: 9/10 · Support: 8/10 | Type: Dedicated Vector Search Engine & Database | Focus: Payload-based Filtering, Fast Approximate Nearest Neighbor (ANN) & Collection Management",
+      "summary": "Design: 9/10 · Support: 8/10 — Qdrant vector database, payload-based metadata filtering, approximate nearest neighbor (ANN) search, and multimodal search engines.",
       "description": "Proficient in Qdrant (Design: 9/10, Support: 8/10) vector search engine. Structuring vector collections, configuring HNSW graph parameters, payload-based metadata filtering, snapshot management, and integrating high-throughput REST and gRPC search endpoints for multimodal AI applications.",
       "featured": true,
       "tags": [
@@ -1267,8 +1291,8 @@
       "support": "8/10",
       "depth": "specialist",
       "firstUsed": "2023",
-      "context": "Design: 9/10 \u00b7 Support: 8/10 | Type: Native Graph Database & Cypher Query Engine | Focus: Connected Knowledge Graphs, Traversal & Property Graphs",
-      "summary": "Design: 9/10 \u00b7 Support: 8/10 \u2014 graph database architecture, Cypher query optimization, labeled property graph modeling, and relationship traversal.",
+      "context": "Design: 9/10 · Support: 8/10 | Type: Native Graph Database & Cypher Query Engine | Focus: Connected Knowledge Graphs, Traversal & Property Graphs",
+      "summary": "Design: 9/10 · Support: 8/10 — graph database architecture, Cypher query optimization, labeled property graph modeling, and relationship traversal.",
       "description": "Specialist proficiency in Neo4j graph database engineering (Design: 9/10, Support: 8/10). Designing labeled property graph schemas, writing optimized Cypher traversal queries, modeling complex interconnected business topologies, and deploying high-availability Neo4j clusters for real-time relational pattern matching.",
       "featured": true,
       "tags": [
@@ -1299,7 +1323,7 @@
       "depth": "deep",
       "firstUsed": "2021",
       "context": "Level: 8/10 | Type: Serverless Event Bus & Event Router | Focus: Event Routing, Rule Matching & Microservice Decoupling (Ktrade Learn to Invest)",
-      "summary": "8/10 level \u2014 serverless event routing, rule-based event pattern matching, schema registry, and asynchronous microservice integration (used in Ktrade Learn to Invest platform).",
+      "summary": "8/10 level — serverless event routing, rule-based event pattern matching, schema registry, and asynchronous microservice integration (used in Ktrade Learn to Invest platform).",
       "description": "Proficient hands-on experience (8/10) with AWS EventBridge (Event Bus). Implemented event-driven asynchronous communication in Ktrade Securities (Learn to Invest backend), publishing trading league events, contest participation triggers, schema validation, and routing decoupled domain events to AWS Lambda workers and downstream microservices with dead-letter queue (DLQ) reliability.",
       "featured": true,
       "tags": [
@@ -1332,7 +1356,7 @@
       "depth": "specialist",
       "firstUsed": "2021",
       "context": "Proficiency: 5/5 | Type: High-Performance Distributed Message System & Persistence Engine",
-      "summary": "Proficiency: 5/5 \u2014 high-throughput, microsecond-latency messaging, NATS JetStream distributed persistence, subject-based routing, and cluster mesh.",
+      "summary": "Proficiency: 5/5 — high-throughput, microsecond-latency messaging, NATS JetStream distributed persistence, subject-based routing, and cluster mesh.",
       "description": "Expert mastery in NATS and JetStream (Proficiency: 5/5). Architecting sub-millisecond distributed message fabrics across polyglot microservices (Go, Python, .NET). Leveraging NATS Core for high-frequency pub/sub, request-reply semantics, NATS JetStream for guaranteed at-least-once message persistence, deduplication, stream consumers, and decentralized multi-cluster leaf nodes.",
       "featured": true,
       "tags": [
@@ -1365,7 +1389,7 @@
       "depth": "specialist",
       "firstUsed": "2020",
       "context": "Proficiency: 4.5/5 | Type: Lightweight Publish/Subscribe Messaging Protocol",
-      "summary": "Proficiency: 4.5/5 \u2014 lightweight edge publish/subscribe, hierarchical topic topologies, QoS guarantee negotiation (0/1/2), and real-time telemetry pipelines.",
+      "summary": "Proficiency: 4.5/5 — lightweight edge publish/subscribe, hierarchical topic topologies, QoS guarantee negotiation (0/1/2), and real-time telemetry pipelines.",
       "description": "Deep proficiency in MQTT protocol and brokers (Proficiency: 4.5/5). Engineering low-overhead, high-concurrency event telemetry channels for edge devices, camera agents, and distributed microservices. Designing topic taxonomies, wildcard subscriptions, retained messages, Last Will and Testament (LWT) handlers, and fine-tuned QoS level delivery over constrained networks.",
       "featured": true,
       "tags": [
@@ -1397,7 +1421,7 @@
       "depth": "deep",
       "firstUsed": "2021",
       "context": "Proficiency: 4.5/5 | Type: Distributed Event Streaming Platform",
-      "summary": "Proficiency: 4.5/5 \u2014 distributed event streaming, partitioned topic commit logs, consumer group scalability, offset management, and fault-tolerant ingestion.",
+      "summary": "Proficiency: 4.5/5 — distributed event streaming, partitioned topic commit logs, consumer group scalability, offset management, and fault-tolerant ingestion.",
       "description": "Strong proficiency in Apache Kafka (Proficiency: 4.5/5) for high-throughput event streaming and log aggregation. Designing partitioned topic architectures, key-based partitioning for ordering guarantees, consumer group scaling, consumer rebalance tuning, idempotent producers, and resilient stream ingestion pipelines.",
       "featured": true,
       "tags": [
@@ -1425,7 +1449,7 @@
       "depth": "specialist",
       "firstUsed": "2020",
       "context": "Handling: 10/10 | Type: Containerization Platform & Multi-Service Orchestration",
-      "summary": "Handling: 10/10 \u2014 multi-container developer environments, service topology, volume mounts, network bridging, and container lifecycle orchestration.",
+      "summary": "Handling: 10/10 — multi-container developer environments, service topology, volume mounts, network bridging, and container lifecycle orchestration.",
       "description": "Expert hands-on mastery in Docker and Docker Compose (Handling: 10/10). Architecting reproducible multi-container topologies, multi-stage Dockerfiles for minimal production footprint, health checks, named volume persistence, isolated bridge networks, environment variable secret injection, and fast local development stacks.",
       "featured": true,
       "tags": [
@@ -1459,7 +1483,7 @@
       "depth": "specialist",
       "firstUsed": "2020",
       "context": "Handling: 10/10 | Type: Container Orchestration Platform | Ecosystem: Kubernetes, Amazon EKS, Helm",
-      "summary": "Handling: 10/10 \u2014 production Kubernetes cluster orchestration, Helm charts, Ingress routing, Horizontal Pod Autoscaling (HPA), and zero-downtime rolling deployments.",
+      "summary": "Handling: 10/10 — production Kubernetes cluster orchestration, Helm charts, Ingress routing, Horizontal Pod Autoscaling (HPA), and zero-downtime rolling deployments.",
       "description": "Expert hands-on mastery in Kubernetes (Handling: 10/10). Managing production container orchestration across AWS EKS and self-managed clusters. Structuring declarative YAML manifests, custom Helm charts, Ingress NGINX controllers, ConfigMaps/Secrets, resource quotas, HPA autoscaling policies, liveness/readiness probes, and automated zero-downtime GitOps rollouts.",
       "featured": true,
       "tags": [
@@ -1497,7 +1521,7 @@
       "depth": "specialist",
       "firstUsed": "2020",
       "context": "Handling: 9/10 | Type: Native Docker Cluster Management & Container Orchestration Engine",
-      "summary": "Handling: 9/10 \u2014 Docker Swarm multi-node clustering, service discovery, overlay networking, rolling updates, and lightweight container orchestration.",
+      "summary": "Handling: 9/10 — Docker Swarm multi-node clustering, service discovery, overlay networking, rolling updates, and lightweight container orchestration.",
       "description": "Specialist proficiency in Docker Swarm (Handling: 9/10). Deploying and managing multi-node Swarm clusters with manager/worker nodes, declarative compose stack deployments, overlay networks for cross-host encrypted communication, ingress load balancing, rolling service updates with automated rollback, and high-availability topologies where lightweight orchestration is preferred over full Kubernetes overhead.",
       "featured": true,
       "tags": [
@@ -1525,7 +1549,7 @@
       "depth": "specialist",
       "firstUsed": "2019",
       "context": "Handling: 9/10 | Type: Version Control System | Workflows: Git, GitHub, Monorepo Management",
-      "summary": "Handling: 9/10 \u2014 distributed version control, multi-project monorepo structures, branch policies, and GitOps automation.",
+      "summary": "Handling: 9/10 — distributed version control, multi-project monorepo structures, branch policies, and GitOps automation.",
       "description": "Specialist proficiency in Git, GitHub, and Monorepo Architecture (Handling: 9/10). Maintaining multi-service and monorepo architectures, subproject isolation, code review workflows, semantic versioning, and GitOps automation.",
       "featured": false,
       "tags": [
@@ -1910,6 +1934,45 @@
         "exp-ktrade",
         "exp-qbs"
       ]
+    },
+    {
+      "id": "sk-retail-planogram",
+      "slug": "retail-planogram-audit-pipeline",
+      "name": "Retail Planogram Audit Pipeline",
+      "category": "AI & Deep Learning Frameworks",
+      "design": "9/10",
+      "support": "9/10",
+      "depth": "specialist",
+      "firstUsed": "2023",
+      "context": "Design: 9/10 · Support: 9/10 | Focus: Automated Retail Shelf Audit, SKU Recognition & 90%+ Planogram Compliance",
+      "summary": "Design: 9/10 · Support: 9/10 — automated retail shelf inspection, SKU identification, and planogram compliance verification using multimodal vision-language models and agentic workflows.",
+      "description": "Architected and delivered end-to-end retail audit automation pipelines capable of verifying planogram compliance at 90%+ accuracy across dense retail shelving environments. Leveraged multimodal vision-language models, fine-grained object detection, and agentic reasoning pipelines integrated directly into the VERSEYE enterprise vision platform.",
+      "featured": true,
+      "tags": [
+        "Planogram Compliance",
+        "Retail Audit",
+        "SKU Recognition",
+        "Computer Vision",
+        "Agentic AI",
+        "Multimodal Models"
+      ],
+      "technologies": [
+        "Retail Vision",
+        "SKU Detection",
+        "Planogram Matching",
+        "Multimodal AI",
+        "LangChain"
+      ],
+      "relatedProducts": [
+        "prod-verseye"
+      ],
+      "relatedProjects": [
+        "proj-planogram-pipeline"
+      ],
+      "relatedExperience": [
+        "exp-botonetics",
+        "exp-qbs"
+      ]
     }
   ],
   "experience": [
@@ -1941,7 +2004,7 @@
         "Delivered LOCKKEYZ enterprise IAM provider with SAP IAS, Azure AD, and FortiGate federation.",
         "Standardized company-wide microservices boilerplate reducing new project kickoff overhead by 70-80%.",
         "Migrated legacy IIS workloads to containerized Amazon EKS with auto-scaling and zero downtime.",
-        "Awarded Best Track Lead - QBs co (2024\u20132025) for high-impact technical leadership and delivery excellence."
+        "Awarded Best Track Lead - QBs co (2024–2025) for high-impact technical leadership and delivery excellence."
       ],
       "systems": [
         "VERSEYE AI Platform",
@@ -2133,7 +2196,7 @@
       "evidence": [
         {
           "claim": "Official Experience Letter issued by KASB / Ktrade Securities",
-          "note": "Verified tenure as Senior Software Developer (August 2021 \u2013 October 2023)",
+          "note": "Verified tenure as Senior Software Developer (August 2021 – October 2023)",
           "links": [
             {
               "label": "View Experience Letter (PDF)",
@@ -2164,7 +2227,7 @@
         "type": "closed-source"
       },
       "summary": "AI app market orchestration platform engineered from scratch as Technical Lead, reusing a single distributed computer vision pipeline to power surveillance domains (PPE compliance, footfall analytics, employee monitoring, restaurant monitoring, planogram compliance, quality inspection) with natural text search, connected evidence graphs, and runtime Kubernetes plugin deployment.",
-      "description": "**VERSEYE** is an enterprise AI app market orchestration platform engineered from scratch at QBS Co., where Noman Ali serves as Technical Lead \u2014 directing a cross-functional team across computer vision, AI/ML, backend, frontend, DevOps, and analytics.\n\n**Platform Overview**\nThe core idea: one high-throughput computer vision pipeline, many domain-specific surveillance products. VERSEYE powers employee monitoring, restaurant monitoring, planogram compliance, PPE monitoring, footfall analytics, and industrial quality inspection \u2014 all from a single shared pipeline backbone with a distributed backend and micro-frontend UI.\n\n**Dynamic Plugin Runtime (.NET + Kubernetes)**\nPlugins are containerized AI modules deployed, scaled, and managed at runtime directly from the UI. Using .NET with native kubectl integration, operators can launch or retire detection models on live Kubernetes clusters with zero downtime \u2014 no DevOps ticket required.\n\n**Polyglot Pipeline Engine**\nThe core pipeline is Python-based (FastAPI + gRPC), but plugins can be written in any language \u2014 C++, Go, Python, or C# \u2014 as long as they expose a gRPC or REST interface. This enables teams to pick the best runtime per model: CUDA-optimized C++ for object detection, Go for high-throughput ingestion, Python for model experimentation.\n\n**Connected Evidence Graph & Natural Language Search**\nBecause every detection in the pipeline is linked: a natural language query like *\"give me all people who are using mobile\"* resolves through text \u2192 local track ID \u2192 global track ID \u2192 frame snapshots \u2192 timestamp-synchronized video clips, all stored across distributed MinIO object storage. No manual tagging. No keyword search. Pure semantic retrieval.\n\n**Multi-Camera Tracking & Global ReID**\nSupports ByteTrack, DeepSORT, OC-SORT, and BoT-SORT for multi-camera tracking with global re-identification across face, gait, pose, appearance, and text query signals \u2014 enabling continuous subject tracking across camera boundaries in large-scale deployments.\n\n**Micro-Frontend Shell (Webpack Module Federation)**\nEach surveillance domain (PPE, footfall, employee monitoring, etc.) is an independently built and deployed micro-frontend. Webpack Module Federation dynamically loads these remotes into a unified shell, allowing domain teams to ship UI updates without coordinating a monolith release.\n\n**Inference Optimization & Durable Retraining**\nModels are optimized end-to-end: ONNX export \u2192 genetic-algorithm-based graph pruning \u2192 TensorRT FP16/INT8 acceleration on NVIDIA GPUs. Temporal.io orchestrates durable retraining workflows, ensuring model lifecycle jobs survive hardware failures and are fully auditable.\n\nThe platform has been demonstrated in successful client demos and is under active production feature development.",
+      "description": "**VERSEYE** is an enterprise AI app market orchestration platform engineered from scratch at QBS Co., where Noman Ali serves as Technical Lead — directing a cross-functional team across computer vision, AI/ML, backend, frontend, DevOps, and analytics.\n\n**Platform Overview**\nThe core idea: one high-throughput computer vision pipeline, many domain-specific surveillance products. VERSEYE powers employee monitoring, restaurant monitoring, planogram compliance, PPE monitoring, footfall analytics, and industrial quality inspection — all from a single shared pipeline backbone with a distributed backend and micro-frontend UI.\n\n**Dynamic Plugin Runtime (.NET + Kubernetes)**\nPlugins are containerized AI modules deployed, scaled, and managed at runtime directly from the UI. Using .NET with native kubectl integration, operators can launch or retire detection models on live Kubernetes clusters with zero downtime — no DevOps ticket required.\n\n**Polyglot Pipeline Engine**\nThe core pipeline is Python-based (FastAPI + gRPC), but plugins can be written in any language — C++, Go, Python, or C# — as long as they expose a gRPC or REST interface. This enables teams to pick the best runtime per model: CUDA-optimized C++ for object detection, Go for high-throughput ingestion, Python for model experimentation.\n\n**Connected Evidence Graph & Natural Language Search**\nBecause every detection in the pipeline is linked: a natural language query like *\"give me all people who are using mobile\"* resolves through text → local track ID → global track ID → frame snapshots → timestamp-synchronized video clips, all stored across distributed MinIO object storage. No manual tagging. No keyword search. Pure semantic retrieval.\n\n**Multi-Camera Tracking & Global ReID**\nSupports ByteTrack, DeepSORT, OC-SORT, and BoT-SORT for multi-camera tracking with global re-identification across face, gait, pose, appearance, and text query signals — enabling continuous subject tracking across camera boundaries in large-scale deployments.\n\n**Micro-Frontend Shell (Webpack Module Federation)**\nEach surveillance domain (PPE, footfall, employee monitoring, etc.) is an independently built and deployed micro-frontend. Webpack Module Federation dynamically loads these remotes into a unified shell, allowing domain teams to ship UI updates without coordinating a monolith release.\n\n**Inference Optimization & Durable Retraining**\nModels are optimized end-to-end: ONNX export → genetic-algorithm-based graph pruning → TensorRT FP16/INT8 acceleration on NVIDIA GPUs. Temporal.io orchestrates durable retraining workflows, ensuring model lifecycle jobs survive hardware failures and are fully auditable.\n\nThe platform has been demonstrated in successful client demos and is under active production feature development.",
       "features": [
         {
           "name": "Natural Text & Semantic Video Search",
@@ -2361,14 +2424,18 @@
         "sk-fiber",
         "sk-dart",
         "sk-flutter",
-        "sk-litert"
+        "sk-litert",
+        "sk-redis"
       ],
-      "featured": true
+      "featured": true,
+      "relatedProjects": [
+        "proj-planogram-pipeline"
+      ]
     },
     {
       "id": "prod-lockkeyz",
       "slug": "lockkeyz",
-      "name": "LOCKKEYZ \u2014 Enterprise Identity Provider",
+      "name": "LOCKKEYZ — Enterprise Identity Provider",
       "tagline": "Enterprise SAML 2.0 & OIDC identity federation and SSO platform",
       "category": "Enterprise Security & IAM",
       "organisation": "QBS Co.",
@@ -2441,7 +2508,12 @@
         }
       ],
       "relatedSkills": [
-        "sk-frontend-nextjs"
+        "sk-frontend-nextjs",
+        "sk-csharp",
+        "sk-dotnet",
+        "sk-postgres",
+        "sk-redis",
+        "sk-iam"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2548,7 +2620,9 @@
         "sk-nats",
         "sk-dotnet",
         "sk-typescript",
-        "sk-neo4j"
+        "sk-neo4j",
+        "sk-redis",
+        "sk-python"
       ],
       "relatedProjects": [
         "proj-microservices-template"
@@ -2556,13 +2630,22 @@
       "relatedExperience": [
         "exp-qbs"
       ],
-      "featured": true
+      "featured": true,
+      "integrations": [
+        {
+          "name": "SAP ERP Enterprise Gateway",
+          "type": "Enterprise Resource Planning & Asset Ingestion",
+          "status": "Production Integrated",
+          "detail": "Bidirectional enterprise integration with SAP ERP for automated maintenance work orders, spare parts procurement synchronization, technician asset dispatch, and corporate financial accounting.",
+          "url": "https://www.sap.com/"
+        }
+      ]
     },
     {
       "id": "prod-klystr",
       "slug": "klystr",
-      "name": "Klystr \u2014 Kubernetes Operations & Topology",
-      "tagline": "See. Understand. Operate \u2014 visual Kubernetes resource topology, RBAC inspection, and cluster security in VS Code & the web.",
+      "name": "Klystr — Kubernetes Operations & Topology",
+      "tagline": "See. Understand. Operate — visual Kubernetes resource topology, RBAC inspection, and cluster security in VS Code & the web.",
       "category": "Cloud & DevOps Tooling",
       "organisation": "Independent",
       "period": {
@@ -2655,12 +2738,6 @@
           "url": "https://tools.klystr.botonetics.com/",
           "title": "Klystr Web Topology Workspace",
           "caption": "Live interactive Kubernetes operations, topology inspection, and manifest analysis platform."
-        },
-        {
-          "type": "svg",
-          "url": "/media/klystr-logo.svg",
-          "title": "Klystr Brand Icon",
-          "caption": "Official Klystr visual logo and brand mark."
         }
       ],
       "links": [
@@ -2756,7 +2833,8 @@
         "sk-csharp",
         "sk-postgres",
         "sk-dotnet",
-        "sk-typescript"
+        "sk-typescript",
+        "sk-redis"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2858,7 +2936,23 @@
       "relatedExperience": [
         "exp-ktrade"
       ],
-      "featured": true
+      "featured": true,
+      "integrations": [
+        {
+          "name": "Saudi Stock Exchange (Tadawul)",
+          "type": "Market Feed & Regulatory Trading Gateway",
+          "status": "Production Integrated",
+          "detail": "Comprehensive microservices integration for Ktrade Saudi connecting with Tadawul market data streams, order routing protocols, and regional exchange compliance rules.",
+          "url": "https://www.saudiexchange.sa/"
+        },
+        {
+          "name": "Pakistan Stock Exchange (PSX)",
+          "type": "High-Throughput Live Market Feed",
+          "status": "Production Feed Active",
+          "detail": "Low-latency market quote feeds, stock search, and historical candle data analytics for national retail equity investors.",
+          "url": "https://www.psx.com.pk/"
+        }
+      ]
     },
     {
       "id": "prod-learn-to-invest",
@@ -2931,19 +3025,36 @@
         "sk-memorydb",
         "sk-dynamodb",
         "sk-rest-apis",
-        "sk-aws-api-gateway"
+        "sk-aws-api-gateway",
+        "sk-redis"
       ],
       "relatedExperience": [
         "exp-ktrade"
       ],
-      "featured": true
+      "featured": true,
+      "integrations": [
+        {
+          "name": "JazzCash Mobile Application",
+          "type": "National Payment & Competition Gateway",
+          "status": "Production Integrated",
+          "detail": "Engineered high-concurrency backend services directly embedded into the JazzCash mobile app, allowing millions of verified users to compete in live investment tournaments and trading leagues.",
+          "url": "https://www.jazzcash.com.pk/"
+        },
+        {
+          "name": "Pakistan Stock Exchange (PSX)",
+          "type": "Live Equity Market Feed & Order Routing",
+          "status": "Production Feed Active",
+          "detail": "Direct real-time PSX live market tick data ingestion, order book synchronization, and automated virtual portfolio mark-to-market valuation.",
+          "url": "https://www.psx.com.pk/"
+        }
+      ]
     }
   ],
   "projects": [
     {
       "id": "proj-lab",
       "slug": "lab-nomanali-online",
-      "name": "lab.nomanali.online \u2014 Personal Engineering Lab & Live Playground",
+      "name": "lab.nomanali.online — Personal Engineering Lab & Live Playground",
       "organisation": "Independent",
       "status": "active",
       "source": {
@@ -2954,8 +3065,8 @@
         "ongoing": true
       },
       "summary": "A personal engineering lab and live playground site (lab.nomanali.online) for independent experiments, interactive micro-tools, and technical explorations spanning computer vision, agentic AI, and UI engineering.",
-      "description": "**lab.nomanali.online** is Noman Ali's independent engineering lab and experiments space \u2014 an always-evolving live playground for ideas, micro-tools, and interactive technical explorations outside of client and enterprise engagements.\n\nIt hosts proof-of-concepts, visual computer vision demos, agentic AI orchestrations, distributed systems prototypes, and modern UI experiments. Built to run on high agency and curiosity: ship fast, test hypotheses empirically in the browser, and document key findings.\n\nThe lab is independently hosted at `lab.nomanali.online` and embedded directly as an interactive live preview.",
-      "concept": "A personal engineering lab \u2014 a live site for independent micro-experiments, demos, and explorations across computer vision, distributed systems, and agentic AI.",
+      "description": "**lab.nomanali.online** is Noman Ali's independent engineering lab and experiments space — an always-evolving live playground for ideas, micro-tools, and interactive technical explorations outside of client and enterprise engagements.\n\nIt hosts proof-of-concepts, visual computer vision demos, agentic AI orchestrations, distributed systems prototypes, and modern UI experiments. Built to run on high agency and curiosity: ship fast, test hypotheses empirically in the browser, and document key findings.\n\nThe lab is independently hosted at `lab.nomanali.online` and embedded directly as an interactive live preview.",
+      "concept": "A personal engineering lab — a live site for independent micro-experiments, demos, and explorations across computer vision, distributed systems, and agentic AI.",
       "problem": "Need for an unconstrained, zero-ceremony sandbox to rapidly prototype computer vision algorithms, micro-tools, agentic workflows, and creative frontend interfaces without client NDA restrictions or production overhead.",
       "hypothesis": "Maintaining a continuous, publicly accessible live lab environment fosters rapid iteration, lets visitors interact directly with live web demos via embedded sandboxes, and accelerates empirical validation of ideas.",
       "approach": "Engineered an independent experimental hub at lab.nomanali.online hosting micro-tools, proof-of-concepts, visual demos, and technical experiments across computer vision, distributed systems, agentic AI, and UI engineering.",
@@ -2974,7 +3085,7 @@
         {
           "type": "iframe",
           "url": "https://lab.nomanali.online",
-          "title": "lab.nomanali.online \u2014 Live Interactive Playground",
+          "title": "lab.nomanali.online — Live Interactive Playground",
           "caption": "Live personal lab and engineering experiments site (lab.nomanali.online). Interactive preview embedded via iframe.",
           "ratio": 1.777,
           "order": 0,
@@ -3011,7 +3122,7 @@
     {
       "id": "proj-navirox",
       "slug": "navirox",
-      "name": "NAVIROX \u2014 Autonomous Unmanned Vessel CV & 360\u00b0 LiDAR Fusion POC",
+      "name": "NAVIROX — Autonomous Unmanned Vessel CV & 360° LiDAR Fusion POC",
       "organisation": "QBS Co.",
       "status": "prototype",
       "source": {
@@ -3023,13 +3134,13 @@
         "endDate": "2026-07-31",
         "ongoing": false
       },
-      "summary": "Engineering proof-of-concept integrating real-time computer vision object detection with unmanned surface vessels, 4-camera panoramic perception, 360\u00b0 LiDAR depth fusion for range estimation, drone visual integration, and low-latency Flutter telemetry over MQTT.",
-      "description": "**NAVIROX** was a high-stakes engineering proof-of-concept developed at QBS Co. from February to July 2026, built to answer one question: can you give an unmanned surface vessel the ability to *see*, *measure*, and *think* in real time?\n\n**What It Was**\nA multimodal perception system for autonomous unmanned vessels \u2014 combining cameras, LiDAR, and drone feeds into a single edge-compute intelligence layer capable of detecting obstacles, estimating distances, and feeding spatial data into mission planning engines.\n\n**4-Camera Array + 360\u00b0 LiDAR Fusion**\nFour surround cameras gave the vessel panoramic visual coverage. A synchronized 360\u00b0 LiDAR sensor added real depth \u2014 computing precise distance, range, and bearing to maritime obstacles, other surface vessels, and navigational markers. The two modalities were fused so every visual detection came with an accurate spatial measurement, not just a bounding box.\n\n**Edge AI on NVIDIA Jetson**\nAll inference ran locally on embedded NVIDIA Jetson hardware \u2014 no cloud, no latency. Object detection models were optimized with TensorRT for FP16 acceleration, sustaining 30+ FPS across all cameras under strict power and thermal constraints. Edge-first by design.\n\n**Drone Integration \u2192 Mission Planning**\nAerial drone feeds were pulled into the same perception pipeline. Detections from the drone \u2014 objects, vessels, coastlines \u2014 were translated into spatial parameters and injected directly into the vessel's mission planning and navigation trajectory engine. The drone became a scout; the vessel responded autonomously.\n\n**MQTT Telemetry + Flutter Cockpit**\nAll live data \u2014 vessel velocity, LiDAR point clouds, detection alerts, and spatial coordinates \u2014 was streamed over lightweight MQTT broker channels to a custom Flutter tablet and mobile application. Field operators could monitor the vessel's full situational awareness in real time from anywhere.\n\nThe POC was field-validated with working multimodal perception, accurate 50-metre obstacle distance estimation, drone-to-vessel mission coordination, and sub-second telemetry responsiveness.",
-      "concept": "Multimodal sensor fusion combining a 4-camera surround vision array, 360\u00b0 LiDAR point clouds, and aerial drone feeds onto edge-compute unmanned vessels for autonomous obstacle detection and mission planning.",
+      "summary": "Engineering proof-of-concept integrating real-time computer vision object detection with unmanned surface vessels, 4-camera panoramic perception, 360° LiDAR depth fusion for range estimation, drone visual integration, and low-latency Flutter telemetry over MQTT.",
+      "description": "**NAVIROX** was a high-stakes engineering proof-of-concept developed at QBS Co. from February to July 2026, built to answer one question: can you give an unmanned surface vessel the ability to *see*, *measure*, and *think* in real time?\n\n**What It Was**\nA multimodal perception system for autonomous unmanned vessels — combining cameras, LiDAR, and drone feeds into a single edge-compute intelligence layer capable of detecting obstacles, estimating distances, and feeding spatial data into mission planning engines.\n\n**4-Camera Array + 360° LiDAR Fusion**\nFour surround cameras gave the vessel panoramic visual coverage. A synchronized 360° LiDAR sensor added real depth — computing precise distance, range, and bearing to maritime obstacles, other surface vessels, and navigational markers. The two modalities were fused so every visual detection came with an accurate spatial measurement, not just a bounding box.\n\n**Edge AI on NVIDIA Jetson**\nAll inference ran locally on embedded NVIDIA Jetson hardware — no cloud, no latency. Object detection models were optimized with TensorRT for FP16 acceleration, sustaining 30+ FPS across all cameras under strict power and thermal constraints. Edge-first by design.\n\n**Drone Integration → Mission Planning**\nAerial drone feeds were pulled into the same perception pipeline. Detections from the drone — objects, vessels, coastlines — were translated into spatial parameters and injected directly into the vessel's mission planning and navigation trajectory engine. The drone became a scout; the vessel responded autonomously.\n\n**MQTT Telemetry + Flutter Cockpit**\nAll live data — vessel velocity, LiDAR point clouds, detection alerts, and spatial coordinates — was streamed over lightweight MQTT broker channels to a custom Flutter tablet and mobile application. Field operators could monitor the vessel's full situational awareness in real time from anywhere.\n\nThe POC was field-validated with working multimodal perception, accurate 50-metre obstacle distance estimation, drone-to-vessel mission coordination, and sub-second telemetry responsiveness.",
+      "concept": "Multimodal sensor fusion combining a 4-camera surround vision array, 360° LiDAR point clouds, and aerial drone feeds onto edge-compute unmanned vessels for autonomous obstacle detection and mission planning.",
       "problem": "Unmanned surface vessels operating in maritime environments face severe perception challenges: single-camera setups lack depth accuracy in open water, while standalone LiDAR struggles to semantically classify obstacles. Constrained edge compute on embedded hardware requires sub-30ms perception latency for safe navigation.",
-      "approach": "Engineered an edge multimodal perception pipeline on NVIDIA Jetson using TensorRT-accelerated deep learning detectors in Python. Fused 2D detections from 4 surround cameras with spatial depth from 360\u00b0 LiDAR returns, integrated drone aerial detections into mission trajectory planning, and streamed telemetry over MQTT to a Flutter operator cockpit.",
-      "implementation": "Built the core perception daemon in Python with TensorRT and CUDA optimizations on NVIDIA Jetson. Synchronized timestamped frames across 4 USB/MIPI cameras and mapped 360\u00b0 LiDAR range bins to camera bounding frustums for distance estimation. Connected aerial drone detection streams to the vessel's mission planner, and published JSON telemetry packets over MQTT topics (QoS 1) consumed by a custom Flutter BLoC telemetry app.",
-      "results": "Successfully demonstrated working multimodal perception in field trials: real-time 4-camera surround detection at 30+ FPS on Jetson, accurate obstacle distance estimation up to 50 meters via 360\u00b0 LiDAR fusion, coordinated drone-to-vessel mission parameterization, and responsive sub-second telemetry updates in the Flutter app.",
+      "approach": "Engineered an edge multimodal perception pipeline on NVIDIA Jetson using TensorRT-accelerated deep learning detectors in Python. Fused 2D detections from 4 surround cameras with spatial depth from 360° LiDAR returns, integrated drone aerial detections into mission trajectory planning, and streamed telemetry over MQTT to a Flutter operator cockpit.",
+      "implementation": "Built the core perception daemon in Python with TensorRT and CUDA optimizations on NVIDIA Jetson. Synchronized timestamped frames across 4 USB/MIPI cameras and mapped 360° LiDAR range bins to camera bounding frustums for distance estimation. Connected aerial drone detection streams to the vessel's mission planner, and published JSON telemetry packets over MQTT topics (QoS 1) consumed by a custom Flutter BLoC telemetry app.",
+      "results": "Successfully demonstrated working multimodal perception in field trials: real-time 4-camera surround detection at 30+ FPS on Jetson, accurate obstacle distance estimation up to 50 meters via 360° LiDAR fusion, coordinated drone-to-vessel mission parameterization, and responsive sub-second telemetry updates in the Flutter app.",
       "lessons": [
         "LiDAR-camera spatial calibration requires rigid mounting rigs and vibration dampening on marine hulls to avoid calibration drift during wave motion.",
         "TensorRT FP16 serialization is critical for sustaining 30 FPS multi-camera inference on edge Jetson hardware without thermal throttling.",
@@ -3041,7 +3152,7 @@
         "Adding edge-to-cloud telemetry sync for fleet-wide mission replay and sensor health diagnostics."
       ],
       "architecture": {
-        "summary": "Edge multimodal perception and telemetry architecture on NVIDIA Jetson fusing 4 surround cameras, 360\u00b0 LiDAR, and drone feeds with an MQTT broker and Flutter telemetry cockpit.",
+        "summary": "Edge multimodal perception and telemetry architecture on NVIDIA Jetson fusing 4 surround cameras, 360° LiDAR, and drone feeds with an MQTT broker and Flutter telemetry cockpit.",
         "layers": [
           {
             "name": "Surround Vision & Aerial Ingestion",
@@ -3065,8 +3176,8 @@
             ]
           },
           {
-            "name": "360\u00b0 LiDAR Spatial Fusion",
-            "detail": "Projects 360\u00b0 LiDAR point-cloud range returns onto 2D camera bounding boxes to calculate exact obstacle distances and bearings.",
+            "name": "360° LiDAR Spatial Fusion",
+            "detail": "Projects 360° LiDAR point-cloud range returns onto 2D camera bounding boxes to calculate exact obstacle distances and bearings.",
             "technologies": [
               "360 LiDAR",
               "Sensor Fusion",
@@ -3245,7 +3356,7 @@
     {
       "id": "proj-tracker-simulator",
       "slug": "tracker-failure-simulator",
-      "name": "Tracker Failure Simulator \u2014 Visual Multi-Object Tracking & Evaluation Lab",
+      "name": "Tracker Failure Simulator — Visual Multi-Object Tracking & Evaluation Lab",
       "organisation": "Independent",
       "status": "live",
       "source": {
@@ -3357,7 +3468,7 @@
         "ongoing": false
       },
       "summary": "Standardized enterprise microservices chassis and reusable modules (Auth/RBAC/IAM, Notifications, Messaging) conceived during AJEEK platform development and now powering 10+ production projects across QBS Co.",
-      "description": "During rapid development across multiple products and projects at QBS Co., teams faced a major architectural challenge: repeatedly reinventing core infrastructure blocks\u2014such as Authentication, RBAC, Notifications, and Messaging\u2014for each new application. Conceived and extracted during the development of the AJEEK platform, this initiative designed and standardized modular, reusable microservice templates so engineering squads never have to rebuild cross-cutting foundations again.\n\nThe cornerstone of this architecture is a mature Auth / RBAC / IAM module that connects dynamically to all participating microservices at runtime to discover their API endpoints for real-time RBAC policy enforcement. Upon authentication, it generates an authoritative security ticket/token that controls and validates access across all downstream microservices and remaining APIs. Standardized notification and messaging modules were similarly extracted into turnkey templates, enabling rapid kickoff across 10+ production projects at QBS Co. with zero redundant boilerplate.",
+      "description": "During rapid development across multiple products and projects at QBS Co., teams faced a major architectural challenge: repeatedly reinventing core infrastructure blocks—such as Authentication, RBAC, Notifications, and Messaging—for each new application. Conceived and extracted during the development of the AJEEK platform, this initiative designed and standardized modular, reusable microservice templates so engineering squads never have to rebuild cross-cutting foundations again.\n\nThe cornerstone of this architecture is a mature Auth / RBAC / IAM module that connects dynamically to all participating microservices at runtime to discover their API endpoints for real-time RBAC policy enforcement. Upon authentication, it generates an authoritative security ticket/token that controls and validates access across all downstream microservices and remaining APIs. Standardized notification and messaging modules were similarly extracted into turnkey templates, enabling rapid kickoff across 10+ production projects at QBS Co. with zero redundant boilerplate.",
       "concept": "Reusable, plug-and-play enterprise microservices templates (Auth/RBAC, Notifications, Messaging) featuring runtime API endpoint discovery and unified ticket-based authorization.",
       "problem": "Across multiple new products and projects at QBS Co. (starting during the development of AJEEK), squads repeatedly spent months building isolated auth, notification, and messaging services from scratch, leading to code duplication, inconsistent RBAC, and heavy maintenance overhead.",
       "approach": "Architected modular microservices templates in .NET Core and Go. Engineered a centralized Auth & IAM module that connects with all microservices to discover their endpoints at runtime for granular RBAC operations, generating a single authoritative security ticket that governs all remaining APIs. Packaged companion plug-and-play notification and messaging templates.",
@@ -3397,7 +3508,10 @@
         "sk-dotnet",
         "sk-ocelot",
         "sk-iam",
-        "sk-rest-apis"
+        "sk-rest-apis",
+        "sk-redis",
+        "sk-postgres",
+        "sk-aws-api-gateway"
       ],
       "relatedProducts": [
         "prod-ajeek"
@@ -3410,7 +3524,7 @@
     {
       "id": "proj-resume-hr",
       "slug": "resume-hr",
-      "name": "ResumeHR \u2014 Agentic Candidate Screening & Knowledge Distillation",
+      "name": "ResumeHR — Agentic Candidate Screening & Knowledge Distillation",
       "organisation": "QBS Co.",
       "status": "live",
       "source": {
@@ -3461,7 +3575,9 @@
         "sk-langchain",
         "sk-rag",
         "sk-frontend-nextjs",
-        "sk-typescript"
+        "sk-typescript",
+        "sk-postgres",
+        "sk-redis"
       ],
       "relatedProjects": [
         "proj-tracker-simulator"
@@ -3474,7 +3590,7 @@
     {
       "id": "proj-need",
       "slug": "need-neuroevolution-framework",
-      "name": "NEED \u2014 Neuro-Evolution for Effective Decision",
+      "name": "NEED — Neuro-Evolution for Effective Decision",
       "organisation": "Independent (NUCES-FAST)",
       "status": "live",
       "source": {
@@ -3487,7 +3603,7 @@
         "endDate": "2025-07-31",
         "ongoing": false
       },
-      "summary": "Neuro-Evolution for Effective Decision (NEED) \u2014 master's final year project at NUCES-FAST training and optimizing RL agents with minimal parameters (e.g. Lunar Lander in only 96 params) without backpropagation. Currently developing v2 for formal publication.",
+      "summary": "Neuro-Evolution for Effective Decision (NEED) — master's final year project at NUCES-FAST training and optimizing RL agents with minimal parameters (e.g. Lunar Lander in only 96 params) without backpropagation. Currently developing v2 for formal publication.",
       "description": "NEED (Neuro-Evolution for Effective Decision) is an independent research framework developed during Master of Science in Data Science studies at NUCES-FAST. The project explores evolutionary algorithms to train and optimize compact neural policies from noise, completely gradient-free without backpropagation.\n\nWhile backpropagation is optimal for supervised and unsupervised learning due to smooth, differentiable loss landscapes, it frequently struggles in reinforcement learning with sparse reward signals, high gradient variance, and deceptive local optima. NEED demonstrates that evolutionary algorithms excel in RL by directly searching the parameter space without gradient calculations, value estimators, or reward differentiability constraints.\n\nKey Highlights & Achievements:\n- **Ultra-Minimal Parameter Footprint**: Successfully trained an agent to master the Gymnasium Lunar Lander environment with only **96 parameters**, achieving top-tier average scores and perfectly stable touchdowns.\n- **Zero Backpropagation**: Evolved policies purely through population selection, uniform crossover, polynomial mutation, and novelty-driven fitness diversity.\n- **Multi-Environment Evaluation**: Evaluated across 8 Gymnasium domains (Lunar Lander, HalfCheetah, Walker2d, Humanoid Standup, Ant, Swimmer, CartPole, and Humanoid) with 500+ archived policy runs.\n- **Live Research & v2 Roadmap**: Live interactive research platform, video recordings, and benchmarks deployed at https://need.nomanali.online/v1. Actively working on **v2** for formal academic publication.",
       "concept": "Gradient-free neural policy optimization using evolutionary algorithms to achieve high-performance decision-making with minimal parameter footprints.",
       "problem": "Traditional reinforcement learning relies on backpropagation, requiring massive compute, dense reward engineering, and millions of parameters that often fail under deceptive reward landscapes.",
@@ -3560,7 +3676,7 @@
     {
       "id": "proj-payment-middleware",
       "slug": "payment-middleware",
-      "name": "Unified Payment Middleware \u2014 Fuelinks Integration",
+      "name": "Unified Payment Middleware — Fuelinks Integration",
       "organisation": "QBS Co.",
       "status": "live",
       "source": {
@@ -3740,7 +3856,9 @@
         }
       ],
       "relatedSkills": [
-        "sk-typescript"
+        "sk-typescript",
+        "sk-redis",
+        "sk-mongodb"
       ],
       "relatedEducation": [
         "edu-bs"
@@ -3749,6 +3867,57 @@
         "pub-ieee-2021"
       ],
       "featured": true
+    },
+    {
+      "id": "proj-planogram-pipeline",
+      "slug": "retail-planogram-audit-pipeline",
+      "name": "Retail Planogram Audit Pipeline",
+      "concept": "Automated multimodal retail shelf audit & planogram compliance",
+      "summary": "Multimodal agentic computer vision pipeline combining object detection, SKU recognition, and LLM reasoning to automate planogram compliance for retail shelves at 90%+ accuracy.",
+      "description": "Architected an end-to-end agentic retail audit pipeline designed to inspect grocery and retail shelves, detect fine-grained SKUs, analyze facing positions, and verify compliance against reference planograms with 90%+ accuracy. Seamlessly integrated into the VERSEYE enterprise AI surveillance platform as a domain-specific micro-frontend and inference worker.",
+      "status": "active",
+      "category": "Computer Vision & Agentic AI",
+      "organisation": "Botonetics",
+      "period": {
+        "startDate": "2023",
+        "endDate": "2024",
+        "ongoing": false
+      },
+      "featured": true,
+      "technologies": [
+        "Python",
+        "LangChain",
+        "Agentic LLMs",
+        "PyTorch",
+        "CUDA",
+        "FastAPI",
+        "gRPC",
+        "Computer Vision",
+        "Object Detection",
+        "SKU Recognition"
+      ],
+      "tags": [
+        "Computer Vision",
+        "Planogram Compliance",
+        "Retail Tech",
+        "LangChain",
+        "Agentic AI",
+        "Object Detection",
+        "VERSEYE"
+      ],
+      "relatedSkills": [
+        "sk-langchain",
+        "sk-retail-planogram",
+        "sk-python",
+        "sk-pytorch-cuda",
+        "sk-fastapi"
+      ],
+      "relatedProducts": [
+        "prod-verseye"
+      ],
+      "relatedExperience": [
+        "exp-botonetics"
+      ]
     }
   ],
   "research": [
@@ -3788,7 +3957,7 @@
     {
       "id": "edu-ms",
       "slug": "fast-nuces-ms-data-science",
-      "name": "MS in Data Science \u2014 NUCES-FAST",
+      "name": "MS in Data Science — NUCES-FAST",
       "institution": "National University of Computer and Emerging Sciences (NUCES-FAST)",
       "degree": "Master of Science (MS)",
       "field": "Data Science",
@@ -3832,7 +4001,7 @@
         {
           "type": "image",
           "url": "https://raw.githubusercontent.com/nomi181472/portfolio-os/refs/heads/main/media/ds-transcript.png",
-          "title": "Official Academic Transcript \u2014 MS Data Science",
+          "title": "Official Academic Transcript — MS Data Science",
           "caption": "Official MS Data Science academic transcript issued by NUCES-FAST Controller of Examinations (Roll No. 23K-8069).",
           "alt": "Official MS Data Science academic transcript for Noman Ali from NUCES-FAST",
           "ratio": 1.504,
@@ -3864,7 +4033,7 @@
     {
       "id": "edu-bs",
       "slug": "fast-nuces-bs-computer-science",
-      "name": "BS in Computer Science \u2014 NUCES-FAST",
+      "name": "BS in Computer Science — NUCES-FAST",
       "institution": "National University of Computer and Emerging Sciences (NUCES-FAST)",
       "degree": "Bachelor of Science (BS)",
       "field": "Computer Science",
@@ -3912,7 +4081,7 @@
         {
           "type": "image",
           "url": "/media/bscs-transcript.png",
-          "title": "Official Academic Transcript \u2014 BS Computer Science",
+          "title": "Official Academic Transcript — BS Computer Science",
           "caption": "Official academic transcript issued by NUCES-FAST Controller of Examinations (Roll No. 17K-3652).",
           "alt": "Official BS Computer Science academic transcript for Noman Ali from NUCES-FAST",
           "ratio": 0.987,
@@ -3963,9 +4132,9 @@
       "venue": "4th IEEE International Conference on Computing & Information Sciences (ICCIS 2021) / IEEE Xplore",
       "citation": "2021 International Conference on Computing & Information Sciences (ICCIS), pp. 1-6, DOI: 10.1109/ICCIS54243.2021.9676387",
       "doi": "10.1109/ICCIS54243.2021.9676387",
-      "abstract": "Derived directly from the computer vision muscle detection service developed for Noman's BSCS Final Year Capstone Project, this peer-reviewed research presents a convolutional neural network (CNN) pipeline for automated visual segmentation and assessment of human muscle anatomy. The paper was presented at the 4th IEEE International Conference on Computing & Information Sciences (ICCIS 2021) organized by PAF-KIET, Karachi on November 29\u201330, 2021, and indexed in IEEE Xplore.",
+      "abstract": "Derived directly from the computer vision muscle detection service developed for Noman's BSCS Final Year Capstone Project, this peer-reviewed research presents a convolutional neural network (CNN) pipeline for automated visual segmentation and assessment of human muscle anatomy. The paper was presented at the 4th IEEE International Conference on Computing & Information Sciences (ICCIS 2021) organized by PAF-KIET, Karachi on November 29–30, 2021, and indexed in IEEE Xplore.",
       "summary": "Peer-reviewed research presented at IEEE ICCIS 2021 and published in IEEE Xplore on automated visual assessment of human muscles using deep convolutional neural networks.",
-      "body": "### Background & Project Origin\n\nThis research originated directly from the computer vision muscle assessment service engineered during Noman's BSCS Final Year Capstone Project (**Diet & Exercise Recommendation System**) at NUCES-FAST.\n\n### Core Methodology\n\n- **Computer Vision Segmentation**: Implemented convolutional neural networks to localize and segment human muscle groups from standard RGB visual captures.\n- **Objective Diagnostics**: Created an automated physical assessment baseline to support data-driven rehabilitation, training, and physiotherapy.\n- **Downstream Association**: Provided sensory feedback to an event-driven recommendation engine (Apriori algorithm) for dynamic diet and workout scheduling.\n\n### Conference Presentation & Indexing\n\n- **Conference**: 4th IEEE International Conference on Computing & Information Sciences (ICCIS 2021)\n- **Organizers**: College of Computing and Information Sciences, PAF-KIET, Karachi in collaboration with IEEE Karachi Section and Higher Education Commission (HEC)\n- **Presentation Date**: November 29\u201330, 2021\n- **IEEE Indexing**: Published in IEEE Xplore (Document ID: `9676387`, DOI: `10.1109/ICCIS54243.2021.9676387`).",
+      "body": "### Background & Project Origin\n\nThis research originated directly from the computer vision muscle assessment service engineered during Noman's BSCS Final Year Capstone Project (**Diet & Exercise Recommendation System**) at NUCES-FAST.\n\n### Core Methodology\n\n- **Computer Vision Segmentation**: Implemented convolutional neural networks to localize and segment human muscle groups from standard RGB visual captures.\n- **Objective Diagnostics**: Created an automated physical assessment baseline to support data-driven rehabilitation, training, and physiotherapy.\n- **Downstream Association**: Provided sensory feedback to an event-driven recommendation engine (Apriori algorithm) for dynamic diet and workout scheduling.\n\n### Conference Presentation & Indexing\n\n- **Conference**: 4th IEEE International Conference on Computing & Information Sciences (ICCIS 2021)\n- **Organizers**: College of Computing and Information Sciences, PAF-KIET, Karachi in collaboration with IEEE Karachi Section and Higher Education Commission (HEC)\n- **Presentation Date**: November 29–30, 2021\n- **IEEE Indexing**: Published in IEEE Xplore (Document ID: `9676387`, DOI: `10.1109/ICCIS54243.2021.9676387`).",
       "media": [
         {
           "type": "image",
@@ -3986,9 +4155,9 @@
           "visibility": "public",
           "box": {
             "left": 37.4,
-            "top": 33.0,
+            "top": 33,
             "width": 7.2,
-            "height": 17.0,
+            "height": 17,
             "color": "#00f2fe"
           }
         },
@@ -4054,7 +4223,7 @@
     {
       "id": "award-best-lead",
       "slug": "best-track-lead-qbs",
-      "name": "Best Track Lead - QBs co (2024\u20132025)",
+      "name": "Best Track Lead - QBs co (2024–2025)",
       "organisation": "QBS Co.",
       "date": "2025",
       "period": {
@@ -4062,15 +4231,15 @@
         "endDate": "2025"
       },
       "context": "7th Anniversary Celebration & Annual Engineering Excellence Recognition",
-      "reason": "Awarded Best Track Lead - QBs co (2024\u20132025) 'For Leading With Clarity And Purpose' in recognition of high-impact technical leadership, microservices architectural modernization, and engineering delivery.",
-      "summary": "Honored as Best Track Lead - QBs co (2024\u20132025) at QBS Co. 'For Leading With Clarity And Purpose' across distributed systems architecture, microservices modernization, and cloud engineering.",
-      "description": "Awarded Best Track Lead - QBs co during the QBS Co. 7th Anniversary Celebration (2024\u20132025) 'For Leading With Clarity And Purpose'. Recognized for exceptional architectural stewardship, guiding multi-tenant SaaS delivery, decomposing monoliths into containerized microservices on Amazon EKS, and mentoring engineering squads with technical clarity and rigor.",
+      "reason": "Awarded Best Track Lead - QBs co (2024–2025) 'For Leading With Clarity And Purpose' in recognition of high-impact technical leadership, microservices architectural modernization, and engineering delivery.",
+      "summary": "Honored as Best Track Lead - QBs co (2024–2025) at QBS Co. 'For Leading With Clarity And Purpose' across distributed systems architecture, microservices modernization, and cloud engineering.",
+      "description": "Awarded Best Track Lead - QBs co during the QBS Co. 7th Anniversary Celebration (2024–2025) 'For Leading With Clarity And Purpose'. Recognized for exceptional architectural stewardship, guiding multi-tenant SaaS delivery, decomposing monoliths into containerized microservices on Amazon EKS, and mentoring engineering squads with technical clarity and rigor.",
       "media": [
         {
           "type": "image",
           "url": "/media/awards.jpeg",
-          "title": "Best Track Lead - QBs co Trophy (2024\u20132025)",
-          "caption": "Official Best Track Lead - QBs co award trophy presented to Noman Ali by QBS Co. 'For Leading With Clarity And Purpose' (2024\u20132025).",
+          "title": "Best Track Lead - QBs co Trophy (2024–2025)",
+          "caption": "Official Best Track Lead - QBs co award trophy presented to Noman Ali by QBS Co. 'For Leading With Clarity And Purpose' (2024–2025).",
           "alt": "Best Track Lead - QBs co award trophy presented to Noman Ali by QBS Co.",
           "ratio": 0.75,
           "visibility": "public"
@@ -4206,7 +4375,10 @@
         "ongoing": true
       },
       "scope": "Technical Lead across Core Platform and Microservices",
-      "mentoring": "Mentored developers at MIRC (+40% code quality); led technical workshops on Kubernetes, .NET Core, and Go for 25+ interns."
+      "mentoring": "Mentored developers at MIRC (+40% code quality); led technical workshops on Kubernetes, .NET Core, and Go for 25+ interns.",
+      "relatedExperience": [
+        "exp-qbs"
+      ]
     }
   ],
   "volunteering": [

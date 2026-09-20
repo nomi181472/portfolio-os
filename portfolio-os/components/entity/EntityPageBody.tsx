@@ -76,9 +76,10 @@ export async function EntityPageBody({ category, slug, renderBody }: EntityPageB
 
   const body = entity.data.body;
   const reading = Boolean(body && renderBody);
+  const isKlystr = slug === 'klystr';
 
   return (
-    <div className="page">
+    <div className={`page ${isKlystr ? 'page--wide' : ''}`}>
       <Breadcrumbs
         trail={[
           { label: 'Surface', href: '/' },
@@ -92,12 +93,16 @@ export async function EntityPageBody({ category, slug, renderBody }: EntityPageB
 
       {reading ? <section className="section">{renderBody!(body!)}</section> : null}
 
-      <Related
-        edges={edges}
-        title={definition.kind === 'skills' ? 'Where this has actually been used' : 'Connected work'}
-      />
+      {!isKlystr ? (
+        <>
+          <Related
+            edges={edges}
+            title={definition.kind === 'skills' ? 'Where this has actually been used' : 'Connected work'}
+          />
 
-      <PrevNext previous={previous} next={next} />
+          <PrevNext previous={previous} next={next} />
+        </>
+      ) : null}
     </div>
   );
 }

@@ -90,6 +90,10 @@ button, input, textarea, select { font: inherit; color: inherit; }
   margin-inline: 0;
 }
 
+.page--wide {
+  max-width: 96rem;
+}
+
 /* The gutter ruler: a measurement device that encodes depth, not decoration.
    Each tick is one level down from the surface, and the filled tick is where
    you currently are. */
@@ -108,15 +112,15 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .ruler__tick[data-on='true'] { background: var(--signal); height: 12px; }
 
 /* ==========================================================================
-   Type roles
+   Type roles — Modern Precision Architecture
    ========================================================================== */
 
 .display {
   font-family: var(--font-display);
   font-size: var(--text-display);
-  font-weight: 400;
-  line-height: 0.96;
-  letter-spacing: -0.022em;
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
   color: var(--ink-bright);
   text-wrap: balance;
 }
@@ -124,9 +128,9 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .heading {
   font-family: var(--font-display);
   font-size: var(--text-heading);
-  font-weight: 400;
+  font-weight: 600;
   line-height: var(--leading-tight);
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
   color: var(--ink-bright);
   text-wrap: balance;
 }
@@ -136,6 +140,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   font-size: var(--text-title);
   font-weight: 500;
   line-height: var(--leading-snug);
+  letter-spacing: -0.015em;
   color: var(--ink-bright);
 }
 
@@ -144,6 +149,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   line-height: var(--leading-reading);
   color: var(--ink);
   max-width: var(--measure);
+  letter-spacing: -0.01em;
   text-wrap: pretty;
 }
 
@@ -190,9 +196,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 
 /* ==========================================================================
-   Entity rows — the preview depth. Rules and type, no cards.
-   Hovering lifts the rule, not the row: the structure responds, the content
-   stays still.
+   Entity rows — the preview depth. Ultra-clean, tactile, and responsive.
    ========================================================================== */
 
 .rows { border-top: var(--border-hair) solid var(--rule); }
@@ -202,32 +206,46 @@ button, input, textarea, select { font: inherit; color: inherit; }
   grid-template-columns: 2.25rem minmax(0, 1fr) auto;
   gap: var(--space);
   align-items: start;
-  padding: var(--space-loose) 0;
+  padding: var(--space-loose) var(--space-snug);
   border-bottom: var(--border-hair) solid var(--rule);
+  border-radius: var(--radius-frame);
   position: relative;
-  transition: background var(--dur-quick) var(--ease-out);
+  transition: background var(--dur-quick) var(--ease-out), border-color var(--dur-quick) var(--ease-out), transform var(--dur-quick) var(--ease-out);
 }
 
 .row::before {
   content: '';
   position: absolute;
-  left: 0; bottom: -1px;
-  height: 1px; width: 0;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 2px;
   background: var(--signal);
-  transition: width var(--dur-considered) var(--ease-out);
+  opacity: 0;
+  border-radius: 2px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+  transition: opacity var(--dur-quick) var(--ease-out), transform var(--dur-quick) var(--ease-out);
+  transform: scaleY(0.4);
 }
 .row:hover::before,
-.row:focus-within::before { width: 100%; }
+.row:focus-within::before {
+  opacity: 1;
+  transform: scaleY(1);
+}
 
-.row:hover { background: color-mix(in oklab, var(--surface-raised) 55%, transparent); }
+.row:hover {
+  background: rgba(255, 255, 255, 0.025);
+  border-color: rgba(255, 255, 255, 0.12);
+}
 
-.row__mark { color: var(--ink-faint); padding-top: 2px; }
+.row__mark { color: var(--ink-faint); padding-top: 3px; transition: color var(--dur-quick) var(--ease-out); }
 .row:hover .row__mark, .row:focus-within .row__mark { color: var(--signal); }
 
 .row__name {
   font-family: var(--font-display);
   font-size: var(--text-title);
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: -0.015em;
   line-height: var(--leading-snug);
   color: var(--ink-bright);
 }
@@ -238,6 +256,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   color: var(--ink-quiet);
   max-width: var(--measure);
   font-size: var(--text-meta);
+  line-height: var(--leading-reading);
 }
 
 .row__aside {
@@ -256,26 +275,40 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 
 .tech {
+  display: inline-flex;
+  align-items: center;
   font-family: var(--font-data);
   font-size: var(--text-fine);
-  color: var(--ink-faint);
-  border-bottom: var(--border-hair) solid var(--rule-strong);
-  padding-bottom: 1px;
+  color: var(--ink-quiet);
+  background: rgba(255, 255, 255, 0.035);
+  border: var(--border-hair) solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 0.18rem 0.5rem;
+  line-height: 1.2;
+  transition: all var(--dur-quick) var(--ease-out);
 }
-a.tech:hover { color: var(--signal); border-color: var(--signal); }
+a.tech:hover {
+  color: var(--ink-bright);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
 
 /* ==========================================================================
-   State: brass marks state and nothing else.
+   State & Badges: Clean minimal capsules
    ========================================================================== */
 
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-hair);
+  gap: 0.35rem;
   font-family: var(--font-data);
   font-size: var(--text-fine);
   letter-spacing: 0.02em;
   color: var(--ink-quiet);
+  background: rgba(255, 255, 255, 0.03);
+  border: var(--border-hair) solid var(--rule-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.15rem 0.5rem;
   white-space: nowrap;
 }
 .badge::before {
@@ -283,14 +316,21 @@ a.tech:hover { color: var(--signal); border-color: var(--signal); }
   width: 5px; height: 5px;
   border: var(--border-hair) solid currentColor;
   transform: rotate(45deg);
+  border-radius: 1px;
 }
-/* Live and active are the only states that earn the signal colour: they are
-   the only ones that mean "this is running right now". */
 .badge[data-state='live'],
 .badge[data-state='active'],
-.badge[data-state='validated'] { color: var(--signal); }
+.badge[data-state='validated'] {
+  color: var(--ink-bright);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.06);
+}
 .badge[data-state='live']::before,
-.badge[data-state='active']::before { background: currentColor; }
+.badge[data-state='active']::before {
+  background: currentColor;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
 .badge[data-state='archived'],
 .badge[data-state='unresolved'] { color: var(--ink-faint); }
 .badge[data-state='private']::before { border-style: dashed; }
@@ -438,53 +478,79 @@ a.tech:hover { color: var(--signal); border-color: var(--signal); }
    ========================================================================== */
 
 .link {
-  color: var(--ink-bright);
-  border-bottom: var(--border-hair) solid var(--rule-strong);
-  transition: border-color var(--dur-quick) var(--ease-out);
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  padding-bottom: 1px;
+  transition: color var(--dur-quick) var(--ease-out), border-color var(--dur-quick) var(--ease-out);
 }
-.link:hover { border-bottom-color: var(--signal); }
+.link:hover {
+  color: var(--ink-bright);
+  border-bottom-color: var(--signal);
+}
 
 .control {
   display: inline-flex; align-items: center; gap: var(--space-tight);
-  padding: var(--space-tight) var(--space-snug);
-  background: transparent;
+  padding: 0.45rem 0.9rem;
+  background: rgba(255, 255, 255, 0.04);
   border: var(--border-hair) solid var(--rule-strong);
   border-radius: var(--radius-control);
   color: var(--ink);
   cursor: pointer;
   font-size: var(--text-meta);
-  transition: border-color var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
+  font-weight: 500;
+  transition: all var(--dur-quick) var(--ease-out);
+  backdrop-filter: blur(8px);
 }
-.control:hover { border-color: var(--signal); color: var(--ink-bright); }
-.control[data-emphasis='signal'] { border-color: var(--signal); color: var(--signal); }
-.control[disabled] { opacity: 0.45; cursor: not-allowed; }
+.control:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--ink-bright);
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.06);
+}
+.control[data-emphasis='signal'] {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--ink-bright);
+}
+.control[disabled] { opacity: 0.35; cursor: not-allowed; }
 
 .field {
   width: 100%;
-  background: var(--surface-sunk);
-  border: var(--border-hair) solid var(--rule);
+  background: rgba(255, 255, 255, 0.03);
+  border: var(--border-hair) solid var(--rule-strong);
   border-radius: var(--radius-control);
-  padding: var(--space-tight) var(--space-snug);
+  padding: 0.55rem 0.85rem;
   color: var(--ink-bright);
   font-size: var(--text-meta);
+  transition: all var(--dur-quick) var(--ease-out);
 }
-.field:focus { border-color: var(--signal); outline: none; }
-.field[data-invalid='true'] { border-color: var(--signal); background: var(--signal-wash); }
+.field:focus {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  outline: none;
+}
+.field[data-invalid='true'] {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.06);
+}
 
 /* ==========================================================================
-   Notices — never alarming, always actionable.
+   Notices — architectural system cards
    ========================================================================== */
 
 .notice {
   border: var(--border-hair) solid var(--rule-strong);
-  border-left: 2px solid var(--signal-quiet);
-  background: var(--surface-raised);
+  border-left: 3px solid var(--signal);
+  background: rgba(255, 255, 255, 0.025);
   padding: var(--space-snug) var(--space);
   font-size: var(--text-meta);
   color: var(--ink-quiet);
   border-radius: var(--radius-frame);
+  backdrop-filter: blur(12px);
 }
-.notice strong { color: var(--ink-bright); font-weight: 500; }
+.notice strong { color: var(--ink-bright); font-weight: 600; }
 
 /* ==========================================================================
    Motion: one orchestrated entrance on the surface, nothing else automatic.

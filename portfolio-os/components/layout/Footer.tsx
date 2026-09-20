@@ -13,17 +13,37 @@ export function Footer({ profile, source }: { profile: Profile; source: DataSour
         : 'Content loaded from this repository';
 
   return (
-    <footer className="section" style={{ paddingBottom: 'var(--space-wide)' }}>
+    <footer className="section" data-analytics-section="footer" style={{ paddingBottom: 'var(--space-wide)' }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-loose)', justifyContent: 'space-between' }}>
         <div>
           <p className="label">{profile.name}</p>
           <ul style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space)', listStyle: 'none', padding: 0, marginTop: 'var(--space-tight)' }}>
             {profile.email ? (
-              <li><a className="link" href={`mailto:${profile.email}`}>{profile.email}</a></li>
+              <li>
+                <a
+                  className="link"
+                  href={`mailto:${profile.email}`}
+                  data-analytics-id="contact:email"
+                  data-analytics-type="contact"
+                  data-analytics-namespace="contact"
+                >
+                  {profile.email}
+                </a>
+              </li>
             ) : null}
             {profile.links.filter((link) => link.visibility === 'public').map((link) => (
               <li key={link.url}>
-                <a className="link" href={link.url} rel="me noreferrer" target="_blank">{link.label}</a>
+                <a
+                  className="link"
+                  href={link.url}
+                  rel="me noreferrer"
+                  target="_blank"
+                  data-analytics-id={`contact:${link.label.toLowerCase()}`}
+                  data-analytics-type="external"
+                  data-analytics-namespace="contact"
+                >
+                  {link.label}
+                </a>
               </li>
             ))}
           </ul>
@@ -35,10 +55,10 @@ export function Footer({ profile, source }: { profile: Profile; source: DataSour
           </p>
           {adminLoginEnabled() ? (
             <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>
-              <Link href="/admin/dashboard" className="link" style={{ borderBottom: 0 }}>Analytics</Link>
+              <Link href="/analytics" className="link" style={{ borderBottom: 0 }}>Analytics</Link>
             </p>
           ) : null}
-          <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>{portfolioConfig.site.title}</p>
+          <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>{profile.discipline ? `${profile.name} — ${profile.discipline}` : profile.name}</p>
         </div>
       </div>
     </footer>

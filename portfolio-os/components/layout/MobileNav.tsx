@@ -120,7 +120,7 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
     { href: '/experience', label: 'Experience', desc: 'Engineering route', mark: 'route' as MarkName },
     { href: '/products', label: 'Products', desc: 'Artifact vault', mark: 'artifact' as MarkName },
     { href: '/projects', label: 'Projects', desc: 'Lab experiments', mark: 'experiment' as MarkName },
-    { href: '/startup', label: startupName || 'Startup', desc: 'Incubator', mark: 'incubator' as MarkName },
+    ...(startupName ? [{ href: '/startup', label: startupName, desc: 'Incubator', mark: 'incubator' as MarkName }] : []),
     { href: '/research', label: 'Research', desc: 'Open enquiries', mark: 'notebook' as MarkName },
     { href: '/skills', label: 'Skills', desc: 'Technical matrix', mark: 'instrument' as MarkName },
     { href: '/awards', label: 'Awards', desc: 'Honors & recognition', mark: 'milestone' as MarkName },
