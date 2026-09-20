@@ -131,7 +131,7 @@ export function HeatmapChart({ hourlyData = [], title }: HeatmapChartProps) {
         viewBox={`0 0 ${totalWidth} ${totalHeight}`}
         style={{
           width: '100%',
-          minWidth: '560px',
+          minWidth: 'min(560px, 100%)',
           height: 'auto',
           display: 'block',
         }}

@@ -136,8 +136,31 @@ export function AnalyticsDashboard({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-loose)' }}>
+      {/* Mobile responsive overrides */}
+      <style>{`
+        @media (max-width: 640px) {
+          .analytics-header { flex-direction: column !important; align-items: flex-start !important; }
+          .analytics-header-right { width: 100% !important; justify-content: space-between !important; }
+          .analytics-filter-bar { flex-direction: column !important; align-items: stretch !important; }
+          .analytics-range-row { flex-wrap: wrap !important; }
+          .analytics-dep-row { flex-wrap: wrap !important; }
+          .analytics-metric-btns { flex-wrap: wrap !important; }
+          .analytics-kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .analytics-chart-grid { grid-template-columns: 1fr !important; }
+          .analytics-breakdown-grid { grid-template-columns: 1fr !important; }
+          .analytics-engagement-grid { grid-template-columns: 1fr !important; }
+          .analytics-trend-header { flex-direction: column !important; align-items: flex-start !important; }
+          .analytics-section-table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+          .analytics-section-table { min-width: 520px; }
+          .analytics-kpi-value { font-size: 1.35rem !important; }
+        }
+        @media (max-width: 400px) {
+          .analytics-kpi-grid { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
       {/* Top Header Bar: Status, Deployment, Sign out */}
       <header
+        className="analytics-header"
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -194,7 +217,7 @@ export function AnalyticsDashboard({
         </div>
 
         {/* Right side controls: Email, Refresh, Logout */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-snug)' }}>
+        <div className="analytics-header-right" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-snug)' }}>
           <span
             style={{
               fontSize: 'var(--text-fine)',
@@ -227,6 +250,7 @@ export function AnalyticsDashboard({
 
       {/* Filter Bar: Range Presets & Deployment Selector */}
       <div
+        className="analytics-filter-bar"
         style={{
           display: 'flex',
           flexWrap: 'wrap',
@@ -240,7 +264,7 @@ export function AnalyticsDashboard({
         }}
       >
         {/* Presets */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div className="analytics-range-row" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span
             style={{
               fontSize: 'var(--text-fine)',
@@ -287,7 +311,7 @@ export function AnalyticsDashboard({
         </div>
 
         {/* Deployment Switcher */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div className="analytics-dep-row" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <label
             htmlFor="dep-select"
             style={{
@@ -328,9 +352,10 @@ export function AnalyticsDashboard({
 
       {/* KPI Stats Grid */}
       <div
+        className="analytics-kpi-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
           gap: 'var(--space-tight)',
         }}
       >
@@ -356,7 +381,7 @@ export function AnalyticsDashboard({
           <div
             style={{
               fontFamily: 'var(--font-data)',
-              fontSize: '1.75rem',
+              fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
               fontWeight: 600,
               color: 'var(--signal)',
               marginTop: '4px',
@@ -398,7 +423,7 @@ export function AnalyticsDashboard({
           <div
             style={{
               fontFamily: 'var(--font-data)',
-              fontSize: '1.75rem',
+              fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
               fontWeight: 600,
               color: 'var(--ink-bright)',
               marginTop: '4px',
@@ -443,7 +468,7 @@ export function AnalyticsDashboard({
           <div
             style={{
               fontFamily: 'var(--font-data)',
-              fontSize: '1.75rem',
+              fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
               fontWeight: 600,
               color: 'var(--ink-bright)',
               marginTop: '4px',
@@ -485,7 +510,7 @@ export function AnalyticsDashboard({
           <div
             style={{
               fontFamily: 'var(--font-data)',
-              fontSize: '1.75rem',
+              fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
               fontWeight: 600,
               color: 'var(--ink-bright)',
               marginTop: '4px',
@@ -527,7 +552,7 @@ export function AnalyticsDashboard({
           <div
             style={{
               fontFamily: 'var(--font-data)',
-              fontSize: '1.75rem',
+              fontSize: 'clamp(1.25rem, 4vw, 1.75rem)',
               fontWeight: 600,
               color: 'var(--ink-bright)',
               marginTop: '4px',
@@ -558,6 +583,7 @@ export function AnalyticsDashboard({
         }}
       >
         <div
+          className="analytics-trend-header"
           style={{
             display: 'flex',
             flexWrap: 'wrap',
@@ -589,7 +615,7 @@ export function AnalyticsDashboard({
           </div>
 
           {/* Metric Selector Buttons */}
-          <div style={{ display: 'flex', gap: '6px' }}>
+          <div className="analytics-metric-btns" style={{ display: 'flex', gap: '6px' }}>
             {(
               [
                 { key: 'visitors', label: 'Visitors' },
@@ -632,9 +658,10 @@ export function AnalyticsDashboard({
 
       {/* Grid for Sections & Clicks Distributions */}
       <div
+        className="analytics-chart-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
           gap: 'var(--space)',
         }}
       >
@@ -678,9 +705,10 @@ export function AnalyticsDashboard({
 
       {/* Grid for Breakdowns: Devices, Browsers, Countries */}
       <div
+        className="analytics-breakdown-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
           gap: 'var(--space)',
         }}
       >
@@ -747,9 +775,10 @@ export function AnalyticsDashboard({
 
       {/* Engagement Depth & Referrers Grid */}
       <div
+        className="analytics-engagement-grid"
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(320px, 100%), 1fr))',
           gap: 'var(--space)',
         }}
       >
@@ -809,8 +838,9 @@ export function AnalyticsDashboard({
           >
             Section Visibility Performance
           </h2>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="analytics-section-table-wrap" style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
             <table
+              className="analytics-section-table"
               style={{
                 width: '100%',
                 borderCollapse: 'collapse',

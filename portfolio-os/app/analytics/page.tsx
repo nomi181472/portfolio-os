@@ -39,7 +39,7 @@ export default async function AnalyticsPage() {
   });
 
   return (
-    <div className="page" style={{ maxWidth: '1100px' }}>
+    <div className="page" style={{ maxWidth: '1100px', padding: '0 var(--space)' }}>
       <Breadcrumbs
         trail={[
           { label: 'Home', href: '/' },
