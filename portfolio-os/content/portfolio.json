@@ -828,8 +828,7 @@
         "Structured Output Parsing"
       ],
       "relatedProjects": [
-        "proj-resume-hr",
-        "proj-planogram-pipeline"
+        "proj-resume-hr"
       ]
     },
     {
@@ -1934,45 +1933,6 @@
         "exp-ktrade",
         "exp-qbs"
       ]
-    },
-    {
-      "id": "sk-retail-planogram",
-      "slug": "retail-planogram-audit-pipeline",
-      "name": "Retail Planogram Audit Pipeline",
-      "category": "AI & Deep Learning Frameworks",
-      "design": "9/10",
-      "support": "9/10",
-      "depth": "specialist",
-      "firstUsed": "2023",
-      "context": "Design: 9/10 · Support: 9/10 | Focus: Automated Retail Shelf Audit, SKU Recognition & 90%+ Planogram Compliance",
-      "summary": "Design: 9/10 · Support: 9/10 — automated retail shelf inspection, SKU identification, and planogram compliance verification using multimodal vision-language models and agentic workflows.",
-      "description": "Architected and delivered end-to-end retail audit automation pipelines capable of verifying planogram compliance at 90%+ accuracy across dense retail shelving environments. Leveraged multimodal vision-language models, fine-grained object detection, and agentic reasoning pipelines integrated directly into the VERSEYE enterprise vision platform.",
-      "featured": true,
-      "tags": [
-        "Planogram Compliance",
-        "Retail Audit",
-        "SKU Recognition",
-        "Computer Vision",
-        "Agentic AI",
-        "Multimodal Models"
-      ],
-      "technologies": [
-        "Retail Vision",
-        "SKU Detection",
-        "Planogram Matching",
-        "Multimodal AI",
-        "LangChain"
-      ],
-      "relatedProducts": [
-        "prod-verseye"
-      ],
-      "relatedProjects": [
-        "proj-planogram-pipeline"
-      ],
-      "relatedExperience": [
-        "exp-botonetics",
-        "exp-qbs"
-      ]
     }
   ],
   "experience": [
@@ -2073,44 +2033,6 @@
       "relatedAwards": [
         "award-best-lead"
       ],
-      "featured": true
-    },
-    {
-      "id": "exp-botonetics",
-      "slug": "botonetics-deep-learning-engineer",
-      "name": "Deep Learning Engineer at Botonetics",
-      "organisation": "Botonetics",
-      "role": "Deep Learning Engineer",
-      "employmentType": "Part-time",
-      "location": "Karachi, Pakistan",
-      "period": {
-        "startDate": "2023-10-01",
-        "endDate": "2025-01-01",
-        "ongoing": false
-      },
-      "impact": "Engineered agentic retail audit pipeline achieving 90%+ compliance accuracy across low-light and angled captures.",
-      "summary": "Designed multimodal agentic computer vision pipelines for automated retail audit and planogram compliance.",
-      "description": "Researched and built multimodal computer vision workflows integrating YOLO object detection, optical character recognition (OCR), and CLIP embedding retrieval to audit FMCG shelf arrangements automatically.",
-      "responsibilities": [
-        "Developing deep learning inference workflows for product identification and shelf placement validation.",
-        "Implementing image preprocessing pipelines to compensate for adverse camera angles and poor lighting."
-      ],
-      "achievements": [
-        "Engineered agentic retail audit pipeline with 90%+ planogram compliance accuracy.",
-        "Reduced manual supermarket shelf auditing overhead through automated visual verification."
-      ],
-      "systems": [
-        "Retail Planogram Audit Pipeline"
-      ],
-      "technologies": [
-        "Python",
-        "PyTorch",
-        "YOLO",
-        "CLIP",
-        "OpenCV"
-      ],
-      "relatedProducts": [],
-      "relatedProjects": [],
       "featured": true
     },
     {
@@ -2427,10 +2349,7 @@
         "sk-litert",
         "sk-redis"
       ],
-      "featured": true,
-      "relatedProjects": [
-        "proj-planogram-pipeline"
-      ]
+      "featured": true
     },
     {
       "id": "prod-lockkeyz",
@@ -3867,57 +3786,6 @@
         "pub-ieee-2021"
       ],
       "featured": true
-    },
-    {
-      "id": "proj-planogram-pipeline",
-      "slug": "retail-planogram-audit-pipeline",
-      "name": "Retail Planogram Audit Pipeline",
-      "concept": "Automated multimodal retail shelf audit & planogram compliance",
-      "summary": "Multimodal agentic computer vision pipeline combining object detection, SKU recognition, and LLM reasoning to automate planogram compliance for retail shelves at 90%+ accuracy.",
-      "description": "Architected an end-to-end agentic retail audit pipeline designed to inspect grocery and retail shelves, detect fine-grained SKUs, analyze facing positions, and verify compliance against reference planograms with 90%+ accuracy. Seamlessly integrated into the VERSEYE enterprise AI surveillance platform as a domain-specific micro-frontend and inference worker.",
-      "status": "active",
-      "category": "Computer Vision & Agentic AI",
-      "organisation": "Botonetics",
-      "period": {
-        "startDate": "2023",
-        "endDate": "2024",
-        "ongoing": false
-      },
-      "featured": true,
-      "technologies": [
-        "Python",
-        "LangChain",
-        "Agentic LLMs",
-        "PyTorch",
-        "CUDA",
-        "FastAPI",
-        "gRPC",
-        "Computer Vision",
-        "Object Detection",
-        "SKU Recognition"
-      ],
-      "tags": [
-        "Computer Vision",
-        "Planogram Compliance",
-        "Retail Tech",
-        "LangChain",
-        "Agentic AI",
-        "Object Detection",
-        "VERSEYE"
-      ],
-      "relatedSkills": [
-        "sk-langchain",
-        "sk-retail-planogram",
-        "sk-python",
-        "sk-pytorch-cuda",
-        "sk-fastapi"
-      ],
-      "relatedProducts": [
-        "prod-verseye"
-      ],
-      "relatedExperience": [
-        "exp-botonetics"
-      ]
     }
   ],
   "research": [

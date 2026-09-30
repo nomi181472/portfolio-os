@@ -1024,36 +1024,6 @@ portfolio = {
       "featured": True
     },
     {
-      "id": "exp-botonetics",
-      "slug": "botonetics-deep-learning-engineer",
-      "name": "Deep Learning Engineer at Botonetics",
-      "organisation": "Botonetics",
-      "role": "Deep Learning Engineer",
-      "employmentType": "Part-time",
-      "location": "Karachi, Pakistan",
-      "period": {
-        "startDate": "2023-10-01",
-        "endDate": "2025-01-01",
-        "ongoing": False
-      },
-      "impact": "Engineered agentic retail audit pipeline achieving 90%+ compliance accuracy across low-light and angled captures.",
-      "summary": "Designed multimodal agentic computer vision pipelines for automated retail audit and planogram compliance.",
-      "description": "Researched and built multimodal computer vision workflows integrating YOLO object detection, optical character recognition (OCR), and CLIP embedding retrieval to audit FMCG shelf arrangements automatically.",
-      "responsibilities": [
-        "Developing deep learning inference workflows for product identification and shelf placement validation.",
-        "Implementing image preprocessing pipelines to compensate for adverse camera angles and poor lighting."
-      ],
-      "achievements": [
-        "Engineered agentic retail audit pipeline with 90%+ planogram compliance accuracy.",
-        "Reduced manual supermarket shelf auditing overhead through automated visual verification."
-      ],
-      "systems": ["Retail Planogram Audit Pipeline"],
-      "technologies": ["Python", "PyTorch", "YOLO", "CLIP", "OpenCV"],
-      "relatedProducts": [],
-      "relatedProjects": [],
-      "featured": True
-    },
-    {
       "id": "exp-ktrade",
       "slug": "ktrade-senior-software-developer",
       "name": "Senior Software Developer at Ktrade Securities",
