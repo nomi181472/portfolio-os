@@ -2453,6 +2453,53 @@ portfolio = {
   ],
   "research": [
     {
+      "id": "res-lab-playground",
+      "slug": "lab-nomanali-online",
+      "name": "lab.nomanali.online — Personal Engineering Lab & Live Playground",
+      "state": "experiment",
+      "period": {
+        "startDate": "2026-09",
+        "ongoing": True
+      },
+      "lastUpdated": "2026-09-30",
+      "question": "Can the central mechanism of a paper be made legible as something you can run, poke, and break under your own hands — rather than a result taken on trust from a static figure?",
+      "summary": "From Paper to Playground — published research rebuilt as live, interactive experiments you can open in a browser and take apart.",
+      "abstract": "An ongoing, public engineering lab that re-implements the core mechanisms of published research as self-contained browser-native experiments, and publishes each one live as it stabilises.",
+      "description": "lab.nomanali.online is a personal engineering lab built on a single premise: **from paper to playground**. Published work is read far more often than it is run, and in the gap the intuition is usually lost — the reader inherits a conclusion without ever touching the mechanism that produced it. This lab closes that gap by rebuilding the load-bearing idea behind a paper as something that actually executes, exposes its knobs, and fails visibly when pushed. Each experiment is a self-contained, browser-native reproduction built to be taken apart rather than read about, published live so that the argument can be inspected instead of trusted.",
+      "body": """## From Paper to Playground
+
+Most papers get read, not run. The abstraction survives; the intuition does not. This lab exists to close that gap.
+
+### The method
+
+- **Pick the mechanism.** Not the headline result — the actual causal claim the paper rests on.
+- **Re-implement it.** Rebuild from the paper and its references, in the open.
+- **Expose the knobs.** Whatever the authors swept quietly over, the playground makes adjustable.
+- **Publish it live.** No local setup, no install step, no notebook you have to trust.
+
+### Why it is built this way
+
+Everything runs in the browser on Next.js, React, and TypeScript — no backend, no accounts, no state to babysit. An experiment you cannot open in five seconds is a demo nobody opens, and a demo nobody opens teaches nothing.
+
+### Status
+
+Actively ongoing since September 2026. Experiments are added and reworked as they stabilise, so what is live at any moment is a snapshot of the work rather than a finished catalogue.
+""",
+      "technologies": ["Next.js", "React", "TypeScript"],
+      "tags": ["Interactive Demos", "Research Reproduction", "Experimentation", "Open Source", "From Paper to Playground"],
+      "findings": [],
+      "links": [
+        {
+          "label": "Live Playground",
+          "url": "https://lab.nomanali.online/",
+          "type": "demo",
+          "visibility": "public"
+        }
+      ],
+      "relatedSkills": ["sk-frontend-nextjs", "sk-typescript"],
+      "featured": True
+    },
+    {
       "id": "res-neuroevolution",
       "slug": "compute-efficient-neuroevolution",
       "name": "Compute-Efficient Neuroevolution for Deep Architectures",
