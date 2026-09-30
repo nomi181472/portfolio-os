@@ -4,17 +4,21 @@ import Image from 'next/image';
 import { getGraph } from '@/lib/source';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { staticPage } from '@/lib/seo';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { StatusBadge } from '@/components/entity/Badges';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { bundle } = await getGraph();
   const startup = bundle.data.startup;
-  const name = startup?.name || 'Startup';
-  return {
+  if (!startup) return {};
+  const name = startup.name || 'Startup';
+  return staticPage({
     title: `${name} — Incubation`,
-    description: startup?.vision ? `${name}: ${startup.vision}` : `${name} Incubation`,
-  };
+    description: startup.vision ? `${name}: ${startup.vision}` : `${name} Incubation`,
+    path: '/startup',
+  });
 }
 
 export default async function StartupPage() {
@@ -27,6 +31,7 @@ export default async function StartupPage() {
 
   return (
     <div className="page">
+      <BreadcrumbJsonLd trail={[{ label: 'Surface', href: '/' }, { label: startup.name }]} />
       <Breadcrumbs trail={[{ label: 'Surface', href: '/' }, { label: startup.name }]} />
       <Ruler depth={2} label="Incubation" />
 
@@ -50,7 +55,7 @@ export default async function StartupPage() {
               width: 'clamp(56px, 14vw, 80px)',
               height: 'clamp(56px, 14vw, 80px)',
               borderRadius: '16px',
-              background: '#091015',
+              background: 'var(--surface-sunk)',
               border: '1.5px solid var(--rule-strong)',
               display: 'flex',
               alignItems: 'center',
@@ -148,7 +153,7 @@ export default async function StartupPage() {
             border: '1px solid var(--rule-strong)',
             borderRadius: 'var(--radius-frame)',
             overflow: 'hidden',
-            background: '#091015',
+            background: 'var(--surface-sunk)',
             boxShadow: '0 12px 36px rgba(0,0,0,0.4)',
           }}
         >

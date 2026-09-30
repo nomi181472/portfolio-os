@@ -1,7 +1,9 @@
 import Link from 'next/link';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { StatusBadge, OrganisationBadge } from './Badges';
+import { PeriodPulse } from './PeriodPulse';
 import { formatDate, formatPeriod } from '@/lib/format';
+import { pulseStagger } from '@/lib/pulse';
 import { CATEGORIES } from '@/lib/categories';
 import type { ResolvedEntity } from '@/types/portfolio';
 
@@ -10,7 +12,7 @@ import type { ResolvedEntity } from '@/types/portfolio';
  * what it does, when, and what state it is in. Everything else is one click
  * away, and the row is the click target.
  */
-export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; showPeriod?: boolean }) {
+export function Row({ entity, showPeriod = true, index = 0 }: { entity: ResolvedEntity; showPeriod?: boolean; index?: number }) {
   const { data, kind, href } = entity;
   const category = CATEGORIES[kind];
   const rawPeriod = 'period' in data && data.period
@@ -248,7 +250,9 @@ export function Row({ entity, showPeriod = true }: { entity: ResolvedEntity; sho
           </span>
         ) : null}
         <StatusBadge status={data.status} />
-        {period ? <span className="meta">{period}</span> : null}
+        {period ? (
+          <PeriodPulse text={period} className="meta" stagger={pulseStagger(index)} />
+        ) : null}
       </div>
     </article>
   );
@@ -264,8 +268,8 @@ export function Rows({ entities, showPeriod }: { entities: ResolvedEntity[]; sho
   }
   return (
     <div className="rows">
-      {entities.map((entity) => (
-        <Row key={`${entity.kind}:${entity.data.id}`} entity={entity} showPeriod={showPeriod} />
+      {entities.map((entity, index) => (
+        <Row key={`${entity.kind}:${entity.data.id}`} entity={entity} showPeriod={showPeriod} index={index} />
       ))}
     </div>
   );

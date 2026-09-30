@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Portfolio OS">
+  {/*
+    * The rail's instrument, reduced to what survives at 16px: a substrate square,
+    * one signal rule, and the mark's corner tick. Derived from the two brand
+    * values in config/portfolio.config.ts rather than from a palette, so a fork
+    * that re-skins the site gets a matching icon without regenerating artwork.
+    */}
+  <rect width="32" height="32" rx="6" fill="#090a0d" />
+  <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="5.4" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1.5" />
+  <path d="M9 22V10l14 12V10" fill="none" stroke="#f5f7fa" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter" />
+</svg>

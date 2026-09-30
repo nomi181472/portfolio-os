@@ -4,7 +4,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { CATEGORIES } from '@/lib/categories';
+import type { AppearanceChoice } from '@/lib/theme';
 import type { MetaphorMark as MarkName } from '@/lib/categories';
 import styles from './MobileNav.module.css';
 
@@ -12,6 +14,7 @@ interface MobileNavProps {
   onOpenSearch: () => void;
   profile: { name: string; avatar?: string };
   startupName?: string;
+  appearance?: AppearanceChoice;
 }
 
 interface Ripple {
@@ -20,7 +23,7 @@ interface Ripple {
   y: number;
 }
 
-export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps) {
+export function MobileNav({ onOpenSearch, profile, startupName, appearance = 'system' }: MobileNavProps) {
   const pathname = usePathname();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dragOffsetY, setDragOffsetY] = useState(0);
@@ -109,31 +112,39 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
     return pathname === href || pathname.startsWith(`${href}/`);
   };
 
+  /*
+   * The nav used the site's own vocabulary — "Surface", "Artifact vault",
+   * "Incubator", "Technical matrix", "Question-driven map". None of it is
+   * self-explanatory, and a nav label has to be. The metaphor survives where it is
+   * *explained* (each section page opens by defining it); it is dropped here,
+   * where someone is only trying to decide what to tap. Plain words also happen to
+   * be the words a person would type into a search engine.
+   */
   const primaryDestinations = [
-    { href: '/', label: 'Surface', mark: 'artifact' as MarkName },
+    { href: '/', label: 'About', mark: 'artifact' as MarkName },
     { href: '/experience', label: 'Experience', mark: 'route' as MarkName },
     { href: '/products', label: 'Products', mark: 'artifact' as MarkName },
     { href: '/projects', label: 'Projects', mark: 'experiment' as MarkName },
   ];
 
   const coreSections = [
-    { href: '/experience', label: 'Experience', desc: 'Engineering route', mark: 'route' as MarkName },
-    { href: '/products', label: 'Products', desc: 'Artifact vault', mark: 'artifact' as MarkName },
-    { href: '/projects', label: 'Projects', desc: 'Lab experiments', mark: 'experiment' as MarkName },
-    ...(startupName ? [{ href: '/startup', label: startupName, desc: 'Incubator', mark: 'incubator' as MarkName }] : []),
-    { href: '/research', label: 'Research', desc: 'Open enquiries', mark: 'notebook' as MarkName },
-    { href: '/skills', label: 'Skills', desc: 'Technical matrix', mark: 'instrument' as MarkName },
-    { href: '/awards', label: 'Awards', desc: 'Honors & recognition', mark: 'milestone' as MarkName },
-    { href: '/publications', label: 'Publications', desc: 'Citable papers', mark: 'library' as MarkName },
-    { href: '/education', label: 'Education', desc: 'Foundations', mark: 'foundation' as MarkName },
-    { href: '/future', label: 'Trajectory', desc: 'Roadmap & horizons', mark: 'trajectory' as MarkName },
+    { href: '/experience', label: 'Experience', desc: 'Where I worked, and what changed', mark: 'route' as MarkName },
+    { href: '/products', label: 'Products', desc: 'Products built and shipped', mark: 'artifact' as MarkName },
+    { href: '/projects', label: 'Projects', desc: 'Things built to find something out', mark: 'experiment' as MarkName },
+    ...(startupName ? [{ href: '/startup', label: startupName, desc: 'The company being built now', mark: 'incubator' as MarkName }] : []),
+    { href: '/research', label: 'Research', desc: 'Open questions under investigation', mark: 'notebook' as MarkName },
+    { href: '/skills', label: 'Skills', desc: 'Technologies, with evidence of use', mark: 'instrument' as MarkName },
+    { href: '/awards', label: 'Awards', desc: 'Honours and recognition', mark: 'milestone' as MarkName },
+    { href: '/publications', label: 'Publications', desc: 'Papers and citable writing', mark: 'library' as MarkName },
+    { href: '/education', label: 'Education', desc: 'Degrees and formal study', mark: 'foundation' as MarkName },
+    { href: '/future', label: 'Trajectory', desc: 'What happens next, by how certain it is', mark: 'trajectory' as MarkName },
   ];
 
   const toolSections = [
-    { href: '/copy', label: 'Copy this OS', desc: 'Fork & duplicate', mark: 'copy' as MarkName },
-    { href: '/edit', label: 'Visual Editor', desc: 'Local in-browser draft', mark: 'instrument' as MarkName },
-    { href: '/explore', label: 'Explore Mode', desc: 'Question-driven map', mark: 'network' as MarkName },
-    { href: '/colophon', label: 'Colophon', desc: 'System provenance', mark: 'seal' as MarkName },
+    { href: '/explore', label: 'Browse by question', desc: 'Start from what you want to know', mark: 'network' as MarkName },
+    { href: '/edit', label: 'Edit this portfolio', desc: 'Draft in your browser, then export', mark: 'instrument' as MarkName },
+    { href: '/copy', label: 'Copy this site', desc: 'Fork it and make it your own', mark: 'copy' as MarkName },
+    { href: '/colophon', label: 'Colophon', desc: 'How this site is built', mark: 'seal' as MarkName },
   ];
 
   return (
@@ -158,7 +169,10 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
               <span style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 600, color: 'var(--ink-quiet)' }}>{profile.name.charAt(0)}</span>
             )}
           </span>
-          <span>PORTFOLIO OS</span>
+          {/* "PORTFOLIO OS" is the project's name, not the person's. In the one
+              position on a phone screen that is always visible, it should say
+              whose work this is. */}
+          <span>{profile.name}</span>
         </Link>
         <div className={styles.topActions}>
           <button
@@ -305,6 +319,13 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
             <span>Search anything in portfolio... (Ctrl+K)</span>
           </button>
 
+          {/* Appearance lives in the drawer rather than the top bar: the bar is
+              three controls wide on a 320px screen, and a palette choice is not a
+              per-page action. */}
+          <div className={styles.appearanceRow}>
+            <ThemeToggle initialChoice={appearance} />
+          </div>
+
           <div>
             <div className={styles.categoryGroupTitle}>Collections</div>
             <div className={styles.gridLinks}>
@@ -319,7 +340,7 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
                   <MetaphorMark name={item.mark} size={18} />
                   <div>
                     <div style={{ fontWeight: 500 }}>{item.label}</div>
-                    <div style={{ fontSize: '10px', color: 'var(--ink-dim)' }}>{item.desc}</div>
+                    <div style={{ fontSize: '10px', color: 'var(--ink-faint)' }}>{item.desc}</div>
                   </div>
                 </Link>
               ))}
@@ -340,7 +361,7 @@ export function MobileNav({ onOpenSearch, profile, startupName }: MobileNavProps
                   <MetaphorMark name={item.mark} size={18} />
                   <div>
                     <div style={{ fontWeight: 500 }}>{item.label}</div>
-                    <div style={{ fontSize: '10px', color: 'var(--ink-dim)' }}>{item.desc}</div>
+                    <div style={{ fontSize: '10px', color: 'var(--ink-faint)' }}>{item.desc}</div>
                   </div>
                 </Link>
               ))}

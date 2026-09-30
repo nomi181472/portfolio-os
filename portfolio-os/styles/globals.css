@@ -223,7 +223,7 @@ button, input, textarea, select { font: inherit; color: inherit; }
   background: var(--signal);
   opacity: 0;
   border-radius: 2px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 10px var(--glow);
   transition: opacity var(--dur-quick) var(--ease-out), transform var(--dur-quick) var(--ease-out);
   transform: scaleY(0.4);
 }
@@ -234,8 +234,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 
 .row:hover {
-  background: rgba(255, 255, 255, 0.025);
-  border-color: rgba(255, 255, 255, 0.12);
+  background: var(--fill-faint);
+  border-color: var(--fill-strong);
 }
 
 .row__mark { color: var(--ink-faint); padding-top: 3px; transition: color var(--dur-quick) var(--ease-out); }
@@ -280,8 +280,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
   font-family: var(--font-data);
   font-size: var(--text-fine);
   color: var(--ink-quiet);
-  background: rgba(255, 255, 255, 0.035);
-  border: var(--border-hair) solid rgba(255, 255, 255, 0.08);
+  background: var(--fill-faint);
+  border: var(--border-hair) solid var(--fill);
   border-radius: var(--radius-sm);
   padding: 0.18rem 0.5rem;
   line-height: 1.2;
@@ -289,8 +289,8 @@ button, input, textarea, select { font: inherit; color: inherit; }
 }
 a.tech:hover {
   color: var(--ink-bright);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--fill);
+  border-color: var(--line-strong);
 }
 
 /* ==========================================================================
@@ -305,7 +305,7 @@ a.tech:hover {
   font-size: var(--text-fine);
   letter-spacing: 0.02em;
   color: var(--ink-quiet);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--fill-faint);
   border: var(--border-hair) solid var(--rule-strong);
   border-radius: var(--radius-pill);
   padding: 0.15rem 0.5rem;
@@ -322,14 +322,14 @@ a.tech:hover {
 .badge[data-state='active'],
 .badge[data-state='validated'] {
   color: var(--ink-bright);
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.28);
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.06);
+  background: var(--fill);
+  border-color: var(--line-strong);
+  box-shadow: 0 0 10px var(--fill);
 }
 .badge[data-state='live']::before,
 .badge[data-state='active']::before {
   background: currentColor;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 6px var(--glow);
 }
 .badge[data-state='archived'],
 .badge[data-state='unresolved'] { color: var(--ink-faint); }
@@ -480,7 +480,7 @@ a.tech:hover {
 .link {
   color: var(--ink);
   text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid var(--fill-strong);
   padding-bottom: 1px;
   transition: color var(--dur-quick) var(--ease-out), border-color var(--dur-quick) var(--ease-out);
 }
@@ -492,7 +492,7 @@ a.tech:hover {
 .control {
   display: inline-flex; align-items: center; gap: var(--space-tight);
   padding: 0.45rem 0.9rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--fill-faint);
   border: var(--border-hair) solid var(--rule-strong);
   border-radius: var(--radius-control);
   color: var(--ink);
@@ -503,21 +503,21 @@ a.tech:hover {
   backdrop-filter: blur(8px);
 }
 .control:hover {
-  border-color: rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.09);
+  border-color: var(--line-strong);
+  background: var(--fill);
   color: var(--ink-bright);
-  box-shadow: 0 0 16px rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 16px var(--fill);
 }
 .control[data-emphasis='signal'] {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--glow);
+  background: var(--fill-strong);
   color: var(--ink-bright);
 }
 .control[disabled] { opacity: 0.35; cursor: not-allowed; }
 
 .field {
   width: 100%;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--fill-faint);
   border: var(--border-hair) solid var(--rule-strong);
   border-radius: var(--radius-control);
   padding: 0.55rem 0.85rem;
@@ -526,14 +526,14 @@ a.tech:hover {
   transition: all var(--dur-quick) var(--ease-out);
 }
 .field:focus {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.06);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+  border-color: var(--glow);
+  background: var(--fill);
+  box-shadow: 0 0 0 3px var(--fill);
   outline: none;
 }
 .field[data-invalid='true'] {
-  border-color: #ffffff;
-  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--signal);
+  background: var(--fill);
 }
 
 /* ==========================================================================
@@ -543,7 +543,7 @@ a.tech:hover {
 .notice {
   border: var(--border-hair) solid var(--rule-strong);
   border-left: 3px solid var(--signal);
-  background: rgba(255, 255, 255, 0.025);
+  background: var(--fill-faint);
   padding: var(--space-snug) var(--space);
   font-size: var(--text-meta);
   color: var(--ink-quiet);

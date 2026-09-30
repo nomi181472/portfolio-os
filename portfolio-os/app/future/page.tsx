@@ -3,13 +3,16 @@ import Link from 'next/link';
 import { getGraph } from '@/lib/source';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { humanise } from '@/lib/format';
+import { staticPage } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPage({
+  path: '/future',
   title: 'Trajectory',
   description: 'Where the work is heading, separated by how certain each direction is.',
-};
+});
 
 const HORIZONS = ['current', 'exploring', 'planned', 'long-term'] as const;
 
@@ -32,6 +35,7 @@ export default async function FuturePage() {
 
   return (
     <div className="page">
+      <BreadcrumbJsonLd trail={[{ label: 'Surface', href: '/' }, { label: 'Trajectory' }]} />
       <Breadcrumbs trail={[{ label: 'Surface', href: '/' }, { label: 'Trajectory' }]} />
       <Ruler depth={1} label="Trajectory" />
 

@@ -1,0 +1,156 @@
+/* ==========================================================================
+   Period pulse — a wave of attention travelling through a date that is already
+   fully on screen.
+
+   The rule this file is built around: a pulse is a nudge, never a reveal. Every
+   character is painted from the first frame, so nothing here may declare a
+   resting value for colour, transform, or filter. .glyph sets only the two
+   things a per-character element needs in order to be animatable at all, and
+   inherits everything else from .meta exactly as the plain string used to.
+
+   Because `animation-name` is left unset until a trigger fires, and fill-mode
+   stays `none`, an inactive glyph has no animation to hold keyframe values on
+   it. It is not "reset to rest" — it never left rest.
+   ========================================================================== */
+
+.run {
+  /* Peak of the wave. Every value the keyframes use is declared here so the
+     second, quieter pass is a matter of restating them smaller. */
+  --amp-y: 2px;
+  --amp-scale: 1.05;
+  --amp-rotate: -0.5deg;
+  --amp-glow: 5px;
+  --amp-blur: 0.35px;
+  --amp-bright: 1.5;
+  --pulse-dur: 340ms;
+  --pulse-step: 30ms;
+}
+
+/* The same wave at a third of the volume, once, six seconds in. A reward for
+   having stayed on the page — not a reminder, and it does not come back. */
+.run[data-state='repeat'] {
+  --amp-y: 0.9px;
+  --amp-scale: 1.02;
+  --amp-rotate: -0.2deg;
+  --amp-glow: 2px;
+  --amp-blur: 0.2px;
+  --amp-bright: 1.25;
+}
+
+.glyph {
+  /* transform is inert on non-replaced inline boxes, so each character needs a
+     box of its own. Advance widths are unchanged in a monospace face with
+     inherited tabular-nums, so the meta column cannot reflow. */
+  display: inline-block;
+  /* Keeps the real space characters — the range separator is a word space and
+     must not collapse. Wrapping between glyphs is still allowed. */
+  white-space: pre;
+
+  animation-duration: var(--pulse-dur);
+  animation-delay: calc(var(--i) * var(--pulse-step));
+  animation-fill-mode: none;
+  animation-iteration-count: 1;
+  animation-timing-function: var(--ease-out);
+}
+
+/* ----------------------------------------------------------------------------
+   The wave. Three beats per character, and the peak of the next one is already
+   leaving as this one's arrives — that overlap is what makes it a ripple
+   rather than a sequence of pops.
+
+   0% and 100% are stated to be identical on purpose. Fill-mode is `none`, so
+   neither is ever actually painted as a resting style; they exist to give the
+   interpolation a defined origin and destination, and to guarantee the
+   character lands exactly where it started.
+   ---------------------------------------------------------------------------- */
+@keyframes charPulse {
+  /* 0% is the rest state, spelled out: full transform list, full filter list, so
+     it interpolates cleanly against the peak below. */
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    filter: blur(0px) brightness(1);
+    color: var(--ink-faint);
+    text-shadow: 0 0 0 transparent;
+    /* Sharp attack — the character is struck, not launched. */
+    animation-timing-function: cubic-bezier(0.2, 0.9, 0.2, 1);
+  }
+
+  /* Charge. The character softens by a fraction of a pixel and holds its
+     colour, so the brightening below reads as a strike rather than a fade.
+     Colour is restated here to keep it from ramping during the charge. */
+  22% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    filter: blur(var(--amp-blur)) brightness(1.1);
+    color: var(--ink-faint);
+    text-shadow: 0 0 0 transparent;
+  }
+
+  /* Peak. Lift, scale, a barely-there tilt, and the colour rises from the
+     resting metadata grey to the brightest ink the theme allows. The glow uses
+     --glow, which every appearance theme already redefines, so it inverts
+     correctly instead of glowing white on a light background. */
+  40% {
+    transform: translate3d(0, calc(var(--amp-y) * -1), 0) scale(var(--amp-scale)) rotate(var(--amp-rotate));
+    filter: blur(0px) brightness(var(--amp-bright));
+    color: var(--ink-bright);
+    text-shadow: 0 0 var(--amp-glow) var(--glow);
+    animation-timing-function: var(--ease-out);
+  }
+
+  /* Decay. Slight overshoot past the baseline on the way home — this is the
+     overshoot that makes it feel sprung instead of switched off. */
+  62% {
+    transform: translate3d(0, calc(var(--amp-y) * 0.35), 0) scale(0.994) rotate(0.15deg);
+    filter: blur(0px) brightness(1.05);
+    color: var(--ink-quiet);
+    text-shadow: 0 0 calc(var(--amp-glow) * 0.4) var(--glow);
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    filter: blur(0px) brightness(1);
+    color: var(--ink-faint);
+    text-shadow: 0 0 0 transparent;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+   Triggers. Hover and focus rules come last on purpose: at equal specificity
+   the later rule wins, so a deliberate interaction is never overridden by a
+   pass that is still finishing underneath the pointer.
+   ---------------------------------------------------------------------------- */
+.run[data-state='view'] .glyph,
+.run[data-state='repeat'] .glyph {
+  animation-name: charPulse;
+}
+
+/* Pointing at the date. This is the only trigger that fires on a detail page,
+   where nothing is layered over the header. */
+.run:hover .glyph,
+.run:focus-within .glyph {
+  animation-name: charPulse;
+}
+
+/* Inside a row, the rule above never fires: `.row__name a::after` is a link
+   overlay with `inset: 0`, so the date is never the hit target and the hover
+   lands on the row instead. This is the trigger that does the work on a list
+   page, and it is also the focus path, so the wave is not a mouse-only
+   affordance. It is written as well as, not instead of, the rule above —
+   they cover different parents, and deleting either one silently disables the
+   pulse somewhere. */
+:global(.row):hover .glyph,
+:global(.row):focus-within .glyph {
+  animation-name: charPulse;
+}
+
+/* Under reduced motion the pulse is removed outright rather than shortened. The
+   global rule collapses duration to 1ms, but 1ms is still 24 brightened
+   frames in sequence, and it would say nothing about the stagger either. The
+   date simply stays a date. `!important` is needed because the hover triggers
+   above are more specific than any rule in here. */
+@media (prefers-reduced-motion: reduce) {
+  .run,
+  .run .glyph {
+    animation-name: none !important;
+  }
+}

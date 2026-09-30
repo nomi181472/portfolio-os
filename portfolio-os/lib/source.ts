@@ -11,11 +11,12 @@
  */
 import 'server-only';
 
+import { cache } from 'react';
 import localPortfolio from '@/content/portfolio.json';
 import { portfolioConfig } from '@/config/portfolio.config';
 import { buildGraph, type PortfolioGraph } from '@/lib/graph';
 import { validatePortfolio, describeIssues } from '@/lib/validate';
-import type { DataSourceState, PortfolioBundle } from '@/types/portfolio';
+import type { DataSourceState, Portfolio, PortfolioBundle } from '@/types/portfolio';
 
 const REVALIDATE = Number(process.env.PORTFOLIO_REVALIDATE ?? 3600);
 
@@ -57,21 +58,27 @@ async function loadRemote(url: string): Promise<PortfolioBundle> {
   }
 }
 
-let cached: Promise<PortfolioBundle> | undefined;
+/**
+ * Request-scoped memoisation. `getGraph` used to rebuild the entire graph —
+ * every entity, every edge map — once per component that asked for it, which on
+ * a page with a rail, a footer and a body meant three full builds. React.cache
+ * collapses that to one per request without pinning it across requests, so a
+ * revalidate still picks up fresh content.
+ */
+const loadPortfolio = cache(async (): Promise<PortfolioBundle> => {
+  const source = portfolioConfig.dataSource;
+  const configured = process.env.NEXT_PUBLIC_PORTFOLIO_URL ?? (source.type === 'remote' ? source.url : undefined);
+  return configured ? loadRemote(configured) : Promise.resolve(loadLocal({ status: 'local' }));
+});
+
+const buildGraphFor = cache((data: Portfolio) => buildGraph(data));
 
 export function getPortfolio(): Promise<PortfolioBundle> {
-  if (!cached) {
-    const source = portfolioConfig.dataSource;
-    const configured = process.env.NEXT_PUBLIC_PORTFOLIO_URL ?? (source.type === 'remote' ? source.url : undefined);
-    cached = configured
-      ? loadRemote(configured)
-      : Promise.resolve(loadLocal({ status: 'local' }));
-  }
-  return cached;
+  return loadPortfolio();
 }
 
 export async function getGraph(): Promise<{ bundle: PortfolioBundle; graph: PortfolioGraph }> {
   const bundle = await getPortfolio();
-  const graph = buildGraph(bundle.data);
+  const graph = buildGraphFor(bundle.data);
   return { bundle, graph };
 }

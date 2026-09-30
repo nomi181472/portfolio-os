@@ -32,8 +32,7 @@ export interface PortfolioConfig {
      */
     primary: string;
     secondary: string;
-    /** 'dark' | 'light' | 'system' */
-    defaultAppearance: 'dark' | 'light' | 'system';
+    defaultAppearance: 'dark' | 'light' | 'system' | 'contrast' | 'sepia';
   };
   features: {
     editMode: boolean;
@@ -67,7 +66,8 @@ export const portfolioConfig: PortfolioConfig = {
     primary: 'oklch(0.12 0.005 260)',
     // Crisp Silver / Luminescent White. Clear, high-contrast signal.
     secondary: 'oklch(0.98 0.002 260)',
-    defaultAppearance: 'dark',
+    // Warm reading surface first: new visitors land on sepia, not obsidian.
+    defaultAppearance: 'sepia',
   },
 
   features: {

@@ -11,7 +11,9 @@ import { useEffect, useState } from 'react';
 import { CATEGORIES } from '@/lib/categories';
 import { portfolioConfig } from '@/config/portfolio.config';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import { MobileNav } from './MobileNav';
+import type { AppearanceChoice } from '@/lib/theme';
 import type { MetaphorMark as MarkName } from '@/lib/categories';
 import styles from './Rail.module.css';
 
@@ -31,7 +33,18 @@ function itemsFor(ids: string[], startupName?: string): RailItem[] {
   });
 }
 
-export function Rail({ onOpenSearch, profile, startupName }: { onOpenSearch: () => void; profile: { name: string; avatar?: string }; startupName?: string }) {
+export function Rail({
+  onOpenSearch,
+  profile,
+  startupName,
+  appearance = 'system',
+}: {
+  onOpenSearch: () => void;
+  profile: { name: string; avatar?: string };
+  startupName?: string;
+  /** An optional palette hint. See the note on Shell's prop of the same name. */
+  appearance?: AppearanceChoice;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(true);
 
@@ -71,7 +84,7 @@ export function Rail({ onOpenSearch, profile, startupName }: { onOpenSearch: () 
   return (
     <>
     <nav className={styles.rail} data-open={open} aria-label="Sections">
-      <Link href="/" className={styles.home} aria-label="Surface" aria-current={pathname === '/' ? 'page' : undefined}>
+      <Link href="/" className={styles.home} aria-label={`${profile.name} — about`} aria-current={pathname === '/' ? 'page' : undefined}>
         <span
           style={{
             width: 22,
@@ -89,7 +102,10 @@ export function Rail({ onOpenSearch, profile, startupName }: { onOpenSearch: () 
             <span style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', fontWeight: 600, color: 'var(--ink-quiet)' }}>{profile.name.charAt(0)}</span>
           )}
         </span>
-        <span className={styles.itemLabel}>Surface</span>
+        {/* "Surface" is the site's own word for this page. In a nav rail it is
+            noise: the one thing a visitor needs here is to know whose site this
+            is, and the avatar already marks it as the top of the hierarchy. */}
+        <span className={styles.itemLabel}>{profile.name}</span>
       </Link>
 
       <button type="button" className={styles.item} onClick={onOpenSearch} aria-keyshortcuts="Meta+K Control+K">
@@ -124,7 +140,13 @@ export function Rail({ onOpenSearch, profile, startupName }: { onOpenSearch: () 
         ))}
       </ul>
 
-      <button type="button" className={styles.expand} onClick={handleToggle} aria-expanded={open}>
+      {/* Appearance sits at the foot of the rail with the structural controls,
+          not in the reading column — it governs the whole instrument, not one page. */}
+      <div className={styles.appearance}>
+        <ThemeToggle initialChoice={appearance} compact={!open} />
+      </div>
+
+      <button type="button" className={styles.expand} onClick={handleToggle} aria-expanded={open} aria-label={open ? 'Collapse the section rail' : 'Show section names'}>
         <span className={styles.itemMark} aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25">
             <path d={open ? 'M14 6l-6 6 6 6' : 'M10 6l6 6-6 6'} strokeLinecap="square" />
@@ -133,7 +155,7 @@ export function Rail({ onOpenSearch, profile, startupName }: { onOpenSearch: () 
         <span className={styles.itemLabel}>{open ? 'Collapse' : 'Show names'}</span>
       </button>
     </nav>
-    <MobileNav onOpenSearch={onOpenSearch} profile={profile} startupName={startupName} />
+    <MobileNav onOpenSearch={onOpenSearch} profile={profile} startupName={startupName} appearance={appearance} />
     </>
   );
 }

@@ -5,11 +5,14 @@ import { CATEGORIES, EXPLORE_ROUTES } from '@/lib/categories';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { staticPage } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPage({
+  path: '/explore',
   title: 'Explore',
   description: 'Enter this portfolio from a question rather than from a section name.',
-};
+});
 
 /**
  * Explore mode (§13). The same content, entered from intent instead of
@@ -21,6 +24,9 @@ export default async function ExplorePage() {
 
   return (
     <div className="page">
+      <BreadcrumbJsonLd
+        trail={[{ label: 'Surface', href: '/' }, { label: 'Explore' }]}
+      />
       <Breadcrumbs trail={[{ label: 'Surface', href: '/' }, { label: 'Explore' }]} />
       <Ruler depth={1} label="Explore" />
 

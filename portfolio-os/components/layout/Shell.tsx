@@ -1,34 +1,65 @@
 'use client';
 
 /**
- * The shell wires the rail, the command menu and the editor together. It is the
- * only client boundary in the layout — pages below it stay server-rendered so
- * their content is in the HTML for crawlers and slow connections (§85, §116).
+ * The shell wires the rail and the command menu together. It is the only client
+ * boundary in the layout — pages below it stay server-rendered so their content is
+ * in the HTML for crawlers and slow connections.
+ *
+ * Two things used to live here and no longer do:
+ *
+ * - The whole search index, passed down from the layout as a prop. That put ~90 kB
+ *   of JSON into the initial payload of every page so that a dialog, opened by a
+ *   fraction of visitors, would have something to read. It now fetches from
+ *   /api/search when it opens.
+ * - EditBar, and with it EditorProvider. The editor is one route; wrapping the
+ *   entire site in its context meant every visitor parsed localStorage and
+ *   carried an isEditing reducer for a feature they would never open.
+ *
+ * The menu is code-split and mounted only after the first Ctrl+K, and latched
+ * rather than derived: once loaded its chunk stays, so the second press is instant.
  */
 import { useCallback, useEffect, useState } from 'react';
-import { Rail } from './Rail';
-import { CommandMenu } from '@/components/search/CommandMenu';
-import { EditBar } from '@/components/editor/EditBar';
+import dynamic from 'next/dynamic';
+import type { AppearanceChoice } from '@/lib/theme';
 import { portfolioConfig } from '@/config/portfolio.config';
-import type { SearchRecord } from '@/lib/search';
+import { Rail } from './Rail';
+
+const CommandMenu = dynamic(
+  () => import('@/components/search/CommandMenu').then((mod) => mod.CommandMenu),
+  { ssr: false },
+);
 
 interface ShellProps {
-  index: SearchRecord[];
   children: React.ReactNode;
+  /** Rendered after `</main>` rather than inside it: a footer is not content. */
+  footer?: React.ReactNode;
   profile: { name: string; avatar?: string };
   startupName?: string;
+  /**
+   * The configured default choice (not a cookie: reading one in the root layout
+   * opts every route out of static generation). It seeds ThemeToggle's select so a
+   * first-time visitor sees "Sepia" selected rather than a "System" that does not
+   * describe what is painted. The blocking script already set the palette, and
+   * ThemeToggle then syncs itself to `localStorage` if a real preference exists.
+   */
+  appearance?: AppearanceChoice;
 }
 
-export function Shell({ index, children, profile, startupName }: ShellProps) {
+export function Shell({ children, footer, profile, startupName, appearance }: ShellProps) {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchMounted, setSearchMounted] = useState(false);
 
-  const openSearch = useCallback(() => setSearchOpen(true), []);
+  const openSearch = useCallback(() => {
+    setSearchMounted(true);
+    setSearchOpen(true);
+  }, []);
 
   useEffect(() => {
     if (!portfolioConfig.features.search) return;
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
+        setSearchMounted(true);
         setSearchOpen((value) => !value);
       }
     };
@@ -39,14 +70,14 @@ export function Shell({ index, children, profile, startupName }: ShellProps) {
   return (
     <div className="shell">
       <a className="skip-link" href="#main">Skip to content</a>
-      <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} />
+      <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} appearance={appearance} />
       <div className="shell__main">
         <main id="main">{children}</main>
+        {footer}
       </div>
-      {portfolioConfig.features.search ? (
-        <CommandMenu index={index} open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {portfolioConfig.features.search && searchMounted ? (
+        <CommandMenu open={searchOpen} onClose={() => setSearchOpen(false)} />
       ) : null}
-      {portfolioConfig.features.editMode ? <EditBar /> : null}
     </div>
   );
 }

@@ -74,6 +74,7 @@ export const portfolioConfig = {
   theme: {
     primary: 'oklch(0.12 0.005 260)',        // Dark substrate
     secondary: 'oklch(0.98 0.002 260)',      // Light signal
+    // 'system' | 'dark' | 'light' | 'contrast' | 'sepia'
     defaultAppearance: 'dark',
   },
   // ...

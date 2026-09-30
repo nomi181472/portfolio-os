@@ -1,0 +1,88 @@
+/**
+ * components/theme/ThemeToggle.module.css
+ *
+ * Deliberately quiet: this control changes the whole page, so drawing attention to
+ * itself would make it the loudest thing on a page whose job is the work. It is set
+ * in the data face like other instrument chrome, and sized to the 44px touch floor
+ * the rest of the rail obeys.
+ */
+
+.wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  min-height: var(--touch-target-min);
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-tight);
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  letter-spacing: 0.02em;
+  color: var(--ink-quiet);
+  flex-shrink: 0;
+}
+
+.glyph {
+  color: var(--ink-quiet);
+  flex-shrink: 0;
+}
+
+.select {
+  appearance: none;
+  -webkit-appearance: none;
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink);
+  background: var(--surface-sunk);
+  border: var(--border-hair) solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 0.34rem 1.5rem 0.34rem 0.5rem;
+  min-width: 0;
+  cursor: pointer;
+  transition: border-color var(--dur-quick) var(--ease-out), color var(--dur-quick) var(--ease-out);
+  /* A hairline caret drawn with a gradient, so the control does not need an icon
+     font and keeps one less request on the critical path. */
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 0.62rem) 50%, calc(100% - 0.4rem) 50%;
+  background-size: 0.22rem 0.22rem, 0.22rem 0.22rem;
+  background-repeat: no-repeat;
+}
+
+.select:hover,
+.select:focus-visible {
+  color: var(--ink-bright);
+  border-color: var(--rule-strong);
+}
+
+.select:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+/* Collapsed rail: icon plus the control, no words. The label is still in the
+   accessibility tree; it is only visually withdrawn. */
+.wrap[data-compact='true'] .label {
+  position: absolute;
+}
+
+.wrap[data-compact='true'] .select {
+  width: 100%;
+  padding-inline: 0.4rem 1.2rem;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

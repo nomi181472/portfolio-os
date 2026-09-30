@@ -163,8 +163,8 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
             >
             <defs>
               <linearGradient id="silverGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#c0c5d0" stopOpacity="0.85" />
+                <stop offset="0%" stopColor="var(--signal)" stopOpacity="0.85" />
+                <stop offset="100%" stopColor="var(--signal-quiet)" stopOpacity="0.85" />
               </linearGradient>
             </defs>
 

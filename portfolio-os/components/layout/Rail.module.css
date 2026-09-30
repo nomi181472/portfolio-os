@@ -8,7 +8,7 @@
   flex-direction: column;
   gap: var(--space-hair);
   padding: var(--space) 0 var(--space-loose);
-  background: rgba(9, 10, 13, 0.85);
+  background: var(--rail-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-right: 1px solid var(--rule);
@@ -41,12 +41,12 @@
 }
 .home:hover, .item:hover, .expand:hover {
   color: var(--ink-bright);
-  background: rgba(255, 255, 255, 0.035);
+  background: var(--fill-faint);
 }
 .item[data-current='true'] {
   color: var(--ink-bright);
   border-left-color: var(--signal);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--fill);
 }
 
 .itemMark {
@@ -102,6 +102,20 @@
   margin-top: auto;
   border-top: 1px solid var(--rule);
   padding-top: var(--space-snug);
+}
+
+/* The appearance control lives above the collapse toggle and shares its divider,
+   so the foot of the rail reads as one band of chrome rather than two additions. */
+.appearance {
+  margin-top: auto;
+  padding: 0 1.45rem var(--space-snug);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-snug);
+}
+.appearance + .expand {
+  margin-top: 0;
+  border-top: 0;
+  padding-top: 0;
 }
 
 @media (max-width: 56rem) {

@@ -4,11 +4,14 @@ import { getGraph } from '@/lib/source';
 import { portfolioConfig } from '@/config/portfolio.config';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { staticPage } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPage({
+  path: '/colophon',
   title: 'Colophon',
   description: 'How this site is built, what the content source is, and how to fork it.',
-};
+});
 
 /** Provenance in full, for the visitor who wants to take the thing apart. */
 export default async function ColophonPage() {
@@ -34,6 +37,7 @@ export default async function ColophonPage() {
 
   return (
     <div className="page">
+      <BreadcrumbJsonLd trail={[{ label: 'Surface', href: '/' }, { label: 'Colophon' }]} />
       <Breadcrumbs trail={[{ label: 'Surface', href: '/' }, { label: 'Colophon' }]} />
       <Ruler depth={1} label="Colophon" />
 

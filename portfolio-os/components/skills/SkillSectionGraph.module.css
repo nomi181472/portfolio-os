@@ -19,7 +19,7 @@
   justify-content: space-between;
   padding: var(--space-tight) var(--space);
   border-bottom: 1px solid var(--rule-faint);
-  background: rgba(255, 255, 255, 0.015);
+  background: var(--fill-faint);
   user-select: none;
 }
 
@@ -38,7 +38,7 @@
   height: 6px;
   border-radius: 50%;
   background: var(--ink-bright);
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 6px var(--glow);
   display: inline-block;
 }
 
@@ -57,7 +57,7 @@
 .toggleButton:hover {
   color: var(--ink-bright);
   border-color: var(--ink-bright);
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--fill);
 }
 
 .canvasWrapper {
@@ -75,7 +75,7 @@
 
 .edge {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.12);
+  stroke: var(--fill-strong);
   stroke-width: 1.2px;
   transition: stroke var(--duration-fast) var(--ease-snappy), stroke-width var(--duration-fast) var(--ease-snappy), opacity var(--duration-fast) var(--ease-snappy);
 }
@@ -86,9 +86,9 @@
 }
 
 .edgeActive {
-  stroke: #ffffff;
+  stroke: var(--signal);
   stroke-width: 2px;
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.7));
+  filter: drop-shadow(0 0 4px var(--glow));
   opacity: 1;
 }
 
@@ -98,12 +98,12 @@
 }
 
 .nodeGroup:hover {
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.35));
+  filter: drop-shadow(0 0 8px var(--line-strong));
 }
 
 .nodeRect {
-  fill: #0c0e13;
-  stroke: rgba(255, 255, 255, 0.18);
+  fill: var(--surface-raised);
+  stroke: var(--fill-strong);
   stroke-width: 1px;
   rx: 6px;
   ry: 6px;
@@ -111,8 +111,8 @@
 }
 
 .nodeRectActive {
-  stroke: #ffffff;
-  fill: #141820;
+  stroke: var(--signal);
+  fill: var(--signal-wash);
   stroke-width: 1.5px;
 }
 
@@ -131,15 +131,15 @@
 }
 
 .countBadge {
-  fill: rgba(255, 255, 255, 0.08);
-  stroke: rgba(255, 255, 255, 0.15);
+  fill: var(--fill);
+  stroke: var(--fill-strong);
   rx: 4px;
   ry: 4px;
 }
 
 .countBadgeActive {
-  fill: #ffffff;
-  stroke: #ffffff;
+  fill: var(--signal);
+  stroke: var(--signal);
 }
 
 .countText {
@@ -152,7 +152,7 @@
 }
 
 .countTextActive {
-  fill: #000000;
+  fill: var(--surface-sunk);
 }
 
 /* ==========================================================================
@@ -206,7 +206,7 @@
   /* Segmented View Mode Controller */
   .mobileSegmentControl {
     display: flex;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--fill-faint);
     border: 1px solid var(--rule);
     border-radius: 8px;
     padding: 3px;
@@ -233,9 +233,9 @@
   }
 
   .mobileSegmentBtnActive {
-    background: #141820;
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+    background: var(--surface-raised);
+    border-color: var(--line-strong);
+    color: var(--ink-bright);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   }
 
@@ -260,7 +260,7 @@
     gap: 6px;
     padding: 6px 12px;
     min-height: 36px;
-    background: rgba(255, 255, 255, 0.03);
+    background: var(--fill-faint);
     border: 1px solid var(--rule);
     border-radius: 9999px;
     color: var(--ink-quiet);
@@ -276,10 +276,10 @@
   }
 
   .mobileChipActive {
-    background: #181d26;
-    border-color: #ffffff;
-    color: #ffffff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.15);
+    background: var(--surface-raised);
+    border-color: var(--signal);
+    color: var(--ink-bright);
+    box-shadow: 0 0 10px var(--fill-strong);
   }
 
   .mobileChipDot {
@@ -291,8 +291,8 @@
   }
 
   .mobileChipActive .mobileChipDot {
-    background: #ffffff;
-    box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+    background: var(--signal);
+    box-shadow: 0 0 6px var(--glow);
   }
 
   .mobileChipText {
@@ -307,15 +307,15 @@
     height: 18px;
     padding: 0 4px;
     border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.06);
+    background: var(--fill);
     color: var(--ink-quiet);
     font-family: var(--font-data);
     font-size: 10px;
   }
 
   .mobileChipActive .mobileChipCount {
-    background: #ffffff;
-    color: #000000;
+    background: var(--signal);
+    color: var(--surface-sunk);
     font-weight: 700;
   }
 
@@ -325,10 +325,10 @@
     flex-direction: column;
     gap: 12px;
     padding: 14px;
-    background: #0d1017;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--surface-raised);
+    border: 1px solid var(--fill-strong);
     border-radius: 10px;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    box-shadow: inset 0 1px 0 var(--fill);
   }
 
   .mobileActiveCardHeader {
@@ -359,7 +359,7 @@
     font-family: var(--font-display);
     font-size: 15px;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--ink-bright);
     margin: 0;
   }
 
@@ -369,7 +369,7 @@
     gap: 4px;
     padding: 5px 9px;
     min-height: 32px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--fill);
     border: 1px solid var(--rule-strong);
     border-radius: 6px;
     font-family: var(--font-data);
@@ -381,8 +381,8 @@
   }
 
   .mobileActiveLink:active {
-    background: rgba(255, 255, 255, 0.12);
-    color: #ffffff;
+    background: var(--fill-strong);
+    color: var(--ink-bright);
   }
 
   .mobileConnectionsSection {
@@ -408,9 +408,9 @@
     justify-content: center;
     padding: 1px 6px;
     border-radius: 4px;
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--fill);
     font-weight: 600;
-    color: #ffffff;
+    color: var(--ink-bright);
   }
 
   .mobileTargetList {
@@ -426,7 +426,7 @@
     gap: 8px;
     padding: 10px 12px;
     min-height: 44px;
-    background: #11141c;
+    background: var(--surface-raised);
     border: 1px solid var(--rule);
     border-radius: 8px;
     text-decoration: none;
@@ -434,8 +434,8 @@
   }
 
   .mobileTargetItem:active {
-    background: #181d28;
-    border-color: rgba(255, 255, 255, 0.3);
+    background: var(--signal-wash);
+    border-color: var(--line-strong);
     transform: scale(0.99);
   }
 
@@ -461,20 +461,20 @@
   }
 
   .mobileTargetBadgeProduct {
-    background: #ffffff;
-    color: #000000;
+    background: var(--signal);
+    color: var(--surface-sunk);
   }
 
   .mobileTargetBadgeProject {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #e2e5eb;
+    border: 1px solid var(--line-strong);
+    color: var(--ink-bright);
   }
 
   .mobileTargetBadgeSkill {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    color: #ffffff;
+    background: var(--fill);
+    border: 1px solid var(--fill-strong);
+    color: var(--ink-bright);
   }
 
   .mobileTargetName {
@@ -496,6 +496,6 @@
 
   .mobileTargetItem:active .mobileTargetArrow {
     transform: translateX(3px);
-    color: #ffffff;
+    color: var(--ink-bright);
   }
 }

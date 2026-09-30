@@ -14,8 +14,10 @@
 import Link from 'next/link';
 import { Disclosure } from './Disclosure';
 import { StatusBadge, SourceBadge, OrganisationBadge } from './Badges';
+import { PeriodPulse } from './PeriodPulse';
 import { MediaGallery } from '@/components/media/Media';
 import { formatPeriod, formatDuration, formatDate, humanise } from '@/lib/format';
+import { pulseStagger } from '@/lib/pulse';
 import { CATEGORIES, type DetailSection } from '@/lib/categories';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { CopyEntityButton } from './CopyEntityButton';
@@ -49,6 +51,13 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
   const category = CATEGORIES[entity.kind];
   const period = formatPeriod(entity.data.period);
   const duration = formatDuration(entity.data.period);
+  // The header states one thing in one line, so the wave crosses the whole of
+  // it rather than stopping halfway through at the end of the range.
+  const stamped =
+    period ||
+    ('date' in data && data.date ? formatDate(String(data.date)) : '') ||
+    ('issued' in data && data.issued ? formatDate(String(data.issued)) : '');
+  const periodLine = stamped ? `${stamped}${duration ? ` · ${duration}` : ''}` : '';
 
   if (entity.data.slug === 'klystr') {
     return (
@@ -151,7 +160,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
     integrations: Array.isArray(data.integrations) && data.integrations.length ? (
       <section style={{ marginTop: 'var(--space-loose)', marginBottom: 'var(--space-loose)', padding: 'var(--space)', border: '1px solid var(--rule-strong)', borderRadius: '10px', background: 'var(--surface-raised)' }}>
         <h3 className="label" style={{ color: 'var(--ink-bright)', marginBottom: 'var(--space-snug)', display: 'flex', alignItems: 'center', gap: 'var(--space-tight)' }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#ffffff', boxShadow: '0 0 6px rgba(255, 255, 255, 0.6)' }} />
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--signal)', boxShadow: '0 0 6px var(--glow)' }} />
           <span>External Ecosystem & Market Integrations</span>
         </h3>
         <p className="meta" style={{ marginBottom: 'var(--space)', color: 'var(--ink-quiet)' }}>
@@ -165,7 +174,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
                 padding: 'var(--space)',
                 border: '1px solid var(--rule)',
                 borderRadius: '8px',
-                background: 'var(--surface-base)',
+                background: 'var(--surface-raised)',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space-snug)' }}>
@@ -174,9 +183,9 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
                   className="badge"
                   style={{
                     fontFamily: 'var(--font-data)',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    color: '#ffffff',
+                    background: 'var(--fill-faint)',
+                    border: '1px solid var(--fill-strong)',
+                    color: 'var(--ink-bright)',
                     fontSize: 'var(--text-fine)',
                   }}
                 >
@@ -186,7 +195,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               <p className="meta" style={{ marginTop: 'var(--space-hair)', color: 'var(--ink-quiet)' }}>
                 {item.type}
               </p>
-              <p style={{ marginTop: 'var(--space-tight)', fontSize: 'var(--text-body)', color: 'var(--ink-soft)' }}>
+              <p style={{ marginTop: 'var(--space-tight)', fontSize: 'var(--text-body)', color: 'var(--ink)' }}>
                 {item.detail}
               </p>
               {item.url ? (
@@ -230,10 +239,10 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
       <Disclosure label="Findings" hint="Dated, with confidence stated" defaultOpen>
         <ol style={{ listStyle: 'none', padding: 0, display: 'grid', gap: 'var(--space-loose)', maxWidth: 'var(--measure)' }}>
           {(data.findings as { date: string; observation: string; evidence?: string; confidence: string; supersededBy?: string }[]).map(
-            (finding) => (
+            (finding, index) => (
               <li key={`${finding.date}-${finding.observation.slice(0, 16)}`} style={{ borderLeft: '1px solid var(--rule-strong)', paddingLeft: 'var(--space)' }}>
                 <p className="meta">
-                  {finding.date} · confidence {finding.confidence}
+                  <PeriodPulse text={finding.date} stagger={pulseStagger(index)} /> · confidence {finding.confidence}
                   {finding.supersededBy ? ' · superseded' : ''}
                 </p>
                 <p style={{ marginTop: 'var(--space-hair)' }}>{finding.observation}</p>
@@ -340,9 +349,9 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
     timeline: entity.data.timeline.length ? (
       <Disclosure label="Timeline">
         <ol style={{ listStyle: 'none', padding: 0, display: 'grid', gap: 'var(--space-snug)' }}>
-          {entity.data.timeline.map((event) => (
+          {entity.data.timeline.map((event, index) => (
             <li key={`${event.date}-${event.label}`} style={{ display: 'grid', gridTemplateColumns: '7rem 1fr', gap: 'var(--space)' }}>
-              <span className="meta">{event.date}</span>
+              <PeriodPulse text={event.date} className="meta" stagger={pulseStagger(index)} />
               <span>
                 {event.label}
                 {event.detail ? <span className="label" style={{ display: 'block' }}>{event.detail}</span> : null}
@@ -380,7 +389,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               width: 'clamp(36px, 8vw, 48px)',
               height: 'clamp(36px, 8vw, 48px)',
               borderRadius: '12px',
-              background: '#091015',
+              background: 'var(--surface-sunk)',
               border: '1px solid var(--rule-strong)',
               display: 'flex',
               alignItems: 'center',
@@ -435,12 +444,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
           ) : null}
           {'state' in data && data.state ? <span className="badge" data-state={String(data.state)}>{humanise(String(data.state))}</span> : null}
           <SourceBadge source={data.source as never} />
-          {period || ('date' in data && data.date) || ('issued' in data && data.issued) ? (
-            <span className="meta">
-              {period || ('date' in data && data.date ? formatDate(String(data.date)) : formatDate(String(data.issued)))}
-              {duration ? ` · ${duration}` : ''}
-            </span>
-          ) : null}
+          {periodLine ? <PeriodPulse text={periodLine} className="meta" repeat /> : null}
           {'design' in data && data.design && 'support' in data && data.support ? (
             <span
               className="badge"
@@ -573,7 +577,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
                       padding: 'var(--space-snug) var(--space)',
                       border: '1px solid var(--rule)',
                       borderRadius: '6px',
-                      background: 'var(--surface-base)',
+                      background: 'var(--surface-raised)',
                       textDecoration: 'none',
                     }}
                   >

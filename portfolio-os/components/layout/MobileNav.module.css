@@ -33,7 +33,7 @@
     height: calc(3.25rem + env(safe-area-inset-top, 0px));
     padding-top: env(safe-area-inset-top, 0px);
     padding-inline: 1rem;
-    background: rgba(9, 10, 13, 0.88);
+    background: var(--rail-bg);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--rule);
@@ -51,7 +51,7 @@
     right: 0;
     height: calc(3.75rem + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
-    background: rgba(9, 10, 13, 0.92);
+    background: var(--rail-bg);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     border-top: 1px solid var(--rule-strong);
@@ -65,7 +65,7 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
+    background: var(--scrim);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     z-index: calc(var(--z-rail) + 10);
@@ -121,7 +121,7 @@
   height: 7px;
   border-radius: 50%;
   background: var(--signal);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 0 8px var(--glow);
   animation: pulseDot 2.5s infinite;
 }
 
@@ -142,7 +142,7 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--fill);
   border: 1px solid var(--rule-strong);
   color: var(--ink-quiet);
   cursor: pointer;
@@ -183,7 +183,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+  background: radial-gradient(circle, var(--line-strong) 0%, transparent 70%);
   pointer-events: none;
   transform: translate(-50%, -50%) scale(0);
   animation: tabRippleKeyframes 0.4s ease-out forwards;
@@ -214,7 +214,7 @@
   height: 2px;
   background: var(--signal);
   border-radius: 0 0 2px 2px;
-  box-shadow: 0 1px 6px rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 6px var(--glow);
 }
 
 .tabIcon {
@@ -275,7 +275,7 @@
 }
 
 .drawerClose {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--fill);
   border: 1px solid var(--rule-strong);
   border-radius: 50%;
   width: 1.85rem;
@@ -303,7 +303,7 @@
   gap: 0.75rem;
   width: 100%;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--fill-faint);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-control);
   color: var(--ink-quiet);
@@ -314,6 +314,13 @@
 .searchLauncher:active {
   border-color: var(--signal);
   color: var(--ink-bright);
+}
+
+.appearanceRow {
+  /* The same width the search launcher claims, so the drawer's header block
+     reads as one panel instead of two unrelated controls. */
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--rule);
 }
 
 .categoryGroupTitle {
@@ -336,7 +343,7 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.7rem 0.8rem;
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--fill-faint);
   border: 1px solid var(--rule);
   border-radius: var(--radius-control);
   color: var(--ink);
@@ -346,13 +353,13 @@
   -webkit-tap-highlight-color: transparent;
 }
 .gridCard:active {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--fill-strong);
   border-color: var(--signal);
   color: var(--ink-bright);
   transform: scale(0.97);
 }
 .gridCard[data-current='true'] {
-  border-color: rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--line-strong);
+  background: var(--fill);
   color: var(--ink-bright);
 }

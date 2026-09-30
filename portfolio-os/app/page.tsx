@@ -7,7 +7,11 @@
  */
 
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import { getGraph } from '@/lib/source';
+import { staticPage } from '@/lib/seo';
+import { ProfileJsonLd } from '@/components/seo/JsonLd';
+import { portfolioConfig } from '@/config/portfolio.config';
 import { Schematic } from '@/components/home/Schematic';
 import { SourceNotice } from '@/components/layout/SourceNotice';
 import { Ruler } from '@/components/layout/Ruler';
@@ -15,6 +19,20 @@ import { Disclosure } from '@/components/entity/Disclosure';
 import { Row } from '@/components/entity/Row';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { EXPLORE_ROUTES, CATEGORIES } from '@/lib/categories';
+
+/**
+ * The home page carried no canonical at all, which leaves a URL that can be
+ * reached as `/`, `//`, or with a query string, all of them duplicates of the same
+ * page with no statement of which one is the original.
+ *
+ * The title is not run through the `%s` template: on every other page the suffix
+ * disambiguates, and on this one it would just repeat the tab into itself.
+ */
+export const metadata: Metadata = staticPage({
+  title: portfolioConfig.site.title,
+  description: portfolioConfig.site.description,
+  path: '/',
+});
 
 export default async function SurfacePage() {
   const { bundle, graph } = await getGraph();
@@ -34,6 +52,9 @@ export default async function SurfacePage() {
 
   return (
     <div className="page">
+      {/* The graph root: Person + WebSite, on the page that is the canonical
+          origin for both. Nothing else on the site identified them before. */}
+      <ProfileJsonLd profile={profile} portfolio={bundle.data} />
       <SourceNotice source={bundle.source} exampleContent={bundle.data.exampleContent} />
 
       <section className="enter" data-analytics-section="hero">
@@ -71,14 +92,19 @@ export default async function SurfacePage() {
         ) : null}
       </section>
 
-      <section style={{ marginTop: 'var(--space-wide)' }} aria-labelledby="map-heading" data-analytics-section="map">
-        <h2 id="map-heading" className="visually-hidden">Map of this portfolio</h2>
-        <Schematic graph={graph} name={profile.name} />
-        <p className="meta" style={{ marginTop: 'var(--space-snug)' }}>
-          Node size is the number of entries. Line weight is the number of real connections between them. Select a node
-          to enter that collection.
-        </p>
-      </section>
+      {/* The home schematic honours the graph flag like every other feature switch:
+          a fork that turns the map off should not ship its bundle weight or its
+          section. `graph` was the one flag nothing read. */}
+      {portfolioConfig.features.graph ? (
+        <section style={{ marginTop: 'var(--space-wide)' }} aria-labelledby="map-heading" data-analytics-section="map">
+          <h2 id="map-heading" className="visually-hidden">Map of this portfolio</h2>
+          <Schematic graph={graph} name={profile.name} />
+          <p className="meta" style={{ marginTop: 'var(--space-snug)' }}>
+            Node size is the number of entries. Line weight is the number of real connections between them. Select a node
+            to enter that collection.
+          </p>
+        </section>
+      ) : null}
 
       {/* Mission briefing — layered, per §14. The first layer is four facts. */}
       <section className="section" aria-labelledby="briefing-heading" data-analytics-section="briefing">
@@ -133,7 +159,7 @@ export default async function SurfacePage() {
             <p className="section__note">Four entries that show the range. Everything else is reachable from the map above.</p>
           </div>
           <div className="rows">
-            {featured.map((entity) => <Row key={`${entity.kind}:${entity.data.id}`} entity={entity} />)}
+            {featured.map((entity, index) => <Row key={`${entity.kind}:${entity.data.id}`} entity={entity} index={index} />)}
           </div>
         </section>
       ) : null}
@@ -145,7 +171,7 @@ export default async function SurfacePage() {
             <p className="section__note">Leadership awards and technical achievements.</p>
           </div>
           <div className="rows">
-            {featuredAwards.map((entity) => <Row key={`${entity.kind}:${entity.data.id}`} entity={entity} />)}
+            {featuredAwards.map((entity, index) => <Row key={`${entity.kind}:${entity.data.id}`} entity={entity} index={index} />)}
           </div>
         </section>
       ) : null}

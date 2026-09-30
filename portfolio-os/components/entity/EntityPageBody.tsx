@@ -25,6 +25,7 @@ import { EntityDetail } from '@/components/entity/EntityDetail';
 import { Related, PrevNext } from '@/components/entity/Related';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { EntityJsonLd } from '@/components/seo/JsonLd';
 import type { EntityKind } from '@/types/portfolio';
 
 /** Shared by every entity route so social cards never drift between them. */
@@ -46,10 +47,21 @@ export async function entityMetadata(category: string, slug: string): Promise<Me
     openGraph: {
       title: `${entity.data.name} — ${definition.singular}`,
       description,
-      type: 'article',
+      // `article` only for the kinds that are prose. A product page is a
+      // CreativeWork; calling everything an article is how a crawler ends up
+      // looking for an author and a date on a skills entry.
+      type: entity.kind === 'research' || entity.kind === 'publications' ? 'article' : 'website',
       url: `${portfolioConfig.site.url}${entity.href}`,
-      images: image ? [{ url: image }] : undefined,
+      /*
+       * A card with no alt text is a card a screen-reader user gets nothing from,
+       * and `images` without dimensions renders a card that reflows. The name is
+       * repeated in the alt because the media record has no caption to use; if it
+       * ever gains one, that is the better string.
+       */
+      images: image ? [{ url: image, alt: entity.data.name, width: 1200, height: 630 }] : undefined,
+      siteName: portfolioConfig.site.title,
     },
+    twitter: { card: image ? 'summary_large_image' : 'summary', title: entity.data.name, description },
   };
 }
 
@@ -64,7 +76,7 @@ export async function EntityPageBody({ category, slug, renderBody }: EntityPageB
   const definition = categoryFor(category);
   if (!definition) notFound();
 
-  const { graph } = await getGraph();
+  const { graph, bundle } = await getGraph();
   const entity = graph.get(definition.kind as EntityKind, slug);
   if (!entity) notFound();
 
@@ -78,15 +90,18 @@ export async function EntityPageBody({ category, slug, renderBody }: EntityPageB
   const reading = Boolean(body && renderBody);
   const isKlystr = slug === 'klystr';
 
+  const trail = [
+    { label: 'Surface', href: '/' },
+    { label: definition.label, href: `/${definition.kind}` },
+    { label: entity.data.name },
+  ];
+
   return (
     <div className={`page ${isKlystr ? 'page--wide' : ''}`}>
-      <Breadcrumbs
-        trail={[
-          { label: 'Surface', href: '/' },
-          { label: definition.label, href: `/${definition.kind}` },
-          { label: entity.data.name },
-        ]}
-      />
+      {/* The same trail the page draws, emitted as schema.org so the entity is
+          connected to the site graph instead of being a floating node. */}
+      <EntityJsonLd entity={entity} definition={definition} profile={bundle.data.profile} trail={trail} />
+      <Breadcrumbs trail={trail} />
       <Ruler depth={reading ? 5 : 3} label={reading ? 'Full technical record' : definition.singular} />
 
       <EntityDetail entity={entity} />

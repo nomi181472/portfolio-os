@@ -3,11 +3,14 @@ import { getGraph } from '@/lib/source';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { CopyHub } from '@/components/copy/CopyHub';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
+import { staticPage } from '@/lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = staticPage({
+  path: '/copy',
   title: 'Copy this Portfolio OS',
   description: 'Fork, clone, or copy the content and configuration to make this portfolio your own.',
-};
+});
 
 export default async function CopyPage() {
   const { bundle } = await getGraph();
@@ -15,6 +18,7 @@ export default async function CopyPage() {
 
   return (
     <div className="page">
+      <BreadcrumbJsonLd trail={[{ label: 'Surface', href: '/' }, { label: 'Copy this OS' }]} />
       <Breadcrumbs trail={[{ label: 'Surface', href: '/' }, { label: 'Copy this OS' }]} />
       <Ruler depth={1} label="Distribution & Forking" />
 

@@ -83,14 +83,14 @@ export function OrganisationBadge({ organisation }: { organisation?: string }) {
         textTransform: 'uppercase',
         padding: '2px 8px',
         borderRadius: '4px',
-        background: 'rgba(255, 255, 255, 0.08)',
-        border: '1px solid rgba(255, 255, 255, 0.28)',
+        background: 'var(--fill)',
+        border: '1px solid var(--line-strong)',
         color: 'var(--ink-bright)',
-        boxShadow: '0 0 10px rgba(255, 255, 255, 0.05)',
+        boxShadow: '0 0 10px var(--fill-faint)',
         whiteSpace: 'nowrap',
       }}
     >
-      <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#ffffff', boxShadow: '0 0 6px rgba(255, 255, 255, 0.8)' }} />
+      <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--signal)', boxShadow: '0 0 6px var(--glow)' }} />
       Company · {organisation}
     </span>
   );

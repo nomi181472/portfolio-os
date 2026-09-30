@@ -14,6 +14,8 @@ import { CATEGORIES, CATEGORY_LIST, categoryFor } from '@/lib/categories';
 import { Rows } from '@/components/entity/Row';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
+import { HubJsonLd } from '@/components/seo/JsonLd';
+import { portfolioConfig } from '@/config/portfolio.config';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import type { EntityKind } from '@/types/portfolio';
 
@@ -29,7 +31,14 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     title: definition.label,
     description: definition.note,
     alternates: { canonical: `/${definition.kind}` },
-    openGraph: { title: definition.label, description: definition.note },
+    openGraph: {
+      title: definition.label,
+      description: definition.note,
+      type: 'website',
+      url: `${portfolioConfig.site.url}/${definition.kind}`,
+      siteName: portfolioConfig.site.title,
+    },
+    twitter: { card: 'summary', title: definition.label, description: definition.note },
   };
 }
 
@@ -82,6 +91,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
   return (
     <div className="page">
+      {/* The hub describes itself as an ItemList of exactly the rows below, plus
+          the trail that leads here. Both are derived from the same `entities`,
+          so the markup cannot disagree with the page. */}
+      <HubJsonLd
+        definition={definition}
+        entities={entities}
+        trail={[{ label: 'Surface', href: '/' }, { label: definition.label }]}
+      />
       <Breadcrumbs trail={[{ label: 'Surface', href: '/' }, { label: definition.label }]} />
       <Ruler depth={1} label={definition.label} />
 

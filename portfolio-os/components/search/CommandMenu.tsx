@@ -31,14 +31,38 @@ const COMMANDS: Command[] = [
   { label: 'Edit this portfolio', hint: 'Local draft editing, export to JSON', run: (r) => r.push('/edit') },
 ];
 
-export function CommandMenu({ index, open, onClose }: { index: SearchRecord[]; open: boolean; onClose: () => void }) {
+export function CommandMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
+  const [index, setIndex] = useState<SearchRecord[]>([]);
+  const [indexState, setIndexState] = useState<'idle' | 'loading' | 'ready' | 'failed'>('idle');
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
 
+  // Fetched the first time the menu is opened, never before. The index is ~90 kB
+  // and only matters to someone who has already decided to search.
+  useEffect(() => {
+    if (!open || indexState !== 'idle') return;
+    let cancelled = false;
+    setIndexState('loading');
+    fetch('/api/search', { headers: { accept: 'application/json' } })
+      .then((response) => (response.ok ? (response.json() as Promise<SearchRecord[]>) : Promise.reject(new Error(String(response.status)))))
+      .then((records) => {
+        if (cancelled) return;
+        setIndex(records);
+        setIndexState('ready');
+      })
+      .catch(() => {
+        if (!cancelled) setIndexState('failed');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, indexState]);
+
   const results = useMemo(() => search(index, query), [index, query]);
+
   const commands = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return COMMANDS.slice(0, 4);
@@ -146,11 +170,17 @@ export function CommandMenu({ index, open, onClose }: { index: SearchRecord[]; o
             );
           })}
 
-          {query && total === 0 ? (
+          {query && indexState === 'failed' ? (
+            <li className={styles.empty}>Search could not load its index. Every section is still reachable from the menu on the left.</li>
+          ) : null}
+          {query && indexState !== 'failed' && total === 0 ? (
             <li className={styles.empty}>
-              Nothing matches “{query}”. Try a technology, a company, or a research state such as “hypothesis”.
+              {indexState === 'loading'
+                ? 'Loading the index…'
+                : <>Nothing matches “{query}”. Try a technology, a company, or a research state such as “hypothesis”.</>}
             </li>
           ) : null}
+
         </ul>
       </div>
     </div>

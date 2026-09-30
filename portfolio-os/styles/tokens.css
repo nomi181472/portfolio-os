@@ -32,6 +32,23 @@
   --rule: rgba(255, 255, 255, 0.07);
   --rule-strong: rgba(255, 255, 255, 0.14);
 
+  /* ------------------------------------------------------- interaction fill
+     These exist because the interface was written against a dark surface: fills,
+     hover states, control backgrounds and focus rings were hardcoded as literal
+     rgba(255,255,255,.x). Under a light palette those become invisible, so every
+     "lift the surface a little" tint is a token that each palette re-derives from
+     its own ink. Shadows are left as black — they read on both substrates. */
+  --fill-faint: rgba(255, 255, 255, 0.03);
+  --fill: rgba(255, 255, 255, 0.06);
+  --fill-strong: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.28);
+  --glow: rgba(255, 255, 255, 0.35);
+
+  /* Overlays and the rail's frosted ground. Both are palette-bound: a black scrim
+     on a paper theme reads as a bug, not as depth. */
+  --scrim: rgba(3, 4, 6, 0.72);
+  --rail-bg: rgba(9, 10, 13, 0.85);
+
   /* ---------------------------------------------------- signal & accents */
   --signal: #ffffff;
   --signal-quiet: #a0a6b5;
@@ -116,24 +133,49 @@
     --surface-vitrine: oklch(from var(--brand-primary) 0.20 calc(c * 0.85) h);
 
     --ink-bright: oklch(from var(--brand-secondary) 0.99 c h);
-    --ink: oklch(from var(--brand-secondary) 0.88 c h);
-    --ink-quiet: oklch(from var(--brand-secondary) 0.65 c h);
-    --ink-faint: oklch(from var(--brand-secondary) 0.44 c h);
+    --ink: oklch(from var(--brand-secondary) 0.90 c h);
+    /* --ink-quiet and --ink-faint were 0.65 / 0.44, which put --ink-faint at
+       3.29:1 against the surface — under the 4.5:1 WCAG AA floor for the small
+       metadata text that carries dates, counts and states. Both are raised so
+       every ink on the page clears AA, with the gap between them preserved so
+       the hierarchy still reads. */
+    --ink-quiet: oklch(from var(--brand-secondary) 0.72 c h);
+    --ink-faint: oklch(from var(--brand-secondary) 0.63 c h);
 
     --rule: rgba(255, 255, 255, 0.07);
     --rule-strong: rgba(255, 255, 255, 0.14);
 
     --signal: var(--brand-secondary);
     --signal-quiet: oklch(from var(--brand-secondary) 0.68 c h);
-    --signal-wash: rgba(255, 255, 255, 0.08);
+    --signal-wash: oklch(100% 0 0 / 0.08);
+
+    --fill-faint: oklch(100% 0 0 / 0.03);
+    --fill: oklch(100% 0 0 / 0.06);
+    --fill-strong: oklch(100% 0 0 / 0.12);
+    --line-strong: oklch(100% 0 0 / 0.28);
+    --glow: oklch(100% 0 0 / 0.35);
+    --scrim: oklch(2% 0.006 260 / 0.82);
+    --rail-bg: oklch(4% 0.006 260 / 0.92);
   }
 }
 
-/* Light appearance: monochromatic crisp paper and charcoal */
+/* ==========================================================================
+   Appearance themes.
+
+   The light palette existed in this file but was unreachable: the site hardcoded
+   a dark default, there was no toggle, and a choice could not survive a reload or
+   a second device. Four palettes now share one contract — every token above has a
+   value here, so nothing renders in the wrong theme's leftovers — and the
+   selection is made in lib/theme.ts, applied by a blocking script before paint,
+   and remembered in localStorage and a cookie so the server renders the same
+   colours the client will.
+   ========================================================================== */
+
+/* Paper: monochromatic crisp paper and charcoal */
 [data-appearance='light'] {
   color-scheme: light;
 
-  --surface-sunk: #f0f2f5;
+  --surface-sunk: #eef1f5;
   --surface: #f8fafc;
   --surface-raised: #ffffff;
   --surface-vitrine: #f1f4f8;
@@ -141,19 +183,127 @@
 
   --ink-bright: #090a0d;
   --ink: #242933;
-  --ink-quiet: #60687a;
-  --ink-faint: #8d95a5;
+  --ink-quiet: #4c5464;
+  /* #8d95a5 measured 2.88:1 on this surface. Metadata is small text, so it has
+     to reach 4.5:1 like any other copy; this value lands at ~4.7:1. */
+  --ink-faint: #697180;
 
-  --rule: rgba(0, 0, 0, 0.08);
-  --rule-strong: rgba(0, 0, 0, 0.16);
+  --rule: rgba(9, 10, 13, 0.10);
+  --rule-strong: rgba(9, 10, 13, 0.18);
+
+  /* Derived from charcoal, not white: on paper, a white tint is not a lift. */
+  --fill-faint: rgba(9, 10, 13, 0.035);
+  --fill: rgba(9, 10, 13, 0.06);
+  --fill-strong: rgba(9, 10, 13, 0.10);
+  --line-strong: rgba(9, 10, 13, 0.24);
+  --glow: rgba(9, 10, 13, 0.10);
+  --scrim: rgba(9, 10, 13, 0.42);
+  --rail-bg: rgba(255, 255, 255, 0.86);
 
   --signal: #090a0d;
   --signal-quiet: #4b5563;
-  --signal-wash: rgba(0, 0, 0, 0.05);
+  --signal-wash: rgba(9, 10, 13, 0.06);
 
   --lift: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 12px 32px -20px rgba(0, 0, 0, 0.15);
   --lift-subtle: 0 1px 0 rgba(255, 255, 255, 0.9) inset, 0 4px 16px -4px rgba(0, 0, 0, 0.08);
   --glow-subtle: 0 0 24px -4px rgba(0, 0, 0, 0.05);
+}
+
+/* High contrast: maximum separation, no translucent rules, no ambient lift.
+   Reachable by choice as well as by prefers-contrast, and deliberately its own
+   palette rather than a filter over the dark one. */
+[data-appearance='contrast'] {
+  color-scheme: dark;
+
+  --brand-secondary: #ffffff;
+
+  --surface-sunk: #000000;
+  --surface: #000000;
+  --surface-raised: #0a0b0e;
+  --surface-vitrine: #0a0b0e;
+  --surface-float: rgba(0, 0, 0, 0.98);
+
+  --ink-bright: #ffffff;
+  --ink: #ffffff;
+  --ink-quiet: #e4e7ec;
+  --ink-faint: #c8cdd6;
+
+  /* Solid, not translucent: on pure black, a 7% white rule disappears. */
+  --rule: #5c6373;
+  --rule-strong: #9aa1b0;
+
+  --fill-faint: rgba(255, 255, 255, 0.10);
+  --fill: rgba(255, 255, 255, 0.18);
+  --fill-strong: rgba(255, 255, 255, 0.28);
+  --line-strong: #ffffff;
+  --glow: transparent;
+  --scrim: rgba(0, 0, 0, 0.95);
+  --rail-bg: #000000;
+
+  --signal: #ffffff;
+  --signal-quiet: #e4e7ec;
+  --signal-wash: rgba(255, 255, 255, 0.16);
+
+  --lift: none;
+  --lift-subtle: none;
+  --glow-subtle: none;
+}
+
+/* Sepia: a warm reading surface. The one theme that breaks the two-hue rule,
+   and it does so only for the substrate, never for the signal. */
+[data-appearance='sepia'] {
+  color-scheme: light;
+
+  --surface-sunk: #e8e0d0;
+  --surface: #f4ece0;
+  --surface-raised: #fbf6ee;
+  --surface-vitrine: #efe6d8;
+  --surface-float: rgba(251, 246, 238, 0.88);
+
+  --ink-bright: #211a12;
+  --ink: #33291d;
+  --ink-quiet: #5c4c39;
+  --ink-faint: #6b5a45;
+
+  --rule: rgba(33, 26, 18, 0.12);
+  --rule-strong: rgba(33, 26, 18, 0.22);
+
+  --fill-faint: rgba(33, 26, 18, 0.04);
+  --fill: rgba(33, 26, 18, 0.07);
+  --fill-strong: rgba(33, 26, 18, 0.12);
+  --line-strong: rgba(33, 26, 18, 0.28);
+  --glow: rgba(107, 63, 29, 0.10);
+  --scrim: rgba(33, 26, 18, 0.45);
+  --rail-bg: rgba(251, 246, 238, 0.88);
+
+  --signal: #6b3f1d;
+  --signal-quiet: #7d5636;
+  --signal-wash: rgba(107, 63, 29, 0.08);
+
+  --lift: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 12px 32px -20px rgba(60, 42, 20, 0.22);
+  --lift-subtle: 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 4px 16px -4px rgba(60, 42, 20, 0.12);
+  --glow-subtle: 0 0 24px -4px rgba(60, 42, 20, 0.06);
+}
+
+/* Someone who asks the operating system for more contrast should not have to
+   find the toggle as well. */
+@media (prefers-contrast: more) {
+  html:not([data-appearance-applied]) {
+    color-scheme: dark;
+
+    --surface-sunk: #000000;
+    --surface: #000000;
+    --surface-raised: #0a0b0e;
+    --surface-vitrine: #0a0b0e;
+
+    --ink-bright: #ffffff;
+    --ink: #ffffff;
+    --ink-quiet: #e4e7ec;
+    --ink-faint: #c8cdd6;
+
+    --rule: #5c6373;
+    --rule-strong: #9aa1b0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

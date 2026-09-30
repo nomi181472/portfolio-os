@@ -125,6 +125,7 @@ const CONFIG_SAMPLE = `export const portfolioConfig = {
   theme: {
     primary: 'oklch(0.12 0.005 260)',   // Obsidian substrate (deep architectural black)
     secondary: 'oklch(0.98 0.002 260)',  // Crisp Silver / Luminescent White signal
+    // 'system' | 'dark' | 'light' | 'contrast' | 'sepia'
     defaultAppearance: 'dark',
   },
   features: {

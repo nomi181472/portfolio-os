@@ -21,7 +21,7 @@
 }
 
 .statVal {
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: var(--text-title);
   font-weight: 600;
   color: var(--ink-bright);
@@ -77,7 +77,7 @@
 }
 
 .copySuccess {
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: var(--text-small);
   color: var(--signal);
   display: inline-flex;
@@ -100,9 +100,9 @@
   padding: var(--space-snug) var(--space);
   background: rgba(0, 0, 0, 0.2);
   border-bottom: 1px solid var(--rule);
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: var(--text-small);
-  color: var(--ink-dim);
+  color: var(--ink-faint);
 }
 
 .codePre {
@@ -110,7 +110,7 @@
   padding: var(--space);
   max-height: 28rem;
   overflow-y: auto;
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: var(--text-small);
   line-height: 1.5;
   color: var(--ink);
@@ -140,7 +140,7 @@
 }
 
 .stepNumber {
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: var(--text-small);
   color: var(--signal);
   font-weight: 600;
@@ -151,10 +151,10 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--space-tight) var(--space-snug);
-  background: #060c10;
+  background: var(--surface-raised);
   border: 1px solid var(--rule);
   border-radius: 4px;
-  font-family: var(--font-mono);
+  font-family: var(--font-data);
   font-size: var(--text-small);
   color: var(--ink-bright);
 }

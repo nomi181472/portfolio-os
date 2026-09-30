@@ -2,7 +2,7 @@
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-frame);
   background:
-    radial-gradient(80% 60% at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 80%),
+    radial-gradient(80% 60% at 50% 50%, var(--fill-faint) 0%, transparent 80%),
     var(--surface-sunk);
   overflow: hidden;
   position: relative;
@@ -10,8 +10,8 @@
 }
 
 .frame:hover {
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.03);
+  border-color: var(--line-strong);
+  box-shadow: 0 0 30px var(--fill-faint);
 }
 
 .svg {
@@ -21,7 +21,7 @@
 }
 
 .grid line {
-  stroke: rgba(255, 255, 255, 0.05);
+  stroke: var(--fill);
   stroke-width: 0.5;
   opacity: 0.6;
   transition: opacity var(--dur-quick) var(--ease-out);
@@ -29,7 +29,7 @@
 
 .edge,
 .spoke {
-  stroke: rgba(255, 255, 255, 0.12);
+  stroke: var(--fill-strong);
   stroke-dasharray: 1000;
   stroke-dashoffset: 1000;
   animation: draw var(--dur-deliberate) var(--ease-out) forwards;
@@ -45,11 +45,11 @@
   opacity: 0.45;
 }
 
-/* Highlighted Edge on Node Hover */
+/* Highlighted Edge on Node Hover — the signal, so it reads on every palette */
 .edgeHighlighted {
-  stroke: #ffffff !important;
+  stroke: var(--signal) !important;
   opacity: 1 !important;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.7));
+  filter: drop-shadow(0 0 6px var(--glow));
 }
 
 /* Dimmed Edges when another node is hovered */
