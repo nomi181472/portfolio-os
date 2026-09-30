@@ -2432,7 +2432,8 @@
         "sk-dotnet",
         "sk-postgres",
         "sk-redis",
-        "sk-iam"
+        "sk-iam",
+        "sk-grpc"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2541,7 +2542,8 @@
         "sk-typescript",
         "sk-neo4j",
         "sk-redis",
-        "sk-python"
+        "sk-python",
+        "sk-grpc"
       ],
       "relatedProjects": [
         "proj-microservices-template"
@@ -2677,7 +2679,8 @@
         }
       ],
       "relatedSkills": [
-        "sk-frontend-nextjs"
+        "sk-frontend-nextjs",
+        "sk-leadership"
       ],
       "relatedExperience": [],
       "featured": true
@@ -2753,7 +2756,8 @@
         "sk-postgres",
         "sk-dotnet",
         "sk-typescript",
-        "sk-redis"
+        "sk-redis",
+        "sk-leadership"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2850,7 +2854,10 @@
         "sk-nats",
         "sk-flutter",
         "sk-dart",
-        "sk-ocelot"
+        "sk-ocelot",
+        "sk-leadership",
+        "sk-rest-apis",
+        "sk-grpc"
       ],
       "relatedExperience": [
         "exp-ktrade"
@@ -3358,7 +3365,6 @@
       "relatedSkills": [
         "sk-python",
         "sk-fastapi",
-        "sk-rest-apis",
         "sk-async-processing",
         "sk-frontend-nextjs",
         "sk-typescript",
@@ -3430,7 +3436,8 @@
         "sk-rest-apis",
         "sk-redis",
         "sk-postgres",
-        "sk-aws-api-gateway"
+        "sk-aws-api-gateway",
+        "sk-grpc"
       ],
       "relatedProducts": [
         "prod-ajeek"
@@ -3496,7 +3503,8 @@
         "sk-frontend-nextjs",
         "sk-typescript",
         "sk-postgres",
-        "sk-redis"
+        "sk-redis",
+        "sk-grpc"
       ],
       "relatedProjects": [
         "proj-tracker-simulator"
@@ -3777,7 +3785,8 @@
       "relatedSkills": [
         "sk-typescript",
         "sk-redis",
-        "sk-mongodb"
+        "sk-mongodb",
+        "sk-grpc"
       ],
       "relatedEducation": [
         "edu-bs"
