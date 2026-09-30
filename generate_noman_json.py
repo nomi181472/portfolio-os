@@ -839,7 +839,7 @@ portfolio = {
     {
       "id": "sk-arch",
       "slug": "solutions-architecture",
-      "name": "Distributed Systems & Solutions Architecture",
+      "name": "Distributed Systems",
       "category": "Architecture",
       "depth": "specialist",
       "firstUsed": "2019",

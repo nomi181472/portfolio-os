@@ -1633,7 +1633,7 @@
     {
       "id": "sk-arch",
       "slug": "solutions-architecture",
-      "name": "Distributed Systems & Solutions Architecture",
+      "name": "Distributed Systems",
       "category": "Architecture",
       "depth": "specialist",
       "firstUsed": "2019",
@@ -2347,7 +2347,8 @@
         "sk-dart",
         "sk-flutter",
         "sk-litert",
-        "sk-redis"
+        "sk-redis",
+        "sk-ocelot"
       ],
       "featured": true
     },
@@ -2433,7 +2434,11 @@
         "sk-postgres",
         "sk-redis",
         "sk-iam",
-        "sk-grpc"
+        "sk-grpc",
+        "sk-leadership",
+        "sk-ocelot",
+        "sk-async-processing",
+        "sk-microservices"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2543,7 +2548,9 @@
         "sk-neo4j",
         "sk-redis",
         "sk-python",
-        "sk-grpc"
+        "sk-grpc",
+        "sk-ocelot",
+        "sk-async-processing"
       ],
       "relatedProjects": [
         "proj-microservices-template"
@@ -2680,7 +2687,8 @@
       ],
       "relatedSkills": [
         "sk-frontend-nextjs",
-        "sk-leadership"
+        "sk-leadership",
+        "sk-async-processing"
       ],
       "relatedExperience": [],
       "featured": true
@@ -2757,7 +2765,8 @@
         "sk-dotnet",
         "sk-typescript",
         "sk-redis",
-        "sk-leadership"
+        "sk-leadership",
+        "sk-async-processing"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2857,7 +2866,9 @@
         "sk-ocelot",
         "sk-leadership",
         "sk-rest-apis",
-        "sk-grpc"
+        "sk-grpc",
+        "sk-arch",
+        "sk-async-processing"
       ],
       "relatedExperience": [
         "exp-ktrade"
@@ -2952,7 +2963,9 @@
         "sk-dynamodb",
         "sk-rest-apis",
         "sk-aws-api-gateway",
-        "sk-redis"
+        "sk-redis",
+        "sk-arch",
+        "sk-async-processing"
       ],
       "relatedExperience": [
         "exp-ktrade"
@@ -3043,7 +3056,12 @@
         "Open",
         "Independent"
       ],
-      "featured": true
+      "featured": true,
+      "relatedSkills": [
+        "sk-leadership",
+        "sk-async-processing",
+        "sk-microservices"
+      ]
     },
     {
       "id": "proj-navirox",
@@ -3179,7 +3197,10 @@
         "sk-litert",
         "sk-video-streaming",
         "sk-arch",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-leadership",
+        "sk-rest-apis",
+        "sk-microservices"
       ],
       "featured": true
     },
@@ -3275,7 +3296,9 @@
         "sk-testing-pytest",
         "sk-pgvector",
         "sk-qdrant",
-        "sk-tensorrt"
+        "sk-tensorrt",
+        "sk-leadership",
+        "sk-async-processing"
       ],
       "featured": true
     },
@@ -3369,7 +3392,9 @@
         "sk-frontend-nextjs",
         "sk-typescript",
         "sk-docker-compose",
-        "sk-pytorch-cuda"
+        "sk-pytorch-cuda",
+        "sk-leadership",
+        "sk-microservices"
       ],
       "relatedProjects": [
         "proj-resume-hr",
@@ -3428,7 +3453,6 @@
       ],
       "relatedSkills": [
         "sk-microservices",
-        "sk-arch",
         "sk-csharp",
         "sk-dotnet",
         "sk-ocelot",
@@ -3436,8 +3460,9 @@
         "sk-rest-apis",
         "sk-redis",
         "sk-postgres",
-        "sk-aws-api-gateway",
-        "sk-grpc"
+        "sk-grpc",
+        "sk-leadership",
+        "sk-async-processing"
       ],
       "relatedProducts": [
         "prod-ajeek"
@@ -3504,7 +3529,12 @@
         "sk-typescript",
         "sk-postgres",
         "sk-redis",
-        "sk-grpc"
+        "sk-grpc",
+        "sk-leadership",
+        "sk-rest-apis",
+        "sk-ocelot",
+        "sk-async-processing",
+        "sk-microservices"
       ],
       "relatedProjects": [
         "proj-tracker-simulator"
@@ -3590,7 +3620,9 @@
         "sk-jax",
         "sk-evotorch",
         "sk-ray",
-        "sk-frontend-nextjs"
+        "sk-frontend-nextjs",
+        "sk-leadership",
+        "sk-async-processing"
       ],
       "relatedEducation": [
         "edu-ms"
@@ -3645,9 +3677,10 @@
       "relatedSkills": [
         "sk-rest-apis",
         "sk-microservices",
-        "sk-arch",
         "sk-csharp",
-        "sk-postgres"
+        "sk-postgres",
+        "sk-leadership",
+        "sk-async-processing"
       ],
       "relatedProducts": [
         "prod-blue"
@@ -3709,7 +3742,11 @@
         "sk-fastapi",
         "sk-timescaledb",
         "sk-redis",
-        "sk-postgres"
+        "sk-postgres",
+        "sk-leadership",
+        "sk-rest-apis",
+        "sk-async-processing",
+        "sk-microservices"
       ],
       "relatedProjects": [
         "proj-tracker-simulator"
@@ -3786,7 +3823,12 @@
         "sk-typescript",
         "sk-redis",
         "sk-mongodb",
-        "sk-grpc"
+        "sk-grpc",
+        "sk-leadership",
+        "sk-rest-apis",
+        "sk-ocelot",
+        "sk-async-processing",
+        "sk-microservices"
       ],
       "relatedEducation": [
         "edu-bs"
