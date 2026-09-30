@@ -460,7 +460,7 @@
       "id": "sk-mfe",
       "slug": "module-federations",
       "name": "Module Federations",
-      "category": "Frameworks",
+      "category": "Architecture",
       "agentic": "9/10",
       "aiAssisted": "8/10",
       "independent": "6/10",
@@ -1933,6 +1933,150 @@
         "exp-ktrade",
         "exp-qbs"
       ]
+    },
+    {
+      "id": "sk-xunit",
+      "slug": "xunit-net",
+      "name": "xUnit.net",
+      "category": "Testing & Quality",
+      "depth": "specialist",
+      "firstUsed": "2021",
+      "context": "Type: .NET Unit & Integration Test Framework | Practices: Test-Driven Development, Mocking, Async Test Doubles",
+      "summary": "xUnit.net test authoring for .NET services: TDD suites, theory-driven data cases, async test doubles, and CI-enforced regression coverage.",
+      "description": "Writing and maintaining xUnit.net test suites for polyglot .NET microservices — theory-driven data cases, async-aware assertions for service and repository layers, dependency-injected test doubles, and coverage gates wired into CI so regressions fail the build rather than production.",
+      "featured": false,
+      "tags": [
+        "Testing Framework",
+        "Quality Assurance",
+        "xUnit",
+        ".NET",
+        "TDD",
+        "Unit Testing",
+        "Integration Testing"
+      ],
+      "technologies": [
+        "xUnit.net",
+        "Unit Testing",
+        "Test-Driven Development",
+        "Mocking",
+        "CI Coverage Gates"
+      ]
+    },
+    {
+      "id": "sk-patrol",
+      "slug": "patrol-flutter-end-to-end-testing",
+      "name": "Patrol — Flutter End-to-End Testing",
+      "category": "Testing & Quality",
+      "depth": "specialist",
+      "firstUsed": "2023",
+      "context": "Type: Flutter End-to-End & Integration Test Framework | Practices: Native Drivers, Multi-Device Test Runs, CI Automation",
+      "summary": "Patrol-driven end-to-end testing for Flutter apps: declarative test bundles, native-driver interaction with platform widgets, and multi-device runs in CI.",
+      "description": "Authoring and running Patrol end-to-end and integration test suites for Flutter applications. Writing declarative test bundles that drive real native drivers rather than the widget tree, so platform-specific behaviour, permissions, and navigation are exercised as a user would; parallelising suites across devices and reporting failures back into CI.",
+      "featured": false,
+      "tags": [
+        "Testing Framework",
+        "Quality Assurance",
+        "Flutter",
+        "Dart",
+        "End-to-End Testing",
+        "Mobile",
+        "CI Automation"
+      ],
+      "technologies": [
+        "Patrol",
+        "Flutter",
+        "Dart",
+        "End-to-End Testing",
+        "Native Drivers",
+        "CI Automation"
+      ]
+    },
+    {
+      "id": "sk-playwright",
+      "slug": "playwright",
+      "name": "Playwright",
+      "category": "Testing & Quality",
+      "depth": "specialist",
+      "firstUsed": "2023",
+      "context": "Type: Browser End-to-End & Component Test Automation | Practices: Cross-Browser Runs, Network & Visual Assertions, Parallel Execution",
+      "summary": "Playwright browser automation for web frontends: cross-browser end-to-end flows, network and visual assertions, and parallel suites running in CI.",
+      "description": "Building end-to-end and component test suites with Playwright against Next.js and other component frontends. Auto-waiting locators that remove the flakiness of hand-written waits, multi-browser and multi-context runs for responsive and authenticated flows, network interception and API assertions to verify the backend contract, and trace/screenshot capture on failure so a broken run is diagnosable from CI artefacts alone.",
+      "featured": false,
+      "tags": [
+        "Testing Framework",
+        "Quality Assurance",
+        "Playwright",
+        "End-to-End Testing",
+        "Browser Automation",
+        "CI Automation",
+        "Web"
+      ],
+      "technologies": [
+        "Playwright",
+        "End-to-End Testing",
+        "Cross-Browser Testing",
+        "Component Testing",
+        "Trace Viewer"
+      ]
+    },
+    {
+      "id": "sk-polyglot-test",
+      "slug": "polyglot-test-framework",
+      "name": "Polyglot — Custom In-House Test Framework",
+      "category": "Testing & Quality",
+      "depth": "specialist",
+      "firstUsed": "2022",
+      "context": "Type: In-House Cross-Language Test Harness | Practices: Polyglot Runtime, Unified Runner, Shared Fixtures & Reporting",
+      "summary": "An in-house test framework built on a polyglot stack, running and reporting suites written across Go, C#, and Python from one harness.",
+      "description": "Polyglot is a custom in-house test framework built on a polyglot stack rather than a single toolchain, so that a polyglot microservice estate can be exercised from one place. Each service language keeps its native runner — Go, xUnit.net, pytest — while the harness itself is implemented across the same stack and owns what those runners cannot: one command to select, run, and aggregate suites across languages, provisioning shared service-level fixtures and dependencies, and emitting a single report and a single exit code that CI can gate on. The goal is a test story that does not fragment at every language boundary.",
+      "featured": false,
+      "tags": [
+        "Testing Framework",
+        "Quality Assurance",
+        "In-House",
+        "Polyglot",
+        "Polyglot Stack",
+        "Test Orchestration",
+        "CI Automation",
+        "Microservices"
+      ],
+      "technologies": [
+        "Custom Test Framework",
+        "Polyglot Stack",
+        "Go",
+        "C# / .NET",
+        "Python",
+        "Test Orchestration",
+        "Shared Fixtures",
+        "CI Reporting"
+      ]
+    },
+    {
+      "id": "sk-microfrontends",
+      "slug": "micro-frontends",
+      "name": "Micro Frontends",
+      "category": "Architecture",
+      "depth": "specialist",
+      "firstUsed": "2023",
+      "context": "Type: Front-End Architecture | Focus: Independently Deployed Micro-Apps, Team-Level Ownership & Runtime Composition",
+      "summary": "Microfrontend architectures where independently owned and deployed frontends are composed at runtime by a host shell, so teams ship on their own cadence.",
+      "description": "Architecting microfrontend estates: splitting a frontend along domain boundaries into independently owned, built, and deployed micro-apps, then composing them at runtime behind a single host shell. The work is in the seams — shared dependency and state contracts, routing and lifecycle across remotes, consistent design language across independently shipped surfaces, and release isolation so one team's deploy cannot break another's.",
+      "featured": false,
+      "tags": [
+        "Microfrontends",
+        "Front-End Architecture",
+        "Architecture",
+        "Modular UI",
+        "Team Topologies",
+        "Decoupled Deployment"
+      ],
+      "technologies": [
+        "Micro Frontends",
+        "Domain-Based Splitting",
+        "Runtime Composition",
+        "Shared State Contracts",
+        "Independent Deployment"
+      ]
     }
   ],
   "experience": [
@@ -2348,7 +2492,11 @@
         "sk-flutter",
         "sk-litert",
         "sk-redis",
-        "sk-ocelot"
+        "sk-ocelot",
+        "sk-xunit",
+        "sk-testing-pytest",
+        "sk-playwright",
+        "sk-polyglot-test"
       ],
       "featured": true
     },
@@ -2438,7 +2586,9 @@
         "sk-leadership",
         "sk-ocelot",
         "sk-async-processing",
-        "sk-microservices"
+        "sk-microservices",
+        "sk-xunit",
+        "sk-playwright"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2550,7 +2700,10 @@
         "sk-python",
         "sk-grpc",
         "sk-ocelot",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-xunit",
+        "sk-testing-pytest",
+        "sk-playwright"
       ],
       "relatedProjects": [
         "proj-microservices-template"
@@ -2688,7 +2841,10 @@
       "relatedSkills": [
         "sk-frontend-nextjs",
         "sk-leadership",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-playwright",
+        "sk-microfrontends",
+        "sk-mfe"
       ],
       "relatedExperience": [],
       "featured": true
@@ -2766,7 +2922,8 @@
         "sk-typescript",
         "sk-redis",
         "sk-leadership",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-xunit"
       ],
       "relatedExperience": [
         "exp-qbs"
@@ -2868,7 +3025,9 @@
         "sk-rest-apis",
         "sk-grpc",
         "sk-arch",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-xunit",
+        "sk-patrol"
       ],
       "relatedExperience": [
         "exp-ktrade"
@@ -2965,7 +3124,8 @@
         "sk-aws-api-gateway",
         "sk-redis",
         "sk-arch",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-xunit"
       ],
       "relatedExperience": [
         "exp-ktrade"
@@ -3200,7 +3360,8 @@
         "sk-async-processing",
         "sk-leadership",
         "sk-rest-apis",
-        "sk-microservices"
+        "sk-microservices",
+        "sk-testing-pytest"
       ],
       "featured": true
     },
@@ -3298,7 +3459,9 @@
         "sk-qdrant",
         "sk-tensorrt",
         "sk-leadership",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-xunit",
+        "sk-playwright"
       ],
       "featured": true
     },
@@ -3394,7 +3557,9 @@
         "sk-docker-compose",
         "sk-pytorch-cuda",
         "sk-leadership",
-        "sk-microservices"
+        "sk-microservices",
+        "sk-testing-pytest",
+        "sk-playwright"
       ],
       "relatedProjects": [
         "proj-resume-hr",
@@ -3462,7 +3627,8 @@
         "sk-postgres",
         "sk-grpc",
         "sk-leadership",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-xunit"
       ],
       "relatedProducts": [
         "prod-ajeek"
@@ -3534,7 +3700,11 @@
         "sk-rest-apis",
         "sk-ocelot",
         "sk-async-processing",
-        "sk-microservices"
+        "sk-microservices",
+        "sk-xunit",
+        "sk-testing-pytest",
+        "sk-playwright",
+        "sk-pytorch-cuda"
       ],
       "relatedProjects": [
         "proj-tracker-simulator"
@@ -3622,7 +3792,9 @@
         "sk-ray",
         "sk-frontend-nextjs",
         "sk-leadership",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-testing-pytest",
+        "sk-playwright"
       ],
       "relatedEducation": [
         "edu-ms"
@@ -3680,7 +3852,8 @@
         "sk-csharp",
         "sk-postgres",
         "sk-leadership",
-        "sk-async-processing"
+        "sk-async-processing",
+        "sk-xunit"
       ],
       "relatedProducts": [
         "prod-blue"
@@ -3746,7 +3919,9 @@
         "sk-leadership",
         "sk-rest-apis",
         "sk-async-processing",
-        "sk-microservices"
+        "sk-microservices",
+        "sk-testing-pytest",
+        "sk-pytorch-cuda"
       ],
       "relatedProjects": [
         "proj-tracker-simulator"
