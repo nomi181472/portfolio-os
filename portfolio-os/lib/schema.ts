@@ -188,6 +188,18 @@ export const EntitySchema = z.object({
   timeline: z.array(TimelineEventSchema).default([]),
   featured: z.boolean().default(false),
   order: z.number().int().optional(),
+  /**
+   * Presentation, not content. `immersive` gives an entity that *is* a running
+   * application the full page width and drops the connected-work footer, so the
+   * embed reads as the work. The renderer keys off this field and never off a
+   * slug (§105), which is why a fork can opt any entity in without a code change.
+   */
+  presentation: z.enum(['standard', 'immersive']).default('standard'),
+  /**
+   * A single call to action for the header — typically launching a project's
+   * live workspace. Authored here, so no component carries a URL (§71).
+   */
+  primaryAction: z.object({ label: z.string().min(1), url: safeUrl }).optional(),
   /** Outbound references, by entity id. */
   relatedSkills: z.array(z.string()).default([]),
   relatedProducts: z.array(z.string()).default([]),

@@ -88,7 +88,9 @@ export async function EntityPageBody({ category, slug, renderBody }: EntityPageB
 
   const body = entity.data.body;
   const reading = Boolean(body && renderBody);
-  const isKlystr = slug === 'klystr';
+  // Immersive entities (a running workspace, for instance) ask for the wide
+  // layout from their own data rather than from a slug the renderer recognises.
+  const immersive = entity.data.presentation === 'immersive';
 
   const trail = [
     { label: 'Surface', href: '/' },
@@ -97,7 +99,7 @@ export async function EntityPageBody({ category, slug, renderBody }: EntityPageB
   ];
 
   return (
-    <div className={`page ${isKlystr ? 'page--wide' : ''}`}>
+    <div className={`page ${immersive ? 'page--wide' : ''}`}>
       {/* The same trail the page draws, emitted as schema.org so the entity is
           connected to the site graph instead of being a floating node. */}
       <EntityJsonLd entity={entity} definition={definition} profile={bundle.data.profile} trail={trail} />
@@ -108,7 +110,7 @@ export async function EntityPageBody({ category, slug, renderBody }: EntityPageB
 
       {reading ? <section className="section">{renderBody!(body!)}</section> : null}
 
-      {!isKlystr ? (
+      {!immersive ? (
         <>
           <Related
             edges={edges}

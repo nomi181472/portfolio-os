@@ -2740,6 +2740,11 @@
       "summary": "Independent open-source developer and operations platform providing visual Kubernetes resource topology, RBAC security inspection, and manifest analysis.",
       "description": "Klystr is an independent open-source Kubernetes operations and cluster visualization platform engineered to demystify complex containerized architectures. It maps live cluster states into an interactive directed graph, audits RBAC permissions for privilege escalation vectors, and integrates directly into developer workflows through the Visual Studio Code Marketplace and an interactive topology canvas.",
       "status": "live",
+      "presentation": "immersive",
+      "primaryAction": {
+        "label": "Open Fullscreen Workspace ↗",
+        "url": "https://klystr.botonetics.com/"
+      },
       "source": {
         "type": "open-source",
         "url": "https://github.com/nomi181472/klystr",

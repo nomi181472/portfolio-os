@@ -59,39 +59,6 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
     ('issued' in data && data.issued ? formatDate(String(data.issued)) : '');
   const periodLine = stamped ? `${stamped}${duration ? ` · ${duration}` : ''}` : '';
 
-  if (entity.data.slug === 'klystr') {
-    return (
-      <div style={{ width: '100%' }}>
-        <header style={{ marginBottom: 'var(--space-loose)' }}>
-          <p className="meta" style={{ marginBottom: 'var(--space-tight)' }}>{category.singular}</p>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 'var(--space)' }}>
-            <h1 className="heading" style={{ margin: 0 }}>{entity.data.name}</h1>
-            <div style={{ display: 'flex', gap: 'var(--space-snug)', alignItems: 'center', flexWrap: 'wrap' }}>
-              <StatusBadge status={entity.data.status} />
-              <SourceBadge source={data.source as never} />
-              <a
-                href="https://klystr.botonetics.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="control"
-                style={{ textDecoration: 'none' }}
-              >
-                Open Fullscreen Workspace ↗
-              </a>
-            </div>
-          </div>
-          {entity.data.summary ? (
-            <p className="lead" style={{ marginTop: 'var(--space-tight)' }}>{entity.data.summary}</p>
-          ) : null}
-        </header>
-
-        <div style={{ width: '100%', marginTop: 'var(--space)' }}>
-          <MediaGallery items={entity.data.media} />
-        </div>
-      </div>
-    );
-  }
-
   const sections: Record<DetailSection, React.ReactNode> = {
     description: (entity.data.description || ('reason' in data && data.reason)) ? (
       <div style={{ display: 'grid', gap: 'var(--space-loose)' }}>
@@ -384,7 +351,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
       <header style={{ marginBottom: 'var(--space-wide)' }}>
         <p className="meta" style={{ marginBottom: 'var(--space-tight)' }}>{category.singular}</p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-snug)', flexWrap: 'wrap' }}>
-          {entity.data.media?.find((m) => m.url.includes('logo')) && entity.data.slug !== 'klystr' ? (
+          {entity.data.media?.find((m) => m.url.includes('logo')) ? (
             <div style={{
               width: 'clamp(36px, 8vw, 48px)',
               height: 'clamp(36px, 8vw, 48px)',
@@ -439,6 +406,17 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-loose)', marginTop: 'var(--space-loose)', alignItems: 'center' }}>
           <StatusBadge status={entity.data.status} />
+          {entity.data.primaryAction ? (
+            <a
+              href={entity.data.primaryAction.url}
+              target="_blank"
+              rel="noreferrer"
+              className="control"
+              style={{ textDecoration: 'none' }}
+            >
+              {entity.data.primaryAction.label}
+            </a>
+          ) : null}
           {'organisation' in data && data.organisation && (entity.kind === 'products' || entity.kind === 'projects') ? (
             <OrganisationBadge organisation={String(data.organisation)} />
           ) : null}
