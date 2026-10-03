@@ -54,9 +54,12 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
     return Array.from(map.values()).sort((a, b) => b.count - a.count);
   }, [connectedSkills]);
 
-  if (connectedSkills.length === 0 || uniqueTargets.length === 0) {
-    return null;
-  }
+  // NOTE: no early return above this line. It used to sit directly after
+  // `uniqueTargets`, which left the five `useMemo` calls below it unreachable on a
+  // section with no connected skills — so a section that gained a skill mid-session
+  // went from rendering zero hooks to rendering five, and React throws "Rendered more
+  // hooks than during the previous render". The empty case is handled after every
+  // hook has run, below.
 
   // Layout calculations
   const leftX = 14;
@@ -133,6 +136,11 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
     if (!activeMobileTarget) return [];
     return connectedSkills.filter((s) => s.targets.some((t) => t.id === activeMobileTarget.id));
   }, [activeMobileTarget, connectedSkills]);
+
+  // After every hook, never before: see the note at the top of the layout block.
+  if (connectedSkills.length === 0 || uniqueTargets.length === 0) {
+    return null;
+  }
 
   return (
     <div className={styles.container}>

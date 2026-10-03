@@ -225,6 +225,39 @@ export const ProfileSchema = z.object({
   email: z.string().email().optional(),
 });
 
+/**
+ * Availability is a statement the portfolio *owner* makes about themselves, not
+ * something anything in this file may infer.
+ *
+ * It is an enum rather than a boolean on purpose. "Closed" and "open to work" are
+ * not the only two honest answers — "looking for opportunities" is a real third
+ * state, and a boolean would force one of the three to be expressed as a
+ * negation of the others, which is exactly the kind of drift that turns into a
+ * false claim the moment a reader takes it literally.
+ *
+ * The portfolio intelligence agent reads this field verbatim. It is never
+ * derived from `experience[].period.ongoing`, from the presence of an email
+ * address, or from any other signal in the document.
+ */
+export const AvailabilityStatusSchema = z.enum([
+  'open-to-work',
+  'looking-for-opportunities',
+  'closed',
+]);
+
+export const AvailabilitySchema = z.object({
+  /**
+   * Defaults to 'closed' so that a fork which has not thought about this cannot
+   * accidentally ship an availability claim. The agent's wording for every value
+   * is fixed in lib/agent/knowledge.ts and is never generated.
+   */
+  status: AvailabilityStatusSchema.default('closed'),
+  /** Free text the owner controls. Shown as written; never paraphrased. */
+  note: z.string().optional(),
+  /** When the owner last set this. The agent never guesses freshness. */
+  updatedAt: isoish.optional(),
+});
+
 export const ExperienceSchema = EntitySchema.extend({
   organisation: z.string().optional(),
   role: z.string().optional(),
@@ -426,6 +459,7 @@ export const PortfolioSchema = z.object({
   /** Set true on the shipped sample so the UI can say so out loud (§96). */
   exampleContent: z.boolean().default(false),
   profile: ProfileSchema,
+  availability: AvailabilitySchema.default({ status: 'closed' }),
   experience: z.array(ExperienceSchema).default([]),
   education: z.array(EducationSchema).default([]),
   products: z.array(ProductSchema).default([]),

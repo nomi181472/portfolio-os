@@ -22,6 +22,7 @@ import type {
   TimelineEventSchema,
   IntegrationSchema,
   ProfileSchema,
+  AvailabilitySchema,
   ExperienceSchema,
   EducationSchema,
   ProductSchema,
@@ -50,6 +51,7 @@ export type TimelineEvent = z.infer<typeof TimelineEventSchema>;
 export type Integration = z.infer<typeof IntegrationSchema>;
 
 export type Profile = z.infer<typeof ProfileSchema>;
+export type Availability = z.infer<typeof AvailabilitySchema>;
 export type Experience = z.infer<typeof ExperienceSchema>;
 export type Education = z.infer<typeof EducationSchema>;
 export type Product = z.infer<typeof ProductSchema>;

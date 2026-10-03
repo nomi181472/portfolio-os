@@ -55,6 +55,18 @@ portfolio = {
       }
     ]
   },
+  # Portfolio-level availability signal. The owner states this; nothing in the
+  # document infers it. The portfolio intelligence agent reads `status` verbatim
+  # and is forbidden from stating availability for any other value.
+  #
+  # TODO(owner): set to "open-to-work" or "looking-for-opportunities" when that
+  # is true. "closed" is the safe default — with it the agent will never imply
+  # Noman is looking, which is the only acceptable failure mode for a field this
+  # consequential. It becomes true only when the data says so.
+  "availability": {
+    "status": "closed",
+    "updatedAt": "2026-09-30"
+  },
   "skills": [
     # ── 1. PROGRAMMING LANGUAGES (Pure Languages Only) ───────────────
     {
@@ -3002,7 +3014,74 @@ target_paths = [
     "/home/noman/projects/noman-portfolio/portfolio.json"
 ]
 
+# ------------------------------------------------------------------------------
+# DRIFT GUARD
+#
+# This script is NOT the source of truth for portfolio.json. The committed file has
+# been hand-edited since the last time this ran, and those edits are real content:
+# five skills (xUnit.net, Patrol, Playwright, Polyglot, Micro Frontends), five
+# product integrations (SAP, Tadawul, PSX x2, JazzCash), a fuller Redis write-up,
+# and several dozen relatedSkills edges exist in portfolio.json but not here.
+#
+# Running this script unguarded therefore does not refresh the data -- it deletes
+# a meaningful fraction of it. That is how it was discovered: a four-line addition
+# came back as a 444-line deletion.
+#
+# So the guard below refuses to write whenever the generated document would lose an
+# entity or an integration relative to what is on disk. If it trips, the fix is to
+# bring this script forward to match the data, not to accept the write.
+# ------------------------------------------------------------------------------
+def assert_no_content_loss(generated, path):
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        try:
+            on_disk = json.load(f)
+        except json.JSONDecodeError:
+            return  # Unparseable on disk: nothing to compare against, not a loss.
+
+    losses = []
+    for key, value in generated.items():
+        if not isinstance(value, list):
+            continue
+        if not isinstance(on_disk.get(key), list):
+            continue
+        have = {e.get("id") for e in on_disk[key] if isinstance(e, dict)}
+        missing = sorted(i for i in have if i and i not in {e.get("id") for e in value if isinstance(e, dict)})
+        if missing:
+            losses.append(f"  {key}: would drop {len(missing)} -> {', '.join(missing)}")
+
+    for product in generated.get("products", []):
+        if not isinstance(product, dict):
+            continue
+        was = next((p for p in on_disk.get("products", []) if isinstance(p, dict) and p.get("id") == product.get("id")), None)
+        if not was:
+            continue
+        if len(was.get("integrations", [])) > len(product.get("integrations", [])):
+            losses.append(
+                f"  products/{product.get('id')}: would drop "
+                f"{len(was.get('integrations', [])) - len(product.get('integrations', []))} integration(s)"
+            )
+
+    if losses:
+        raise SystemExit(
+            "REFUSING TO WRITE — this script has drifted behind portfolio.json.\n"
+            + "\n".join(losses)
+            + "\n\nBring this script forward to match the data, then re-run.\n"
+            f"  ({path} left untouched)"
+        )
+
+
+for p in target_paths:
+    assert_no_content_loss(portfolio, p)
+
+# ensure_ascii=False keeps the em dashes, middle dots, arrows and accented names in
+# the document as real UTF-8. The default (True) escapes them to \uXXXX, which is
+# still valid JSON and still parses to the same object -- but it turns a
+# three-line diff into a four-hundred-line one, and it makes the committed file
+# unreadable for the person who has to review content changes by hand.
 for p in target_paths:
     with open(p, "w", encoding="utf-8") as f:
-        json.dump(portfolio, f, indent=2)
+        json.dump(portfolio, f, indent=2, ensure_ascii=False)
+        f.write("\n")
     print(f"Successfully wrote {p}")

@@ -1,0 +1,571 @@
+/**
+ * components/agent/AgentWidget.module.css
+ *
+ * Tokens only — no literal colours — so the widget follows the palette the
+ * reader has already chosen, including the sepia and light sets.
+ */
+
+.widget {
+  position: fixed;
+  inset-block-end: var(--space);
+  inset-inline-end: var(--space);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-tight);
+}
+
+.launcher {
+  appearance: none;
+  cursor: pointer;
+  padding: var(--space-tight) var(--space-snug);
+  border-radius: 999px;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-float);
+  backdrop-filter: blur(12px);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-tight);
+}
+
+.launcherIcon {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: block;
+  flex-shrink: 0;
+}
+
+.launcherText {
+  font-weight: 600;
+}
+
+.launcher:hover {
+  border-color: var(--line-strong);
+  color: var(--ink-bright);
+}
+
+.launcher:focus-visible,
+.close:focus-visible,
+.send:focus-visible,
+.suggestion:focus-visible,
+.card:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 2px;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: min(26rem, calc(100vw - var(--space) * 2));
+  max-height: min(34rem, calc(100vh - var(--space) * 2));
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.42);
+  overflow: hidden;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space);
+  padding: var(--space);
+  border-block-end: 1px solid var(--rule);
+}
+
+.title {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--ink-bright);
+}
+
+.subtitle {
+  margin: 0.125rem 0 0;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.close {
+  appearance: none;
+  cursor: pointer;
+  border: 0;
+  background: none;
+  color: var(--ink-quiet);
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0 var(--space-hair);
+}
+
+.close:hover {
+  color: var(--ink-bright);
+}
+
+.status {
+  margin: 0;
+  padding: var(--space) var(--space) 0;
+  font-size: 0.8125rem;
+  color: var(--ink-quiet);
+}
+
+/*
+ * The optional model panel. Deliberately quieter than the conversation: the agent
+ * already answers without a model, so this is an offer, not a blocker. Nothing
+ * here is disabled-looking or urgent unless it has actually failed.
+ */
+.brain {
+  margin: 0;
+  padding: var(--space);
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+}
+
+.brainRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.brainLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.brainDetail {
+  font-size: 0.8125rem;
+  color: var(--ink-quiet);
+}
+
+.brainReady .brainDetail {
+  color: var(--ink);
+}
+
+.brainError .brainDetail {
+  color: var(--ink);
+}
+
+.brainNote {
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+  margin: 0;
+}
+
+.brainActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+/*
+ * Progress, for both phases: the download (bytes) and the index (chunks).
+ *
+ * `role="progressbar"` with the value mirrored in ARIA, and the numbers written next
+ * to it — the bar alone would leave a screen reader with "loading" and a reader with
+ * no idea how much is left. The two phases share these classes deliberately: they are
+ * the same shape of progress, and reusing them is what keeps the reduced-motion and
+ * high-contrast rules below applying to both.
+ */
+.brainProgress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-hair);
+}
+
+.brainTrack {
+  height: 3px;
+  width: 100%;
+  background: var(--fill);
+  border-radius: var(--radius-control);
+  overflow: hidden;
+}
+
+.brainFill {
+  height: 100%;
+  background: var(--ink-quiet);
+  border-radius: var(--radius-control);
+}
+
+.brainButton {
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--ink);
+  background: var(--fill);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  padding: var(--space-hair) var(--space-tight);
+  cursor: pointer;
+}
+
+.brainButton:hover {
+  background: var(--fill-strong);
+  color: var(--ink-bright);
+}
+
+/*
+ * The measured timings, set apart from the notes around them.
+ *
+ * A distinct class because these are the only figures on the panel: a reader who sees
+ * "4.1s" needs it to read as a measurement of this machine rather than as part of the
+ * explanation above it. The tabular numerals keep the line from shifting as the
+ * numbers change between turns.
+ */
+.brainTimings {
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.log {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--space);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+}
+
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-tight);
+}
+
+.suggestionsLead {
+  margin: 0 0 var(--space-hair);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.suggestion {
+  appearance: none;
+  cursor: pointer;
+  text-align: start;
+  padding: var(--space-tight) var(--space-snug);
+  border-radius: 999px;
+  border: 1px solid var(--rule);
+  background: var(--fill-faint);
+  color: var(--ink-quiet);
+  font: inherit;
+  font-size: 0.8125rem;
+}
+
+.suggestion:hover {
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.turn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+}
+
+.question {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--ink-bright);
+}
+
+.pending {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+}
+
+/*
+ * The reply keeps its own line breaks rather than running into the card list.
+ * `text-wrap: pretty` stops the last line leaving a single orphan word, which is
+ * what long composed sentences otherwise do in a narrow column.
+ */
+.answer {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+
+.match {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-hair);
+  padding: var(--space-snug);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  background: var(--fill-faint);
+}
+
+.matchRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space);
+}
+
+.matchLabel {
+  font-size: 0.75rem;
+  color: var(--ink-quiet);
+}
+
+.matchValue {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.875rem;
+  color: var(--ink-bright);
+}
+
+.matchFoot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space);
+  font-size: 0.6875rem;
+  color: var(--ink-faint);
+}
+
+.grade {
+  text-transform: lowercase;
+}
+
+.matchCount {
+  font-variant-numeric: tabular-nums;
+}
+
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-tight);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-hair);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--rule);
+  background: var(--fill-faint);
+  color: var(--ink);
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.card:hover {
+  border-color: var(--rule-strong);
+  color: var(--ink-bright);
+}
+
+.cardKind {
+  color: var(--ink-faint);
+}
+
+.cardName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 14rem;
+}
+
+.caveats {
+  margin: 0;
+  padding-inline-start: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-hair);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+/*
+ * The note about cards that already point at the current page.
+ *
+ * Its own class rather than reusing `.caveats`, because it is a statement about the
+ * interface rather than a caveat about the evidence — and it needs no bullet, since
+ * there is only ever one of it and the list indent would read as another limitation.
+ */
+.caveatNote {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.composer {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-tight);
+  padding: var(--space);
+  border-block-start: 1px solid var(--rule);
+}
+
+.input {
+  flex: 1 1 auto;
+  resize: none;
+  padding: var(--space-tight) var(--space-snug);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.input::placeholder {
+  color: var(--ink-faint);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}
+
+.send {
+  appearance: none;
+  cursor: pointer;
+  padding: var(--space-tight) var(--space);
+  border-radius: var(--radius-control);
+  border: 1px solid var(--rule-strong);
+  background: var(--fill);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8125rem;
+}
+
+.send:hover:not(:disabled) {
+  background: var(--fill-strong);
+  color: var(--ink-bright);
+}
+
+.send:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .panel {
+    animation: rise 140ms ease-out;
+  }
+
+  /*
+   * The download bar animates its width. A 600 MB download that animates for a
+   * reader who has asked for reduced motion is the wrong trade, so the transition
+   * is inside the same guard as the panel rise rather than declared globally.
+   */
+  .brainFill {
+    transition: width 180ms linear;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+  }
+}
+/*
+ * The breakdown. Each state group is a bordered row rather than a coloured chip:
+ * colour-coding evidence states would imply a scale the palette cannot carry, and
+ * four arbitrary hues on a themed surface is how a themed surface stops matching.
+ * The heading says which state it is; the body says why.
+ */
+.breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-snug);
+  padding-block-start: var(--space-tight);
+}
+
+.breakdownGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-hair);
+}
+
+.breakdownHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space);
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.breakdownState {
+  text-transform: none;
+  letter-spacing: normal;
+  font-size: 0.75rem;
+}
+
+.breakdownCount {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-faint);
+}
+
+.breakdownList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-hair);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breakdownItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding-inline-start: var(--space-tight);
+  border-inline-start: 2px solid var(--rule);
+}
+
+.breakdownTerm {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-hair);
+  font-size: 0.8125rem;
+  color: var(--ink);
+}
+
+.breakdownLink {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--rule-strong);
+}
+
+.breakdownLink:hover {
+  color: var(--ink-bright);
+  text-decoration-color: var(--ink-faint);
+}
+
+.breakdownLevel {
+  font-size: 0.6875rem;
+  color: var(--ink-faint);
+}
+
+.breakdownWhy {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--ink-quiet);
+  text-wrap: pretty;
+}

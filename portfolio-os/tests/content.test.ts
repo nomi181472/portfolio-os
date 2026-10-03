@@ -27,6 +27,19 @@ test('the bundled example content is valid', () => {
   assert.equal(result.ok, true, result.ok ? '' : JSON.stringify(result.issues, null, 2));
 });
 
+test('the root portfolio.json is byte-identical to the copy the app reads', () => {
+  // Two files hold the same content: `portfolio.json` at the repository root is what a
+  // visitor or a fork sees, and `content/portfolio.json` is what the build imports.
+  // Divergence between them is the worst class of bug here — the site would silently
+  // answer from facts the published file does not contain, and nothing else in the
+  // suite would notice, because both files validate perfectly well on their own.
+  //
+  // Compared as bytes, not parsed. A reformat that preserves meaning still changes the
+  // published file's hash, and that is the change worth catching.
+  const root = readFileSync(resolve(process.cwd(), '..', 'portfolio.json'), 'utf8');
+  assert.equal(root, raw, 'root portfolio.json differs from content/portfolio.json');
+});
+
 test('the bundled example content has no duplicate slugs', () => {
   const result = validatePortfolio(example);
   assert.ok(result.ok);

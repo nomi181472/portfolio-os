@@ -39,27 +39,32 @@ export function CommandMenu({ open, onClose }: { open: boolean; onClose: () => v
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
+  const indexStarted = useRef(false);
 
   // Fetched the first time the menu is opened, never before. The index is ~90 kB
   // and only matters to someone who has already decided to search.
+  //
+  // `indexStarted` is a ref rather than the `indexState` guard, and it is the
+  // whole reason this works. `indexState` used to be a dependency, so the
+  // `setIndexState('loading')` below re-ran this effect, whose cleanup marked the
+  // in-flight request cancelled — and the response it had already received was
+  // thrown away. The menu then sat on "Loading the index…" indefinitely: the
+  // request went out, the index never arrived, and there was no error to show.
   useEffect(() => {
-    if (!open || indexState !== 'idle') return;
-    let cancelled = false;
+    if (!open || indexStarted.current) return;
+    indexStarted.current = true;
     setIndexState('loading');
     fetch('/api/search', { headers: { accept: 'application/json' } })
       .then((response) => (response.ok ? (response.json() as Promise<SearchRecord[]>) : Promise.reject(new Error(String(response.status)))))
       .then((records) => {
-        if (cancelled) return;
         setIndex(records);
         setIndexState('ready');
       })
-      .catch(() => {
-        if (!cancelled) setIndexState('failed');
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [open, indexState]);
+      .catch(() => setIndexState('failed'));
+    // No cleanup on purpose: the index is wanted for the rest of the session, so
+    // closing the menu mid-fetch should not discard it. State set after unmount
+    // is inert.
+  }, [open]);
 
   const results = useMemo(() => search(index, query), [index, query]);
 

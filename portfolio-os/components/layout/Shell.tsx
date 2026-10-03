@@ -29,6 +29,17 @@ const CommandMenu = dynamic(
   { ssr: false },
 );
 
+// Code-split and client-only, like the search menu — but mounted as soon as the
+// page is, unlike it. The launcher is the affordance that invites the first
+// question, so it has to be on screen to be pressed; latching it the way search is
+// latched would mean the button that opens the widget only exists once the widget
+// is already open. The expensive part is deferred separately: the knowledge
+// payload is fetched on first open, not on page load.
+const AgentWidget = dynamic(
+  () => import('@/components/agent/AgentWidget').then((mod) => mod.AgentWidget),
+  { ssr: false },
+);
+
 interface ShellProps {
   children: React.ReactNode;
   /** Rendered after `</main>` rather than inside it: a footer is not content. */
@@ -48,11 +59,14 @@ interface ShellProps {
 export function Shell({ children, footer, profile, startupName, appearance }: ShellProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchMounted, setSearchMounted] = useState(false);
+  const [agentOpen, setAgentOpen] = useState(false);
 
   const openSearch = useCallback(() => {
     setSearchMounted(true);
     setSearchOpen(true);
   }, []);
+
+  const openAgent = useCallback(() => setAgentOpen(true), []);
 
   useEffect(() => {
     if (!portfolioConfig.features.search) return;
@@ -77,6 +91,13 @@ export function Shell({ children, footer, profile, startupName, appearance }: Sh
       </div>
       {portfolioConfig.features.search && searchMounted ? (
         <CommandMenu open={searchOpen} onClose={() => setSearchOpen(false)} />
+      ) : null}
+      {portfolioConfig.features.agent ? (
+        <AgentWidget
+          open={agentOpen}
+          onOpen={openAgent}
+          onClose={() => setAgentOpen(false)}
+        />
       ) : null}
     </div>
   );

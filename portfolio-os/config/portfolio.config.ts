@@ -39,6 +39,8 @@ export interface PortfolioConfig {
     search: boolean;
     graph: boolean;
     analytics: boolean;
+    /** The portfolio chat. Answers from the content file; no model required. */
+    agent: boolean;
     /** Show the banner explaining that shipped content is a sample. */
     exampleNotice: boolean;
   };
@@ -75,6 +77,7 @@ export const portfolioConfig: PortfolioConfig = {
     search: true,
     graph: true,
     analytics: true,
+    agent: true,
     exampleNotice: false,
   },
 
