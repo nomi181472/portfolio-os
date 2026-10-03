@@ -1450,7 +1450,7 @@ portfolio = {
       "media": [
         {
           "type": "iframe",
-          "url": "https://tools.klystr.botonetics.com/",
+          "url": "https://klystr.botonetics.com/",
           "title": "Klystr Web Topology Workspace",
           "caption": "Live interactive Kubernetes operations, topology inspection, and manifest analysis platform."
         },
@@ -1464,7 +1464,7 @@ portfolio = {
       "links": [
         {
           "label": "Live Web Platform",
-          "url": "https://tools.klystr.botonetics.com/",
+          "url": "https://klystr.botonetics.com/",
           "type": "website"
         },
         {

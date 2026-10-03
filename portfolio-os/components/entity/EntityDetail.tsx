@@ -70,7 +70,7 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
               <StatusBadge status={entity.data.status} />
               <SourceBadge source={data.source as never} />
               <a
-                href="https://tools.klystr.botonetics.com/"
+                href="https://klystr.botonetics.com/"
                 target="_blank"
                 rel="noreferrer"
                 className="control"
