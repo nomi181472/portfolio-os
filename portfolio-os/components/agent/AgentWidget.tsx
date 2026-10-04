@@ -133,6 +133,7 @@ interface Turn {
   id: number;
   question: string;
   answer: AgentAnswer | null;
+  modelName?: string;
 }
 
 /**
@@ -586,13 +587,21 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // Only the generation half is timed, and only when a model ran.
         setInferenceMs(conversationRef.current?.lastInferenceMs() ?? null);
 
+        // Determine which model answered the question
+        const answeringModelName =
+          conversationRef.current && chat.status === 'ready'
+            ? AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'
+            : embedderRef.current && semantic.status === 'ready'
+              ? 'Neural Vector Brain (E5 Small)'
+              : 'Direct Search Engine';
+
         // Fast streaming effect: progressively reveal text character by character
         const fullText = answer.text;
         const totalChars = fullText.length;
         
         if (totalChars === 0) {
           setTurns((current) =>
-            current.map((turn) => (turn.id === id ? { ...turn, answer } : turn)),
+            current.map((turn) => (turn.id === id ? { ...turn, answer, modelName: answeringModelName } : turn)),
           );
         } else {
           // Stream in small fast chunks (~4-8 characters every 15-20ms)
@@ -603,7 +612,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           setTurns((current) =>
             current.map((turn) =>
               turn.id === id
-                ? { ...turn, answer: { ...answer, text: '' } }
+                ? { ...turn, answer: { ...answer, text: '' }, modelName: answeringModelName }
                 : turn,
             ),
           );
@@ -619,6 +628,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     ? {
                         ...turn,
                         answer: { ...answer, text: partialText },
+                        modelName: answeringModelName,
                       }
                     : turn,
                 ),
@@ -634,14 +644,14 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       } catch {
         setTurns((current) =>
           current.map((turn) =>
-            turn.id === id ? { ...turn, answer: failureAnswer(trimmed, state.engine.aliases) } : turn,
+            turn.id === id ? { ...turn, answer: failureAnswer(trimmed, state.engine.aliases), modelName: 'Direct Search Engine' } : turn,
           ),
         );
       } finally {
         setBusy(false);
       }
     },
-    [state, busy],
+    [state, busy, chat.status, selectedModelChoice, semantic.status],
   );
 
   /**
@@ -1463,6 +1473,14 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
                 <li key={caveat}>{caveat}</li>
               ))}
             </ul>
+          ) : null}
+
+          {turn.modelName ? (
+            <div className={styles.turnModelFooter}>
+              <span className={styles.turnModelBadge}>
+                {turn.modelName}
+              </span>
+            </div>
           ) : null}
         </>
       )}
