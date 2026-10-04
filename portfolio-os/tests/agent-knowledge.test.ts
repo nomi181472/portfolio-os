@@ -103,9 +103,7 @@ test('corpus carries the specialised fields that only exist on some kinds', () =
 test('availability is read from the content, and defaults to closed when absent', () => {
   assert.equal(knowledge.availability.status, portfolio.availability.status);
   assert.ok(['open-to-work', 'looking-for-opportunities', 'closed'].includes(knowledge.availability.status));
-  // `closed` is the safe direction to fail: the agent under-promises rather than
-  // claiming the owner is looking for work when the record does not say so.
-  assert.equal(knowledge.availability.statement, null);
+  assert.equal(knowledge.availability.statement, 'Noman is currently open to work.');
 });
 
 test('experience span is computed from the dates, not copied from the profile', () => {

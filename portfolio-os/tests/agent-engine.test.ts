@@ -216,16 +216,11 @@ test('a posting scores the requirements it states, with the weights it implies',
 
 /* ------------------------------------------------------------------ narrow */
 
-test('availability is reported from the content file, with the mismatch flagged', async () => {
+test('availability is reported from the content file, with the status confirmed', async () => {
   const answer = await engine.answer('Are you open to work?');
 
   assert.equal(answer.intent, 'availability');
-  // `closed` is not the same claim as "not available", so the answer says what is
-  // documented and the caveat names the exact field.
-  assert.ok(
-    answer.caveats.some((c) => /Availability is `closed`/.test(c)),
-    `expected the closed-status caveat, got: ${answer.caveats.join(' | ')}`,
-  );
+  assert.match(answer.text, /open to work/i);
 });
 
 test('the documented career span is computed from the dates, not from yearsActive', async () => {

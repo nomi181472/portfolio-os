@@ -59,8 +59,8 @@ interface Rule {
 const JOB_DESCRIPTION_SHAPE: RegExp[] = [
   /\b(?:job description|role description|job posting|job ad|position description)\b/i,
   /\b(?:we are|we're) (?:looking|hiring|searching)\b/i,
-  /\b(?:responsibilities|what you(?:'ll| will) do|about the role|about the job)\b/i,
-  /\b(?:requirements|what we(?:'re| are) looking for|qualifications|skills (?:and|&) experience)\b/i,
+  /\b(?:responsibilities|what you(?:'ll| will) do|what you(?:'ll| will) own|about the role|about the job)\b/i,
+  /\b(?:requirements|what we(?:'re| are) looking for|what we need from you|qualifications|skills (?:and|&) experience)\b/i,
   /\b(?:apply|application|how to apply|interested in)\b/i,
   /\b(?:nice to have|preferred qualifications|bonus points)\b/i,
 ];
@@ -206,7 +206,7 @@ export function routeIntent(question: NormalisedQuestion): IntentRoute {
  * not a posting, so the header has to be the entire line, with nothing after it.
  */
 const POSTING_SECTION_HEADER =
-  /^(?:key )?(?:responsibilities|what you(?:'ll| will) do|about the (?:role|job)|requirements?|qualifications|must haves?|essential requirements|nice to haves?|preferred qualifications|bonus points?|good to haves?)\s*:?\s*$/i;
+  /^(?:key )?(?:responsibilities|what you(?:'ll| will) do|what you(?:'ll| will) own|about the (?:role|job)|requirements?|qualifications|what we need from you|must haves?|essential requirements|nice to haves?|preferred qualifications|bonus points?|good to haves?)\s*:?\s*$/i;
 
 /** True when the input is a posting rather than a question. */
 export function looksLikeJobDescription(text: string): boolean {
