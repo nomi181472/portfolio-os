@@ -48,8 +48,10 @@ import { navigationRegistryFromTargets } from '@/lib/agent/navigation';
 import { rehydrateKnowledge } from '@/lib/agent/wire';
 import {
   coldLoadSummary,
+  deleteCachedModel,
   describeBrain,
   detectBackend,
+  isCached,
   loadModel,
   type BrainState,
   type LoadedModel,
@@ -57,16 +59,19 @@ import {
 import { createConversation, type Conversation } from '@/lib/agent/models/conversation';
 import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } from '@/lib/agent/registry';
 
-interface ModelListItem {
+export type ModelChoiceId = ModelRole | 'none';
+
+export interface ModelListItem {
   id: string;
-  role: ModelRole;
+  role: ModelChoiceId;
   name: string;
   badge: string;
   size: string;
-  url: string;
+  url?: string;
   description: string;
 }
 
+// Calculated model sizes for UI display: formatMb(coldBytes(['conversation'])) and coldLoadSummary(backend, ['embedding'])
 const AVAILABLE_MODELS: ModelListItem[] = [
   {
     id: 'Xenova/multilingual-e5-small',
@@ -89,11 +94,19 @@ const AVAILABLE_MODELS: ModelListItem[] = [
   {
     id: 'onnx-community/Qwen2.5-1.5B-Instruct',
     role: 'fluent',
-    name: 'High-Quality Fluent LLM (Qwen2.5 1.5B)',
+    name: 'High-Quality LLM (Qwen2.5 1.5B)',
     badge: 'Advanced AI',
     size: '~1.58 GB',
     url: modelForRole('fluent').artifact.url,
     description: 'Advanced 1.5B parameter conversational model for deeper natural phrasing and dynamic conversation.',
+  },
+  {
+    id: 'none',
+    role: 'none',
+    name: 'Without Model (Direct Search)',
+    badge: 'Extractive Mode',
+    size: '0 MB',
+    description: 'Runs directly using deterministic search & indexing without downloading or running any local AI models.',
   },
 ];
 import {
@@ -264,7 +277,16 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   /** Real generation time for the last question, or null when no model ran. */
   const [inferenceMs, setInferenceMs] = useState<number | null>(null);
   const [semantic, setSemantic] = useState<SemanticState>({ status: 'unavailable' });
-  const [selectedModelRole, setSelectedModelRole] = useState<ModelRole>('embedding');
+  const [selectedModelChoice, setSelectedModelChoice] = useState<ModelChoiceId>('none');
+  const [cachedModels, setCachedModels] = useState<Record<ModelChoiceId, boolean>>({
+    embedding: false,
+    conversation: false,
+    fluent: false,
+    none: true,
+  });
+  const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
+  const [pendingDownloadModel, setPendingDownloadModel] = useState<ModelListItem | null>(null);
+  const modelPickerRef = useRef<HTMLDivElement>(null);
   const knowledgeRef = useRef<PortfolioKnowledge | null>(null);
 
   /**
@@ -357,6 +379,25 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     detectedBackend.current = true;
     void detectBackend(modelForRole('embedding').devices).then((result) => setBackend(result.backend));
   }, [open]);
+
+  const checkAllModelCaches = useCallback(async () => {
+    const embeddingUrl = modelForRole('embedding').artifact.url;
+    const conversationUrl = modelForRole('conversation').artifact.url;
+    const fluentUrl = modelForRole('fluent').artifact.url;
+
+    const embeddingCached = await isCached(embeddingUrl);
+    const conversationCached = await isCached(conversationUrl);
+    const fluentCached = await isCached(fluentUrl);
+
+    const newMap: Record<ModelChoiceId, boolean> = {
+      embedding: embeddingCached,
+      conversation: conversationCached,
+      fluent: fluentCached,
+      none: true,
+    };
+    setCachedModels(newMap);
+    return newMap;
+  }, []);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
@@ -652,29 +693,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
    */
   // `brain.ts` already memoises loaded pipelines by role, so the timings are
   // re-read from the loader's own record rather than measured twice here.
-  const startChat = useCallback((role: 'conversation' = 'conversation') => {
+  const startChat = useCallback((role: 'conversation' | 'fluent' = 'conversation') => {
     setChat({ status: 'loading' });
 
-    // Captured here because `createConversation` returns only the pipeline and the
-    // validation wrapper; the loader's own record is where the timings live, and the
-    // panel needs them without `createConversation` knowing about display state.
     let loaded: LoadedModel | null = null;
 
-    /*
-     * Real byte progress, relayed from the loader's own `progress_callback`.
-     *
-     * Forwarded rather than re-measured, and passed through untouched: `startChat` has
-     * no `onState` of its own to hook, so without this the 483 MB download sat behind
-     * an indeterminate bar for however long it took. `brain.ts` already filters
-     * tokenizer and config files out of the totals, so what arrives here is the
-     * weight file alone and the percentage means something.
-     *
-     * Guarded against a superseded load: the reader can click "Try again" while a
-     * previous attempt is still unwinding, and two progress streams would otherwise
-     * fight over the same bar. The guard is `chatAttempt`, shared across invocations —
-     * `attempt` is this call's share of it, and a callback that arrives after a later
-     * attempt has claimed the ref is ignored.
-     */
     const attempt = (chatAttempt.current += 1);
 
     void createConversation({
@@ -698,13 +721,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       },
     })
       .then((conversation) => {
-        // Checked before anything is written, including before `conversationRef`. A
-        // superseded attempt still holds a real pipeline, and storing it would leave the
-        // ref pointing at a model the panel never reported loading.
         if (chatAttempt.current !== attempt) {
-          // Disposed rather than dropped. The pipeline is real and holds hundreds of
-          // megabytes, so an abandoned attempt has to be released explicitly or it
-          // stays resident for the life of the tab.
           void conversation?.dispose().catch(() => {});
           return;
         }
@@ -719,11 +736,120 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           loadMs: loaded.loadMs,
           fromCache: loaded.fromCache,
         });
+        void checkAllModelCaches();
       })
       .catch(() => {
         if (chatAttempt.current !== attempt) return;
         setChat({ status: 'failed', message: 'The conversational model could not be loaded.' });
       });
+  }, [checkAllModelCaches]);
+
+  const handleSelectModel = useCallback((item: ModelListItem) => {
+    setIsModelPickerOpen(false);
+    if (item.role === 'none') {
+      setSelectedModelChoice('none');
+      localStorage.setItem('portfolio-agent-selected-model', 'none');
+      if (conversationRef.current) {
+        void conversationRef.current.dispose();
+        conversationRef.current = null;
+        setChat({ status: 'idle' });
+      }
+      return;
+    }
+
+    if (cachedModels[item.role]) {
+      setSelectedModelChoice(item.role);
+      localStorage.setItem('portfolio-agent-selected-model', item.role);
+      if (item.role === 'embedding') {
+        if (semantic.status !== 'ready' && brain.status !== 'downloading') {
+          startModel();
+        }
+      } else {
+        if (chat.status !== 'ready' && chat.status !== 'loading') {
+          startChat(item.role);
+        }
+      }
+    } else {
+      setPendingDownloadModel(item);
+    }
+  }, [cachedModels, semantic.status, brain.status, chat.status, startModel, startChat]);
+
+  const handleConfirmDownload = useCallback((item: ModelListItem) => {
+    setPendingDownloadModel(null);
+    setSelectedModelChoice(item.role);
+    localStorage.setItem('portfolio-agent-selected-model', item.role);
+
+    if (item.role === 'embedding') {
+      startModel();
+    } else if (item.role === 'conversation' || item.role === 'fluent') {
+      startChat(item.role);
+    }
+  }, [startModel, startChat]);
+
+  const handleRemoveModel = useCallback(async (e: React.MouseEvent, item: ModelListItem) => {
+    e.stopPropagation();
+    if (!item.url || item.role === 'none') return;
+
+    await deleteCachedModel(item.url);
+    await checkAllModelCaches();
+
+    if (selectedModelChoice === item.role) {
+      if (item.role === 'embedding') {
+        if (embedderRef.current) {
+          void embedderRef.current.dispose();
+          embedderRef.current = null;
+        }
+        setBrain({ status: 'idle' });
+        setSemantic({ status: 'unavailable' });
+      } else {
+        if (conversationRef.current) {
+          void conversationRef.current.dispose();
+          conversationRef.current = null;
+        }
+        setChat({ status: 'idle' });
+      }
+      setSelectedModelChoice('none');
+      localStorage.setItem('portfolio-agent-selected-model', 'none');
+    }
+  }, [checkAllModelCaches, selectedModelChoice]);
+
+  useEffect(() => {
+    let active = true;
+    const saved = localStorage.getItem('portfolio-agent-selected-model') as ModelChoiceId | null;
+    void checkAllModelCaches().then((cachedMap) => {
+      if (!active) return;
+      if (saved && ['embedding', 'conversation', 'fluent', 'none'].includes(saved)) {
+        if (saved === 'none' || cachedMap[saved]) {
+          setSelectedModelChoice(saved);
+          if (saved === 'embedding' && cachedMap.embedding) {
+            startModel();
+          } else if (saved === 'conversation' && cachedMap.conversation) {
+            startChat('conversation');
+          } else if (saved === 'fluent' && cachedMap.fluent) {
+            startChat('fluent');
+          }
+        } else {
+          setSelectedModelChoice('none');
+        }
+      }
+    });
+    const cleanup = () => {
+      active = false;
+    };
+    return cleanup;
+  }, [checkAllModelCaches, startModel, startChat]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modelPickerRef.current && !modelPickerRef.current.contains(event.target as Node)) {
+        setIsModelPickerOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    const cleanup = () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+    return cleanup;
   }, []);
 
   const summary = describeBrain(brain);
@@ -904,112 +1030,15 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             the site does by default.
           */}
           <section
-              className={`${styles.brain} ${
-                brain.status === 'ready'
-                  ? styles.brainReady
-                  : brain.status === 'failed'
-                    ? styles.brainError
-                    : ''
-              }`}
+            className={`${styles.brain} ${
+              brain.status === 'ready' || chat.status === 'ready'
+                ? styles.brainReady
+                : brain.status === 'failed' || chat.status === 'failed'
+                  ? styles.brainError
+                  : ''
+            }`}
             aria-label="Optional language model"
           >
-            <div className={styles.brainRow}>
-              <span className={styles.brainLabel}>{summary.label}</span>
-              <span className={styles.brainDetail}>{summary.detail}</span>
-            </div>
-
-            {/* Model Selection List */}
-            <div className={styles.modelList}>
-              <p className={styles.modelListTitle}>🤖 Select AI Model ({AVAILABLE_MODELS.length})</p>
-              <div className={styles.modelTabs}>
-                {AVAILABLE_MODELS.map((item) => {
-                  const isSelected = selectedModelRole === item.role;
-                  const displaySize =
-                    item.role === 'embedding'
-                      ? backend
-                        ? coldLoadSummary(backend, ['embedding'])
-                        : item.size
-                      : item.role === 'conversation'
-                        ? formatMb(coldBytes(['conversation']))
-                        : item.size;
-                  return (
-                    <button
-                      key={item.role}
-                      type="button"
-                      className={`${styles.modelTab}${isSelected ? ` ${styles.modelTabSelected}` : ''}`}
-                      onClick={() => setSelectedModelRole(item.role)}
-                    >
-                      <span className={styles.modelTabName}>{item.name}</span>
-                      <span className={styles.modelTabBadge}>{displaySize}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Selected Model Details & Action Card */}
-            {(() => {
-              const selectedModel =
-                AVAILABLE_MODELS.find((m) => m.role === selectedModelRole) || AVAILABLE_MODELS[0]!;
-              const displaySize =
-                selectedModel.role === 'embedding'
-                  ? backend
-                    ? coldLoadSummary(backend, ['embedding'])
-                    : selectedModel.size
-                  : selectedModel.role === 'conversation'
-                    ? formatMb(coldBytes(['conversation']))
-                    : selectedModel.size;
-              return (
-                <div className={styles.modelDetailCard}>
-                  <div className={styles.modelDetailHeader}>
-                    <h4 className={styles.modelDetailTitle}>{selectedModel.name}</h4>
-                    <span className={styles.modelDetailBadge}>
-                      {selectedModel.badge} · {displaySize}
-                    </span>
-                  </div>
-                  <p className={styles.brainNote}>{selectedModel.description}</p>
-                  <p className={styles.brainNote}>
-                    Direct weights from HuggingFace:{' '}
-                    <a
-                      href={selectedModel.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{ textDecoration: 'underline', color: 'inherit' }}
-                    >
-                      ONNX weights
-                    </a>
-                    . Runs 100% in browser ({backend ? backend.toUpperCase() : 'WASM'}), private & zero data leaves device.
-                  </p>
-
-                  <div className={styles.brainActions}>
-                    {selectedModel.role === 'embedding' ? (
-                      semantic.status === 'ready' ? (
-                        <span className={styles.modelActiveBadge}>✓ Neural Vector Brain Active</span>
-                      ) : brain.status === 'downloading' || semantic.status === 'indexing' ? (
-                        <span className={styles.modelActiveBadge}>Loading Neural Brain...</span>
-                      ) : (
-                        <button type="button" className={styles.brainButton} onClick={startModel}>
-                          Download Neural Brain
-                        </button>
-                      )
-                    ) : chat.status === 'ready' ? (
-                      <span className={styles.modelActiveBadge}>✓ Conversational LLM Active</span>
-                    ) : chat.status === 'loading' ? (
-                      <span className={styles.modelActiveBadge}>Loading Conversational LLM...</span>
-                    ) : (
-                      <button
-                        type="button"
-                        className={styles.brainButton}
-                        onClick={() => startChat(selectedModel.role === 'conversation' ? 'conversation' : 'conversation')}
-                      >
-                        Download {selectedModel.name}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })()}
-
             {brain.status === 'downloading' ? (
               <div className={styles.brainProgress}>
                 <div
@@ -1033,7 +1062,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
             {semantic.status === 'ready' ? (
               <p className={styles.brainNote}>
-                🧠 <strong>Vector Brain Active:</strong> Semantic matching is now searching concepts & meaning across {semantic.chunks} passages in local memory.
+                🧠 <strong>Vector Brain Active:</strong> Searching concepts & meaning across {semantic.chunks} passages in local memory.
               </p>
             ) : null}
 
@@ -1116,13 +1145,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     <>
                       {chat.backend ? `${chat.backend.toUpperCase()} · ` : ''}
                       {formatBytes(chat.bytesLoaded ?? 0)} of{' '}
-                      {formatBytes(chat.bytesTotal)}. This one is larger than the
-                      matching model and takes a while.
+                      {formatBytes(chat.bytesTotal)}. Downloading ONNX weights...
                     </>
                   ) : (
                     <>
-                      Loading the conversational model. This one is larger than the
-                      matching model and takes a while.
+                      Loading the conversational model...
                     </>
                   )}
                 </p>
@@ -1132,7 +1159,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             {chat.status === 'failed' ? (
               <div className={styles.brainActions}>
                 <p className={styles.brainNote}>{chat.message} Answers are unaffected.</p>
-                <button type="button" className={styles.brainButton} onClick={() => startChat()}>
+                <button type="button" className={styles.brainButton} onClick={() => startChat(selectedModelChoice !== 'none' && selectedModelChoice !== 'embedding' ? selectedModelChoice : 'conversation')}>
                   Try again
                 </button>
               </div>
@@ -1146,34 +1173,125 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               void ask(draft);
             }}
           >
-            <textarea
-              ref={inputRef}
-              className={styles.input}
-              value={draft}
-              rows={2}
-              placeholder="Ask about a technology, or paste a job description."
-              onChange={(event) => setDraft(event.target.value)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' && !event.shiftKey) {
-                  event.preventDefault();
-                  void ask(draft);
-                  return;
-                }
-                // Escape closes rather than clearing the draft: the draft is
-                // unsent work, and a chat that discards it on Escape is worse
-                // than one that closes.
-                if (event.key === 'Escape') closeAndRelease();
-              }}
-              disabled={state.status !== 'ready'}
-            />
-            <button
-              type="submit"
-              className={styles.send}
-              disabled={state.status !== 'ready' || busy || draft.trim().length === 0}
-            >
-              Ask
-            </button>
+            <div className={styles.composerBar}>
+              <div className={styles.composerControlsRow}>
+                <div className={styles.modelPickerWrapper} ref={modelPickerRef}>
+                  <button
+                    type="button"
+                    className={styles.modelPickerTrigger}
+                    onClick={() => setIsModelPickerOpen((prev) => !prev)}
+                    aria-expanded={isModelPickerOpen}
+                    aria-label="Select Model"
+                  >
+                    <span className={styles.modelPickerPlus}>+</span>
+                    <span className={styles.modelPickerName}>
+                      {AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Without Model'}
+                    </span>
+                    <span className={styles.modelPickerChevron}>{isModelPickerOpen ? '▲' : '▼'}</span>
+                  </button>
+
+                  {isModelPickerOpen && (
+                    <div className={styles.modelPopover}>
+                      <div className={styles.modelPopoverHeader}>Model</div>
+                      <div className={styles.modelPopoverList}>
+                        {AVAILABLE_MODELS.map((item) => {
+                          const isSelected = selectedModelChoice === item.role;
+                          const isDownloaded = cachedModels[item.role];
+                          return (
+                            <div
+                              key={item.role}
+                              className={`${styles.modelPopoverItem}${isSelected ? ` ${styles.modelPopoverItemSelected}` : ''}`}
+                              onClick={() => handleSelectModel(item)}
+                            >
+                              <div className={styles.modelPopoverItemLeft}>
+                                <span className={styles.modelCheckmark}>{isSelected ? '✓' : ''}</span>
+                                <div className={styles.modelPopoverItemText}>
+                                  <span className={styles.modelPopoverItemTitle}>{item.name}</span>
+                                  <span className={styles.modelPopoverItemSubtitle}>
+                                    {item.badge} · {item.size}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className={styles.modelPopoverItemRight}>
+                                {item.role !== 'none' && isDownloaded ? (
+                                  <button
+                                    type="button"
+                                    className={styles.modelRemoveBtn}
+                                    title="Remove model from cache"
+                                    onClick={(e) => void handleRemoveModel(e, item)}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                    </svg>
+                                  </button>
+                                ) : item.role !== 'none' && !isDownloaded ? (
+                                  <span className={styles.modelNotDownloadedTag}>Download</span>
+                                ) : null}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className={styles.inputRow}>
+                <textarea
+                  ref={inputRef}
+                  className={styles.input}
+                  value={draft}
+                  rows={2}
+                  placeholder="Ask about a technology, or paste a job description."
+                  onChange={(event) => setDraft(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' && !event.shiftKey) {
+                      event.preventDefault();
+                      void ask(draft);
+                      return;
+                    }
+                    if (event.key === 'Escape') closeAndRelease();
+                  }}
+                  disabled={state.status !== 'ready'}
+                />
+                <button
+                  type="submit"
+                  className={styles.send}
+                  disabled={state.status !== 'ready' || busy || draft.trim().length === 0}
+                >
+                  Ask
+                </button>
+              </div>
+            </div>
           </form>
+
+          {pendingDownloadModel && (
+            <div className={styles.modalBackdrop}>
+              <div className={styles.modalCard}>
+                <h3 className={styles.modalTitle}>Download {pendingDownloadModel.name}?</h3>
+                <p className={styles.modalBody}>
+                  This model ({pendingDownloadModel.size}) is not downloaded yet. It will run 100% locally in your browser and stay saved in your device storage so you don&apos;t need to download it again.
+                </p>
+                <div className={styles.modalActions}>
+                  <button
+                    type="button"
+                    className={styles.modalCancelBtn}
+                    onClick={() => setPendingDownloadModel(null)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.modalConfirmBtn}
+                    onClick={() => handleConfirmDownload(pendingDownloadModel)}
+                  >
+                    Download ({pendingDownloadModel.size})
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </section>
       ) : null}
     </div>

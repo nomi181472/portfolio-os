@@ -502,7 +502,7 @@ export interface Conversation {
 
 export async function createConversation(
   retrieve: {
-    role: 'conversation';
+    role: 'conversation' | 'fluent';
     backend?: 'webgpu' | 'wasm';
     load: () => Promise<{ pipeline: unknown; backend: 'webgpu' | 'wasm' }>;
   },

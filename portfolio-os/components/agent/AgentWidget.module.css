@@ -74,20 +74,22 @@
 .panel {
   display: flex;
   flex-direction: column;
-  width: min(26rem, calc(100vw - var(--space) * 2));
-  max-height: min(34rem, calc(100vh - var(--space) * 2));
+  width: min(27rem, calc(100vw - var(--space) * 2));
+  height: min(38rem, calc(100vh - var(--space) * 2));
+  max-height: min(38rem, calc(100vh - var(--space) * 2));
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-card);
   background: var(--surface-raised);
   box-shadow: 0 24px 64px rgb(0 0 0 / 0.42);
   overflow: hidden;
+  transition: width 200ms ease, height 200ms ease;
 }
 
 .panelEnlarged {
-  width: 75vw;
-  height: 75vh;
-  max-width: 75vw;
-  max-height: 75vh;
+  width: min(62rem, calc(100vw - var(--space) * 4));
+  height: min(50rem, calc(100vh - var(--space) * 4));
+  max-width: 92vw;
+  max-height: 88vh;
 }
 
 .head {
@@ -701,4 +703,288 @@
   line-height: 1.45;
   color: var(--ink-quiet);
   text-wrap: pretty;
+}
+
+/* Model Selector Dropdown Trigger & Popover */
+.composerBar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+  width: 100%;
+}
+
+.composerControlsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-tight);
+}
+
+.modelPickerWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.modelPickerTrigger {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background: var(--surface-float);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.3rem 0.65rem;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.modelPickerTrigger:hover {
+  background: var(--fill-strong);
+  border-color: var(--line-strong);
+  color: var(--ink-bright);
+}
+
+.modelPickerPlus {
+  font-size: 0.9375rem;
+  line-height: 1;
+  color: var(--ink-quiet);
+}
+
+.modelPickerName {
+  max-width: 15rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modelPickerChevron {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  margin-inline-start: 0.2rem;
+}
+
+/* Floating Dropup Menu */
+.modelPopover {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 100;
+  width: 19.5rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-card);
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  backdrop-filter: blur(16px);
+  animation: popoverFadeIn 120ms ease-out;
+}
+
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modelPopoverHeader {
+  font-size: 0.725rem;
+  font-weight: 600;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.5rem 0.15rem;
+}
+
+.modelPopoverList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.modelPopoverItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  transition: background 0.12s ease;
+  user-select: none;
+}
+
+.modelPopoverItem:hover {
+  background: var(--fill-strong);
+}
+
+.modelPopoverItemSelected {
+  background: var(--fill-strong);
+}
+
+.modelPopoverItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.modelCheckmark {
+  width: 1rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--signal);
+  display: inline-block;
+  text-align: center;
+}
+
+.modelPopoverItemText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.modelPopoverItemTitle {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.modelPopoverItemSubtitle {
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+}
+
+.modelPopoverItemRight {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.modelRemoveBtn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--radius-control);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.modelRemoveBtn:hover {
+  color: var(--signal);
+  background: var(--fill-strong);
+}
+
+.modelNotDownloadedTag {
+  font-size: 0.6875rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  color: var(--ink-quiet);
+}
+
+.inputRow {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-tight);
+}
+
+/* Confirmation Modal */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--scrim);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space);
+}
+
+.modalCard {
+  width: min(24rem, 90vw);
+  background: var(--surface-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-card);
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.5);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink-bright);
+}
+
+.modalBody {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--ink-quiet);
+}
+
+.modalActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-block-start: 0.25rem;
+}
+
+.modalCancelBtn {
+  appearance: none;
+  border: 1px solid var(--rule);
+  background: var(--fill-faint);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+.modalCancelBtn:hover {
+  background: var(--fill);
+  color: var(--ink-bright);
+}
+
+.modalConfirmBtn {
+  appearance: none;
+  border: 1px solid var(--line-strong);
+  background: var(--fill-strong);
+  color: var(--ink-bright);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+}
+
+.modalConfirmBtn:hover {
+  background: var(--ink-bright);
+  color: var(--surface-raised);
 }

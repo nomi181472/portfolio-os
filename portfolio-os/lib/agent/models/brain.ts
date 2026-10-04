@@ -185,6 +185,40 @@ export async function isCached(url: string): Promise<boolean> {
   }
 }
 
+/**
+ * Delete model weights from Cache Storage (`transformers-cache`).
+ *
+ * Removes the given model URL from the browser's Cache Storage.
+ * Also matches related cached files (e.g. tokenizer configs, weights)
+ * associated with the same HuggingFace model repo path if available.
+ */
+export async function deleteCachedModel(url: string): Promise<boolean> {
+  const cacheStorage = (globalThis as { caches?: CacheStorage }).caches;
+  if (!cacheStorage) return false;
+  try {
+    const cache = await cacheStorage.open('transformers-cache');
+    const keys = await cache.keys();
+    let deletedAny = false;
+    const directHit = await cache.match(url);
+    if (directHit) {
+      await cache.delete(url);
+      deletedAny = true;
+    }
+    const repoMatch = url.match(/huggingface\.co\/([^/]+\/[^/]+)/i);
+    const repoPath = repoMatch ? repoMatch[1] : null;
+
+    for (const request of keys) {
+      if (request.url === url || (repoPath && request.url.includes(repoPath))) {
+        await cache.delete(request);
+        deletedAny = true;
+      }
+    }
+    return deletedAny;
+  } catch {
+    return false;
+  }
+}
+
 /* -------------------------------------------------- remembered backend */
 
 /**
