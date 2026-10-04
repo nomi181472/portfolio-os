@@ -166,11 +166,46 @@ export function pruneHistoryToTokenLimit(
  * question cannot smuggle instructions into the prompt by claiming to be a system
  * message. The delimiter in `renderMessages` is what enforces that.
  */
-export function buildInstruction(records: readonly { key: string; name: string }[]): string {
-  // `name`, not `title`: that is the field `KnowledgeRecord` actually has, and
-  // mistyping it here would render `undefined` into the prompt, so the model would be
-  // choosing between bare ids with no descriptions at all.
-  const lines = records.map((record, index) => `${index}. ${record.key} — ${record.name}`);
+/**
+ * Longest summary placed into the prompt, so the record list cannot blow the context.
+ *
+ * The summaries are the one part of the instruction that grows with the record count,
+ * and a skill-check retrieval can carry ten of them, so the cap is what keeps ten rich
+ * records cheap enough to sit inside `MAX_CONTEXT_TOKENS`.
+ */
+export const MAX_SUMMARY_CHARS = 160;
+
+/**
+ * A record's summary, flattened to a single bounded line for the prompt.
+ *
+ * Newlines become spaces so a multi-paragraph description cannot impersonate one of
+ * the instruction's own sections — a line reading `keys:` inside a summary would be the
+ * model's most reliable way to be told the wrong thing — and the length is capped for
+ * the reason on `MAX_SUMMARY_CHARS`.
+ */
+function summariseForPrompt(summary: string | undefined): string {
+  if (!summary) return '';
+  const flat = summary.replace(/\s+/g, ' ').trim();
+  if (flat.length <= MAX_SUMMARY_CHARS) return flat;
+  return `${flat.slice(0, MAX_SUMMARY_CHARS - 1).trimEnd()}…`;
+}
+
+export function buildInstruction(
+  records: readonly { key: string; name: string; summary?: string }[],
+): string {
+  // `name` and `summary`, not `title`: those are the fields `KnowledgeRecord` actually
+  // has, and mistyping them here would render `undefined` into the prompt, so the model
+  // would be choosing between bare ids with no descriptions at all.
+  //
+  // The summary is what the model has to speak *about*. Naming the records without
+  // describing them is how "write a grounded answer" produced nothing but the titles
+  // echoed back or, worse, invented detail — the model was asked to describe records it
+  // had only been shown the names of.
+  const lines = records.flatMap((record, index) => {
+    const head = `${index}. ${record.key} — ${record.name}`;
+    const summary = summariseForPrompt(record.summary);
+    return summary ? [head, `   ${summary}`] : [head];
+  });
 
   return [
     'You are the AI portfolio assistant and navigation controller for Noman Ali’s Computer Science & Solutions Architecture portfolio.',
@@ -185,6 +220,7 @@ export function buildInstruction(records: readonly { key: string; name: string }
     '',
     'text:',
     '- Natural, professional response answering the question directly based on the provided records.',
+    '- When no record matches, still answer conversationally in one or two short sentences and say plainly that the portfolio does not document it, rather than inventing detail.',
     '- If matching opportunities are discussed, mention contacting Noman at nomansoomro51@gmail.com or LinkedIn.',
     '',
     'keys:',
@@ -348,7 +384,12 @@ export function parseSelection(raw: string): ParseOutcome {
     const record = parsed as Record<string, unknown>;
     const keys = stringList(record.keys);
     const text = typeof record.text === 'string' && record.text.trim().length > 0 ? record.text.trim() : undefined;
-    if (keys.length === 0) return { ok: false, reason: 'no-keys' };
+    // Keys and text are independent now. A model that answered the question in prose but
+    // selected no record still produced the half a reader actually sees, so discarding the
+    // whole turn over an empty `keys` array threw away the only natural-language sentence
+    // in it. Neither half rescues a malformed one: no keys *and* no text is still "nothing
+    // usable", which is what makes the caller answer from retrieval order as before.
+    if (keys.length === 0 && !text) return { ok: false, reason: 'no-keys' };
     return { ok: true, keys, actions: actionList(record.actions), ...(text ? { text } : {}) };
   }
 
@@ -553,7 +594,7 @@ export async function selectRecords(options: GenerateOptions): Promise<GenerateR
 export interface Conversation {
   select(
     question: string,
-    retrieved: readonly { key: string; name: string }[],
+    retrieved: readonly { key: string; name: string; summary?: string }[],
     history: readonly MemoryTurn[],
   ): Promise<ValidationResult>;
   /** Real generation time for the last call, or `null` before the first one. */

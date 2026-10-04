@@ -61,7 +61,7 @@ import { buildGraph, type PortfolioGraph } from '@/lib/graph';
 export interface ConversationLayer {
   select(
     question: string,
-    retrieved: readonly { key: string; name: string }[],
+    retrieved: readonly { key: string; name: string; summary?: string }[],
     history: readonly ConversationTurn[],
   ): Promise<{
     keys: readonly string[];
@@ -420,7 +420,7 @@ export function buildEngineFromKnowledge(
     if (conversation) {
       const selection = await conversation.select(
         trimmed,
-        relevant.map((hit) => ({ key: hit.key, name: hit.record.name })),
+        relevant.map((hit) => ({ key: hit.key, name: hit.record.name, summary: hit.record.summary })),
         history,
       );
 

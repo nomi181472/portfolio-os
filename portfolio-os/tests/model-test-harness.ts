@@ -74,7 +74,7 @@ export async function testModelPrompt({
 
   // Step 2: Retrieve Relevant Records
   const retrieved = await retrieve(question, knowledge, lexical, { limit: 6 });
-  const inScopeRecords = retrieved.map((hit) => ({ key: hit.key, name: hit.record.name }));
+  const inScopeRecords = retrieved.map((hit) => ({ key: hit.key, name: hit.record.name, summary: hit.record.summary }));
   console.log(`\n2. RETRIEVED CANDIDATE RECORDS (${inScopeRecords.length}):`);
   inScopeRecords.forEach((r, idx) => console.log(`   [${idx}] ${r.key} — ${r.name}`));
 

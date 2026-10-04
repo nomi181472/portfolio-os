@@ -53,7 +53,7 @@ test('Qwen 1.5B configuration matches production registry', () => {
 test('Qwen 1.5B prompt formats with candidate records and contact info', async () => {
   const q = 'Tell me about scalable distributed systems and microservices';
   const retrieved = await retrieve(q, knowledge, lexical, { limit: 5 });
-  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
+  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name, summary: r.record.summary }));
 
   const instruction = buildInstruction(candidates);
   const messages = renderMessages(instruction, q, []);
@@ -70,7 +70,7 @@ test('Qwen 1.5B prompt formats with candidate records and contact info', async (
 test('Qwen 1.5B complex response with navigation actions', async () => {
   const q = 'Tell me about Kubernetes and Python';
   const retrieved = await retrieve(q, knowledge, lexical, { limit: 5 });
-  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
+  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name, summary: r.record.summary }));
 
   const naviroxKey = candidates.find((c) => c.key.includes('navirox'))?.key || candidates[0]?.key || 'projects:proj-navirox';
   const modelProse = 'Noman Ali has worked extensively with Kubernetes container orchestration and Python backend services. Check the NAVIROX project for deep systems details or connect at nomansoomro51@gmail.com.';
@@ -117,7 +117,7 @@ if (process.argv[1]?.includes('model-qwen-15b.test.ts') && process.argv.includes
     console.log(`======================================================`);
 
     const retrieved = await retrieve(userQ, knowledge, lexical, { limit: 5 });
-    const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
+    const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name, summary: r.record.summary }));
     const instruction = buildInstruction(candidates);
     const messages = renderMessages(instruction, userQ, []);
 

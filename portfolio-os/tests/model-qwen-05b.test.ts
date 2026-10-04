@@ -52,7 +52,7 @@ test('Qwen 0.5B configuration matches production registry', () => {
 test('Qwen 0.5B prompt formats correctly with real candidates', async () => {
   const q = 'What experience does Noman have in Computer Vision and LiDAR?';
   const retrieved = await retrieve(q, knowledge, lexical, { limit: 5 });
-  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
+  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name, summary: r.record.summary }));
 
   const instruction = buildInstruction(candidates);
   const messages = renderMessages(instruction, q, []);
@@ -72,7 +72,7 @@ test('Qwen 0.5B prompt formats correctly with real candidates', async () => {
 test('Qwen 0.5B response simulation with allowlist filtering', async () => {
   const q = 'What projects use Computer Vision and Python?';
   const retrieved = await retrieve(q, knowledge, lexical, { limit: 5 });
-  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
+  const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name, summary: r.record.summary }));
 
   // Simulate Qwen 0.5B markdown output with 100% model-generated text + valid + invalid keys
   const validKey = candidates[0]?.key || 'skills:sk-python';
@@ -113,7 +113,7 @@ if (process.argv[1]?.includes('model-qwen-05b.test.ts') && process.argv.includes
     console.log(`======================================================`);
 
     const retrieved = await retrieve(userQ, knowledge, lexical, { limit: 5 });
-    const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
+    const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name, summary: r.record.summary }));
     const instruction = buildInstruction(candidates);
     const messages = renderMessages(instruction, userQ, []);
 

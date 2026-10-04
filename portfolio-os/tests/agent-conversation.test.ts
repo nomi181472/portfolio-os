@@ -28,6 +28,7 @@ import {
   createConversation,
   isWorthRemembering,
   MAX_SELECTED,
+  MAX_SUMMARY_CHARS,
   MAX_TURNS,
   parseSelection,
   rememberTurn,
@@ -178,6 +179,29 @@ test('an actions field of the wrong type yields no actions rather than failing t
 test('an object with no usable keys is empty', () => {
   assert.equal(parseSelection('{"keys":[],"actions":[{"kind":"navigate","targetId":"x"}]}').ok, false);
   assert.equal(parseSelection('{"actions":[]}').ok, false);
+});
+
+test('model prose survives when it selected no records', () => {
+  // The turn's only natural-language sentence must not be thrown away over an empty
+  // `keys` array: a model that answered the question but found no record to cite still
+  // answered. This is the decoupling that lets the agent converse without a citation.
+  const result = parseSelection(
+    '{"text":"That is not something the portfolio documents, but I can talk about his cloud work.","keys":[],"actions":[]}',
+  );
+  assert.ok(result.ok, `prose with no keys should parse, got ${JSON.stringify(result)}`);
+  assert.deepEqual(result.keys, []);
+  assert.equal(
+    result.text,
+    'That is not something the portfolio documents, but I can talk about his cloud work.',
+  );
+});
+
+test('neither keys nor text is still nothing usable', () => {
+  // The complement of the case above: dropping the key requirement must not turn a truly
+  // empty turn into a successful one, or the caller would stop falling back to retrieval.
+  assert.equal(parseSelection('{"keys":[],"actions":[]}').ok, false);
+  assert.equal(parseSelection('{"text":"","keys":[],"actions":[]}').ok, false);
+  assert.equal(parseSelection('{"text":"   ","keys":[],"actions":[]}').ok, false);
 });
 
 test('a key outside the retrieved set is dropped, and it does not rescue an action', () => {
@@ -331,6 +355,29 @@ test('the instruction lists keys and asks for at most three', () => {
   }
   assert.match(instruction, /at most 3/i);
   assert.match(instruction, /only keys from this list/i);
+});
+
+test('a record summary is offered to the model, flattened and bounded', () => {
+  // The model can only describe records it was told about. Without the summary the
+  // prompt named the records and described none of them, which is how a grounded-writing
+  // instruction produced titles echoed back or invented detail.
+  const instruction = buildInstruction([
+    { key: 'products:prod-verseye', name: 'VERSEYE', summary: 'Real-time computer vision and LiDAR perception.' },
+    { key: 'products:prod-navirox', name: 'NAVIROX', summary: 'Long summary line.\n'.repeat(40) },
+  ]);
+
+  assert.match(instruction, /Real-time computer vision and LiDAR perception\./);
+
+  // The long one is flattened (no embedded newlines) and truncated, so ten rich records
+  // cannot blow the context and a summary cannot impersonate one of the prompt's sections.
+  assert.match(instruction, /Long summary line\. Long summary line\./, 'newlines become spaces');
+  assert.match(instruction, /…/, 'the over-long summary is truncated');
+  const longLine = instruction.split('\n').find((line) => line.includes('Long summary line'));
+  assert.ok(longLine, 'the long summary should be present');
+  assert.ok(
+    longLine.length <= MAX_SUMMARY_CHARS + 3,
+    `a summary line should be bounded, got ${longLine.length} chars`,
+  );
 });
 
 test('a question is fenced, so it cannot pose as an instruction', () => {
@@ -881,4 +928,24 @@ test('the layer preserves 100% model-generated prose and passes it through to th
   const result = await conversation.select('What is your computer vision experience?', RETRIEVED, []);
   assert.equal(result.text, modelProse);
   assert.deepEqual(result.keys, ['products:prod-verseye']);
+});
+
+test('the layer returns model prose even when no record was selected', async () => {
+  // The decoupled half: a conversational answer with no citation is still the answer the
+  // reader should see, while the cards underneath it stay entirely deterministic. The
+  // engine is what decides to prefer `text` over `composeAnswer` here.
+  const modelProse =
+    'That is not something the portfolio documents, but here is what it does cover.';
+  const payload = JSON.stringify({ text: modelProse, keys: [], actions: [] });
+  const { pipeline } = fakePipeline(payload);
+  const conversation = await createConversation({
+    role: 'conversation',
+    load: async () => ({ pipeline, backend: 'wasm' }),
+  });
+  assert.ok(conversation);
+
+  const result = await conversation.select('Do you know Rust?', RETRIEVED, []);
+  assert.equal(result.text, modelProse);
+  assert.deepEqual(result.keys, [], 'no record was selected and none was invented');
+  assert.equal(result.empty, true, 'and the empty selection is still reported as empty');
 });
