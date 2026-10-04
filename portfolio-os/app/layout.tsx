@@ -17,6 +17,7 @@ import { Shell } from '@/components/layout/Shell';
 import { Footer } from '@/components/layout/Footer';
 import { ScrollManager } from '@/components/layout/ScrollManager';
 import { AnalyticsProvider } from '@/components/analytics/Provider';
+import { OfflineProvider } from '@/components/offline/OfflineProvider';
 import 'katex/dist/katex.min.css';
 import '@/styles/tokens.css';
 import '@/styles/globals.css';
@@ -125,6 +126,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <AppearanceScript fallback={fallback} defaultChoice={defaultChoice} />
       </head>
       <body>
+        <OfflineProvider />
         <ScrollManager />
         {portfolioConfig.features.analytics ? <AnalyticsProvider /> : null}
         <Shell
