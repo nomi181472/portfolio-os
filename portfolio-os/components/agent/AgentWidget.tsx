@@ -67,6 +67,7 @@ import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } 
 import { getGreetingMessage } from '@/components/agent/parts/greetings';
 import { checkAllModelCachesHelper } from '@/components/agent/parts/modelHelpers';
 import { processAugmentations } from '@/components/agent/parts/augmentations';
+import { streamTurnAnswer } from '@/components/agent/parts/streaming';
 
 export type ModelChoiceId = ModelRole | 'none';
 
@@ -620,69 +621,14 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         });
 
         // Fast streaming effect: progressively reveal text character by character
-        const fullText = answer.text;
-        const totalChars = fullText.length;
-        
-        if (totalChars === 0) {
-          setTurns((current) =>
-            current.map((turn) =>
-              turn.id === id
-                ? {
-                    ...turn,
-                    answer,
-                    modelName: answeringModelName,
-                    thinking: thinkingTrace,
-                    searchSources,
-                  }
-                : turn,
-            ),
-          );
-        } else {
-          // Stream in small fast chunks (~4-8 characters every 15-20ms)
-          const chunkSize = Math.max(3, Math.ceil(totalChars / 40));
-          let currentLen = 0;
-
-          // Set initial partial answer turn
-          setTurns((current) =>
-            current.map((turn) =>
-              turn.id === id
-                ? {
-                    ...turn,
-                    answer: { ...answer, text: '' },
-                    modelName: answeringModelName,
-                    thinking: thinkingTrace,
-                    searchSources,
-                  }
-                : turn,
-            ),
-          );
-
-          await new Promise<void>((resolve) => {
-            const interval = setInterval(() => {
-              currentLen = Math.min(totalChars, currentLen + chunkSize);
-              const partialText = fullText.slice(0, currentLen);
-
-              setTurns((current) =>
-                current.map((turn) =>
-                  turn.id === id
-                    ? {
-                        ...turn,
-                        answer: { ...answer, text: partialText },
-                        modelName: answeringModelName,
-                        thinking: thinkingTrace,
-                        searchSources,
-                      }
-                    : turn,
-                ),
-              );
-
-              if (currentLen >= totalChars) {
-                clearInterval(interval);
-                resolve();
-              }
-            }, 16);
-          });
-        }
+        await streamTurnAnswer({
+          id,
+          answer,
+          answeringModelName,
+          thinkingTrace,
+          searchSources,
+          setTurns,
+        });
       } catch {
         setTurns((current) =>
           current.map((turn) =>
