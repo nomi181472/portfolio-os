@@ -34,6 +34,11 @@ import {
   renderMessages,
   selectRecords,
   validateSelection,
+  estimateTokens,
+  estimateMessagesTokens,
+  pruneHistoryToTokenLimit,
+  MAX_CONTEXT_TOKENS,
+  MAX_INPUT_QUESTION_TOKENS,
   type MemoryTurn,
 } from '../lib/agent/models/conversation';
 import { navigationRegistryFromTargets } from '../lib/agent/navigation';
@@ -292,6 +297,28 @@ test('a turn with no evidence is not worth remembering', () => {
   assert.equal(isWorthRemembering(turn('q', [])), false);
   assert.equal(isWorthRemembering(turn('q', ['products:prod-verseye'], '   ')), false);
   assert.equal(isWorthRemembering(turn('q', ['products:prod-verseye'])), true);
+});
+
+test('token estimation computes expected heuristic length', () => {
+  assert.equal(estimateTokens(''), 0);
+  assert.ok(estimateTokens('Hello world') > 0);
+  assert.ok(estimateTokens('a'.repeat(380)) >= 100);
+});
+
+test('pruneHistoryToTokenLimit drops oldest turns when token budget is exceeded', () => {
+  const instruction = buildInstruction(RETRIEVED);
+  const q = 'What is VERSEYE?';
+  const longAnswer = 'Documented evidence and system design overview. '.repeat(40);
+  const history: MemoryTurn[] = [
+    { question: 'Old turn 1', answer: longAnswer, keys: ['products:prod-verseye'] },
+    { question: 'Old turn 2', answer: longAnswer, keys: ['products:prod-navirox'] },
+    { question: 'Recent turn 3', answer: 'Short answer', keys: ['products:prod-verseye'] },
+  ];
+
+  // Under a tight token budget, older turns must be pruned
+  const pruned = pruneHistoryToTokenLimit(instruction, q, history, 600);
+  assert.ok(pruned.length < history.length);
+  assert.equal(pruned.at(-1)?.question, 'Recent turn 3', 'newest turn must be preserved over older ones');
 });
 
 /* ------------------------------------------------------------- prompt */

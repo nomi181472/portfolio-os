@@ -23,7 +23,7 @@ import {
   parseSelection,
   validateSelection,
   createConversation,
-  type ConversationLayer,
+  type Conversation,
 } from '../lib/agent/models/conversation';
 import { retrieve, buildLexicalIndex } from '../lib/agent/retrieve';
 import { normaliseQuestion } from '../lib/agent/normalize';
@@ -122,9 +122,9 @@ export async function testModelPrompt({
   }
 
   // Step 6: Full Engine Response Synthesis
-  const simulatedConversationLayer: ConversationLayer | null = rawModelResponse
+  const simulatedConversationLayer: Conversation | null = rawModelResponse
     ? await createConversation({
-        role: modelRole,
+        role: modelRole === 'fluent' ? 'fluent' : 'conversation',
         load: async () => ({
           pipeline: async () => rawModelResponse!,
           backend: 'wasm',
@@ -151,7 +151,7 @@ export async function testModelPrompt({
 if (process.argv[1]?.endsWith('model-test-harness.ts')) {
   const args = process.argv.slice(2);
   const qIndex = args.indexOf('--question');
-  const userQ = qIndex !== -1 && args[qIndex + 1] ? args[qIndex + 1] : 'Do you have experience with Kubernetes and distributed systems?';
+  const userQ: string = (qIndex !== -1 && args[qIndex + 1]) ? (args[qIndex + 1] as string) : 'Do you have experience with Kubernetes and distributed systems?';
 
   (async () => {
     // Demonstration 1: Qwen2.5-0.5B with realistic JSON response

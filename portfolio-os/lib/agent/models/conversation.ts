@@ -102,6 +102,55 @@ export function isWorthRemembering(turn: MemoryTurn): boolean {
   return turn.answer.trim().length > 0 && turn.keys.length > 0;
 }
 
+/**
+ * Standard heuristic for Qwen / LLM token estimation (average ~3.8 - 4 characters per token).
+ */
+export function estimateTokens(text: string): number {
+  if (!text) return 0;
+  return Math.ceil(text.length / 3.8);
+}
+
+/**
+ * Safety ceiling for in-browser local WASM context window (Qwen2.5 0.5B / 1.5B).
+ * Although weights support up to 32k tokens, running > 4096 tokens in browser WebAssembly
+ * degrades latency significantly and causes tab heap allocation pressure.
+ */
+export const MAX_CONTEXT_TOKENS = 4096;
+export const MAX_INPUT_QUESTION_TOKENS = 2048;
+
+/**
+ * Compute the total token consumption of messages sent to the model.
+ */
+export function estimateMessagesTokens(
+  messages: ReadonlyArray<{ role: string; content: string }>,
+): number {
+  let total = 0;
+  for (const msg of messages) {
+    // Role prefix + formatting overhead (~4 tokens) + content tokens
+    total += 4 + estimateTokens(msg.content);
+  }
+  return total;
+}
+
+/**
+ * Prunes older memory turns from history if the estimated context token size approaches limit.
+ */
+export function pruneHistoryToTokenLimit(
+  instruction: string,
+  question: string,
+  history: readonly MemoryTurn[],
+  maxTokens: number = MAX_CONTEXT_TOKENS,
+): MemoryTurn[] {
+  let pruned = [...history];
+  while (pruned.length > 0) {
+    const msgs = renderMessages(instruction, question, pruned);
+    const tokens = estimateMessagesTokens(msgs);
+    if (tokens <= maxTokens) break;
+    pruned.shift();
+  }
+  return pruned;
+}
+
 /* --------------------------------------------------------- the prompt */
 
 /**
@@ -461,7 +510,10 @@ const GENERATION_OPTIONS = {
  * emphasis within it.
  */
 export async function selectRecords(options: GenerateOptions): Promise<GenerateResult> {
-  const messages = renderMessages(options.instruction, options.question, options.history ?? []);
+  const history = options.history
+    ? pruneHistoryToTokenLimit(options.instruction, options.question, options.history)
+    : [];
+  const messages = renderMessages(options.instruction, options.question, history);
 
   let raw: string;
   try {

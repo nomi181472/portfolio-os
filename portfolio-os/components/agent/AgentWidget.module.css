@@ -576,6 +576,39 @@
   font-size: 0.8rem;
 }
 
+.tokenCounter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--ink-quiet);
+  margin-inline-start: auto;
+  user-select: none;
+}
+
+.tokenWarning {
+  color: var(--signal-quiet);
+}
+
+.contextResetBtn {
+  appearance: none;
+  border: 1px solid var(--rule);
+  background: var(--fill-faint);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.contextResetBtn:hover {
+  background: var(--fill-strong);
+  border-color: var(--rule-strong);
+  color: var(--ink-bright);
+}
+
 .match {
   display: flex;
   flex-direction: column;

@@ -56,7 +56,13 @@ import {
   type BrainState,
   type LoadedModel,
 } from '@/lib/agent/models/brain';
-import { createConversation, type Conversation } from '@/lib/agent/models/conversation';
+import {
+  createConversation,
+  estimateTokens,
+  MAX_CONTEXT_TOKENS,
+  MAX_INPUT_QUESTION_TOKENS,
+  type Conversation,
+} from '@/lib/agent/models/conversation';
 import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } from '@/lib/agent/registry';
 
 export type ModelChoiceId = ModelRole | 'none';
@@ -585,6 +591,33 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     async (question: string) => {
       const trimmed = question.trim();
       if (!trimmed || state.status !== 'ready' || busy) return;
+
+      const inputTokens = estimateTokens(trimmed);
+      if (inputTokens > MAX_INPUT_QUESTION_TOKENS) {
+        const id = nextId.current++;
+        setDraft('');
+        const normalised = normaliseQuestion(trimmed, state.engine.aliases);
+        setTurns((current) => [
+          ...current,
+          {
+            id,
+            question: trimmed,
+            answer: {
+              question: trimmed,
+              intent: 'general',
+              routing: { intent: 'general', confidence: 0, signals: [], uncertain: true },
+              normalised,
+              text: `Input size limit reached (${inputTokens} tokens, maximum allowed is ${MAX_INPUT_QUESTION_TOKENS} tokens). Please shorten your input or refresh the chat session to reset the context window.`,
+              cards: [],
+              navigation: [],
+              empty: true,
+              caveats: ['Prompt exceeds maximum input token capacity.'],
+            },
+            modelName: 'System Guard',
+          },
+        ]);
+        return;
+      }
 
       const id = nextId.current++;
       setDraft('');
@@ -1416,6 +1449,35 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     </button>
                   </div>
                 )}
+
+                {/* Token Context Usage & Session Reset */}
+                {(() => {
+                  const draftTokens = estimateTokens(draft);
+                  const isNearInputLimit = draftTokens > MAX_INPUT_QUESTION_TOKENS * 0.8;
+                  const hasConversation = turns.length > 0;
+
+                  return (
+                    <div className={styles.tokenCounter}>
+                      <span className={isNearInputLimit ? styles.tokenWarning : undefined} title="Tokens for current input">
+                        {draftTokens > 0 ? `${draftTokens} / ${MAX_INPUT_QUESTION_TOKENS} tokens` : `${MAX_INPUT_QUESTION_TOKENS} max tokens`}
+                      </span>
+                      {hasConversation && (
+                        <button
+                          type="button"
+                          className={styles.contextResetBtn}
+                          onClick={() => {
+                            setTurns([]);
+                            if (state.status === 'ready') state.engine.clearHistory();
+                            setDraft('');
+                          }}
+                          title="Reset conversation context and start fresh"
+                        >
+                          Clear Context
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               <div className={styles.inputRow}>
