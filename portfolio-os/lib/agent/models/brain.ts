@@ -398,7 +398,13 @@ function configure(mod: TransformersModule): TransformersModule {
   mod.env.allowLocalModels = false;
   mod.env.useBrowserCache = true;
   const wasm = mod.env.backends?.onnx?.wasm;
-  if (wasm) wasm.wasmPaths = ortWasmPath(mod);
+  if (wasm) {
+    wasm.wasmPaths = ortWasmPath(mod);
+    // Disable multi-threading workers (`numThreads = 1`) for WASM. Multi-threading allocates
+    // multiple SharedArrayBuffers that exceed 2GB/4GB WebAssembly memory limits on 1.5B models,
+    // causing ONNX WASM `Aborted() ort-wasm-simd-threaded.jsep.wasm` crashes.
+    (wasm as { numThreads?: number }).numThreads = 1;
+  }
   return mod;
 }
 

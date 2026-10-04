@@ -286,6 +286,45 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   });
   const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
   const [pendingDownloadModel, setPendingDownloadModel] = useState<ModelListItem | null>(null);
+  const [greetingMessage, setGreetingMessage] = useState(
+    'What do you want to know about me? Give me your JDK, and I will give you an honest answer as far as possible.',
+  );
+
+  const pickRandomGreeting = useCallback((role?: ModelChoiceId) => {
+    const defaultVariations = [
+      'What do you want to know about me? Give me your JDK, and I will give you an honest answer as far as possible.',
+      'What would you like to explore about Noman? Share your requirements or tech stack, and I will provide precise insights.',
+      'Curious about Noman’s experience? Ask me anything about architectures, distributed systems, or skills, and I will answer truthfully.',
+      'What do you want to analyze today? Paste a job description or query, and I will evaluate Noman’s exact fit.',
+      'Ready to assist! Ask me about Noman’s past engineering achievements, codebases, or system design decisions.',
+    ];
+
+    const qwen05Variations = [
+      'Qwen 0.5B Instruct model is ready! Ask me anything about Noman’s backend architecture, Kubernetes experience, or project history.',
+      'Loaded Qwen 0.5B! Give me your job description or tech stack (e.g. JDK/Node/Go), and I will evaluate Noman’s direct fit.',
+      'Qwen 0.5B is active locally! What would you like to know about Noman’s experience at Ktrade or Verseye?',
+    ];
+
+    const qwen15Variations = [
+      'Qwen 1.5B High-Quality LLM is active! Ask me deep questions about system design, microservices, or team leadership.',
+      'Loaded Qwen 1.5B Instruct! Paste your role requirements or engineering challenges, and let us discuss Noman’s qualifications in detail.',
+      'Qwen 1.5B neural engine ready! What technical achievements or architecture patterns would you like to explore?',
+    ];
+
+    const e5Variations = [
+      'Neural Vector Brain (E5 Small) is online! Searching 384-dimensional vector space for semantic concept matches across portfolio passages.',
+      'Vector Search engine ready! Ask any conceptual question to search Noman’s portfolio by semantic meaning.',
+    ];
+
+    let pool = defaultVariations;
+    if (role === 'conversation') pool = qwen05Variations;
+    else if (role === 'fluent') pool = qwen15Variations;
+    else if (role === 'embedding') pool = e5Variations;
+
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    const chosen = pool[randomIndex];
+    if (chosen) setGreetingMessage(chosen);
+  }, []);
   const modelPickerRef = useRef<HTMLDivElement>(null);
   const knowledgeRef = useRef<PortfolioKnowledge | null>(null);
 
@@ -683,12 +722,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           return;
         }
         setSemantic({ status: 'ready', chunks: after.total });
+        pickRandomGreeting('embedding');
       })
       .catch(() => {
         // `loadModel` has already reported through `onState`; this only stops the
         // rejection becoming an unhandled one.
       });
-  }, []);
+  }, [pickRandomGreeting]);
 
   /**
    * Load the conversational model. Separate from `startModel` on purpose.
@@ -738,6 +778,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           return;
         }
         conversationRef.current = conversation;
+        pickRandomGreeting(role);
         setChat({
           status: 'ready',
           backend: loaded.backend,
@@ -750,7 +791,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         if (chatAttempt.current !== attempt) return;
         setChat({ status: 'failed', message: 'The conversational model could not be loaded.' });
       });
-  }, [isDownloading, checkAllModelCaches]);
+  }, [isDownloading, checkAllModelCaches, pickRandomGreeting]);
 
   const handleSelectModel = useCallback((item: ModelListItem) => {
     if (isDownloading) return;
@@ -1009,7 +1050,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
              */}
             {chat.status === 'ready' && turns.length === 0 ? (
               <p className={styles.brainNote}>
-                ⚡ <strong>I am alive!</strong> My neural brain is now powered by ONNX directly in your browser. Ask me anything about Noman&apos;s experience, architecture, or skills, and I will guide you through verified portfolio evidence. Activated on{' '}
+                ⚡ <strong>I am alive!</strong> My neural brain is now powered by ONNX directly in your browser. {greetingMessage} Activated on{' '}
                 {new Date().toLocaleDateString(undefined, {
                   day: 'numeric',
                   month: 'long',
