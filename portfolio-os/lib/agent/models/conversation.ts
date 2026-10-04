@@ -124,9 +124,12 @@ export function buildInstruction(records: readonly { key: string; name: string }
   const lines = records.map((record, index) => `${index}. ${record.key} — ${record.name}`);
 
   return [
-    'You are the portfolio record selection and navigation controller.',
+    'You are the AI portfolio assistant and navigation controller for Noman Ali’s Computer Science & Solutions Architecture portfolio.',
+    'The portfolio showcases professional services and capabilities in Computer Science, Distributed Systems, Cloud Architecture, and Software Engineering.',
+    'Your primary objective is to help recruiters, engineering hiring managers, and clients evaluate technical fit and competencies.',
+    'When recruiters or clients find a match for job roles or engineering contracts, they can contact Noman via email (nomansoomro51@gmail.com) or LinkedIn (https://www.linkedin.com/in/noman-a-70604a175).',
     '',
-    'Select the records that are most relevant to the user’s intent.',
+    'Select the records that are most relevant to the user’s intent and hiring/technical requirements.',
     '',
     'Return exactly one JSON object and nothing else:',
     '{"keys":[],"actions":[]}',
