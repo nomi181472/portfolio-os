@@ -454,6 +454,128 @@
   user-select: none;
 }
 
+/* Deep thinking collapsible block */
+.thinkingBlock {
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 0.4rem 0.65rem;
+  font-size: 0.775rem;
+  margin-top: 0.25rem;
+}
+
+.thinkingSummary {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--ink-quiet);
+  user-select: none;
+}
+
+.thinkingSummary:hover {
+  color: var(--ink-bright);
+}
+
+.thinkingIcon {
+  font-size: 0.85rem;
+}
+
+.thinkingContent {
+  margin: 0.4rem 0 0.1rem;
+  padding: 0.4rem;
+  background: var(--fill);
+  border-radius: var(--radius-control);
+  font-family: var(--font-data);
+  font-size: 0.725rem;
+  line-height: 1.5;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Web search sources block */
+.searchSourcesBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.4rem 0.65rem;
+  background: var(--fill-faint);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--radius-control);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.searchSourcesTitle {
+  font-weight: 500;
+  color: var(--ink-quiet);
+}
+
+.searchSourcesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.65rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.searchSourceLink {
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-size: 0.75rem;
+  transition: opacity 0.15s ease;
+}
+
+.searchSourceLink:hover {
+  opacity: 0.8;
+}
+
+/* Qwen Capability Toggles (Think & Web Search) */
+.qwenToggles {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.capabilityToggle {
+  appearance: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-pill);
+  padding: 0.25rem 0.55rem;
+  color: var(--ink-quiet);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.capabilityToggle:hover {
+  background: var(--fill-strong);
+  border-color: var(--rule-strong);
+  color: var(--ink-bright);
+}
+
+.capabilityToggleActive {
+  background: var(--fill-strong);
+  border-color: var(--signal);
+  color: var(--ink-bright);
+}
+
+.capabilityIcon {
+  font-size: 0.8rem;
+}
+
 .match {
   display: flex;
   flex-direction: column;

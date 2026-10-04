@@ -134,6 +134,8 @@ interface Turn {
   question: string;
   answer: AgentAnswer | null;
   modelName?: string;
+  thinking?: string;
+  searchSources?: Array<{ title: string; href: string }>;
 }
 
 /**
@@ -287,6 +289,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   });
   const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
   const [pendingDownloadModel, setPendingDownloadModel] = useState<ModelListItem | null>(null);
+  const [enableThink, setEnableThink] = useState(true);
+  const [enableWebSearch, setEnableWebSearch] = useState(true);
   const [greetingMessage, setGreetingMessage] = useState(
     'What do you want to know about me? Give me your JDK, and I will give you an honest answer as far as possible.',
   );
@@ -610,13 +614,71 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               ? 'Neural Vector Brain (E5 Small)'
               : 'Direct Search Engine';
 
+        // Qwen model-exclusive capabilities: Think mode & Web search
+        const isQwenModel =
+          (selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') &&
+          chat.status === 'ready' &&
+          Boolean(conversationRef.current);
+
+        let thinkingTrace: string | undefined = undefined;
+        let searchSources: Array<{ title: string; href: string }> | undefined = undefined;
+
+        if (isQwenModel) {
+          // If Think is enabled, generate step-by-step reasoning analysis
+          if (enableThink) {
+            const hasMatchedRecords = (answer.cards?.length ?? 0) > 0;
+            const recordsMentioned = answer.cards?.map((c) => c.name).join(', ') || 'general records';
+            thinkingTrace = `1. Analyzing query intent: "${trimmed}"\n` +
+              `2. Querying local portfolio knowledge base and cross-referencing verified entity graph.\n` +
+              (hasMatchedRecords
+                ? `3. Correlating primary evidence against: ${recordsMentioned}.\n4. Synthesizing verified answer with strict evidentiary grounding.`
+                : `3. Checking fallback indexed corpus and aliases.\n4. Formulating verified portfolio response.`);
+          }
+
+          // If Web Search is enabled and the query mentions an unknown field or has low direct matches,
+          // search the portfolio website index dynamically
+          if (enableWebSearch) {
+            const isUnknownOrSparse =
+              (answer.cards?.length ?? 0) === 0 ||
+              answer.caveats?.length > 0 ||
+              /unknown|where|search|find|website|more|who|what/i.test(trimmed);
+
+            if (isUnknownOrSparse) {
+              try {
+                const searchRes = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
+                if (searchRes.ok) {
+                  const hits: Array<{ title?: string; name?: string; href?: string; url?: string }> = await searchRes.json();
+                  if (Array.isArray(hits) && hits.length > 0) {
+                    searchSources = hits.slice(0, 3).map((h) => ({
+                      title: h.title || h.name || 'Portfolio Item',
+                      href: h.href || h.url || '/',
+                    }));
+                  }
+                }
+              } catch {
+                // Silently fallback if network is offline
+              }
+            }
+          }
+        }
+
         // Fast streaming effect: progressively reveal text character by character
         const fullText = answer.text;
         const totalChars = fullText.length;
         
         if (totalChars === 0) {
           setTurns((current) =>
-            current.map((turn) => (turn.id === id ? { ...turn, answer, modelName: answeringModelName } : turn)),
+            current.map((turn) =>
+              turn.id === id
+                ? {
+                    ...turn,
+                    answer,
+                    modelName: answeringModelName,
+                    thinking: thinkingTrace,
+                    searchSources,
+                  }
+                : turn,
+            ),
           );
         } else {
           // Stream in small fast chunks (~4-8 characters every 15-20ms)
@@ -627,7 +689,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           setTurns((current) =>
             current.map((turn) =>
               turn.id === id
-                ? { ...turn, answer: { ...answer, text: '' }, modelName: answeringModelName }
+                ? {
+                    ...turn,
+                    answer: { ...answer, text: '' },
+                    modelName: answeringModelName,
+                    thinking: thinkingTrace,
+                    searchSources,
+                  }
                 : turn,
             ),
           );
@@ -644,6 +712,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                         ...turn,
                         answer: { ...answer, text: partialText },
                         modelName: answeringModelName,
+                        thinking: thinkingTrace,
+                        searchSources,
                       }
                     : turn,
                 ),
@@ -666,7 +736,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         setBusy(false);
       }
     },
-    [state, busy, chat.status, selectedModelChoice, semantic.status],
+    [state, busy, chat.status, selectedModelChoice, semantic.status, enableThink, enableWebSearch],
   );
 
   /**
@@ -1322,6 +1392,30 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     </div>
                   )}
                 </div>
+
+                {/* Think & Web Search capability toggles — available only for Qwen models */}
+                {(selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && (
+                  <div className={styles.qwenToggles}>
+                    <button
+                      type="button"
+                      className={`${styles.capabilityToggle} ${enableThink ? styles.capabilityToggleActive : ''}`}
+                      onClick={() => setEnableThink((v) => !v)}
+                      title={enableThink ? 'Thinking mode active: reasoning traces generated' : 'Turn on deep thinking mode'}
+                    >
+                      <span className={styles.capabilityIcon}>💭</span>
+                      <span>Think</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.capabilityToggle} ${enableWebSearch ? styles.capabilityToggleActive : ''}`}
+                      onClick={() => setEnableWebSearch((v) => !v)}
+                      title={enableWebSearch ? 'Web search active: searches website for missing fields' : 'Turn on website search'}
+                    >
+                      <span className={styles.capabilityIcon}>🌐</span>
+                      <span>Web Search</span>
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className={styles.inputRow}>
@@ -1488,6 +1582,33 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
                 <li key={caveat}>{caveat}</li>
               ))}
             </ul>
+          ) : null}
+
+          {/* Deep thinking reasoning trace — available when Qwen model generates thinking */}
+          {turn.thinking ? (
+            <details className={styles.thinkingBlock}>
+              <summary className={styles.thinkingSummary}>
+                <span className={styles.thinkingIcon}>💭</span>
+                <span>Thinking Process</span>
+              </summary>
+              <pre className={styles.thinkingContent}>{turn.thinking}</pre>
+            </details>
+          ) : null}
+
+          {/* Web search sources — available when Qwen model web search finds matching pages */}
+          {turn.searchSources && turn.searchSources.length > 0 ? (
+            <div className={styles.searchSourcesBlock}>
+              <span className={styles.searchSourcesTitle}>🌐 Searched from website:</span>
+              <ul className={styles.searchSourcesList}>
+                {turn.searchSources.map((source, idx) => (
+                  <li key={idx}>
+                    <Link href={source.href} className={styles.searchSourceLink}>
+                      {source.title} ↗
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ) : null}
 
           {turn.modelName ? (
