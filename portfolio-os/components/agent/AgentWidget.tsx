@@ -443,6 +443,21 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
   }, [turns]);
 
+  const userHasConversationRef = useRef(false);
+  userHasConversationRef.current = turns.some((t) => t.question.trim().length > 0);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (userHasConversationRef.current) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   /**
    * Focus, on open and after close.
    *
