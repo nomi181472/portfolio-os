@@ -158,6 +158,13 @@ export function personEntity(profile: Profile, portfolio: Portfolio): Json {
     new Set([...(profile.briefing?.domains ?? []), ...(profile.briefing?.industries ?? [])]),
   ).slice(0, 16);
 
+  const education = portfolio.education.map((edu) =>
+    compact({
+      '@type': 'EducationalOrganization',
+      name: edu.institution,
+    }),
+  );
+
   return compact({
     '@type': 'Person',
     '@id': PERSON_ID,
@@ -171,6 +178,7 @@ export function personEntity(profile: Profile, portfolio: Portfolio): Json {
       ? { '@type': 'PostalAddress', addressLocality: profile.location }
       : undefined,
     sameAs: sameAs(profile),
+    alumniOf: education.length ? education : undefined,
     worksFor: current.length ? current : undefined,
     knowsAbout: knowsAbout.length ? knowsAbout : undefined,
     hasOccupationalCredential: portfolio.certifications
@@ -212,6 +220,7 @@ export function websiteEntity(profile: Profile, portfolio: Portfolio): Json {
     description: profile.positioning ?? portfolioConfig.site.description,
     inLanguage: portfolioConfig.site.locale,
     publisher: { '@id': PERSON_ID },
+    codeRepository: 'https://github.com/nomi181472/portfolio-os',
     hasPart: sections.length ? sections : undefined,
   });
 }

@@ -23,6 +23,7 @@ import dynamic from 'next/dynamic';
 import type { AppearanceChoice } from '@/lib/theme';
 import { portfolioConfig } from '@/config/portfolio.config';
 import { Rail } from './Rail';
+import { GitHubBadge } from './GitHubBadge';
 
 const CommandMenu = dynamic(
   () => import('@/components/search/CommandMenu').then((mod) => mod.CommandMenu),
@@ -84,6 +85,7 @@ export function Shell({ children, footer, profile, startupName, appearance }: Sh
   return (
     <div className="shell">
       <a className="skip-link" href="#main">Skip to content</a>
+      <GitHubBadge repoUrl="https://github.com/nomi181472/portfolio-os" />
       <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} appearance={appearance} />
       <div className="shell__main">
         <main id="main">{children}</main>

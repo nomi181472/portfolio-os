@@ -1,0 +1,151 @@
+/* ==========================================================================
+   Top Right Floating GitHub Badge with smooth animation & micro-interactions
+   ========================================================================== */
+
+.container {
+  position: fixed;
+  top: 1.15rem;
+  right: 1.25rem;
+  z-index: 45; /* Sits right above main page flow, below modals/drawers */
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 9999px;
+  background: var(--surface-raised);
+  color: var(--ink);
+  font-family: var(--font-data);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  border: 1px solid var(--rule-strong);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18), 0 1px 3px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Subtle breathing glow behind badge */
+.pulseGlow {
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 50% 50%, var(--signal) 0%, transparent 70%);
+  opacity: 0.08;
+  pointer-events: none;
+  animation: breathe 3.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.06;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.18;
+    transform: scale(1.03);
+  }
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-bright);
+  transition: transform 0.25s ease;
+}
+
+.icon {
+  width: 17px;
+  height: 17px;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.repoName {
+  color: var(--ink-bright);
+  font-weight: 500;
+}
+
+/* Live dot indicator */
+.indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981; /* Green live dot */
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+  animation: pulseIndicator 2.2s infinite ease-in-out;
+}
+
+@keyframes pulseIndicator {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+.externalArrow {
+  font-size: 0.75rem;
+  color: var(--ink-quiet);
+  transition: transform 0.2s ease, color 0.2s ease;
+  font-family: system-ui, sans-serif;
+}
+
+/* Hover state */
+.badge:hover {
+  background: var(--surface-overlay, var(--surface-raised));
+  border-color: var(--signal);
+  color: var(--ink-bright);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.26), 0 0 12px var(--glow);
+}
+
+.badge:hover .iconWrapper {
+  transform: rotate(-8deg) scale(1.1);
+  color: var(--signal);
+}
+
+.badge:hover .externalArrow {
+  transform: translate(2px, -2px);
+  color: var(--signal);
+}
+
+.badge:active {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Responsive adjustment on narrow mobile screens (<= 56rem)
+   Top mobile nav bar has its own dedicated GitHub button, so hide floating badge */
+@media (max-width: 56rem) {
+  .container {
+    display: none;
+  }
+}

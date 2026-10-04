@@ -37,7 +37,12 @@
       },
       {
         "label": "GitHub Profile",
-        "url": "https://github.com/noman-ali",
+        "url": "https://github.com/nomi181472",
+        "type": "repository"
+      },
+      {
+        "label": "Portfolio OS GitHub Repository",
+        "url": "https://github.com/nomi181472/portfolio-os",
         "type": "repository"
       },
       {
