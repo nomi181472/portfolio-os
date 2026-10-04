@@ -43,6 +43,9 @@ self.addEventListener('fetch', (event) => {
   // Skip chrome-extension, internal, and external cross-origin requests
   if (url.origin !== self.location.origin) return;
 
+  // Do NOT intercept or cache dynamic API endpoints (/api/agent/knowledge, /api/search, /api/analytics, etc.)
+  if (url.pathname.startsWith('/api/')) return;
+
   // Stale-while-revalidate for static JS chunks, CSS, and media
   if (
     url.pathname.startsWith('/_next/static/') ||

@@ -64,6 +64,9 @@ import {
   type Conversation,
 } from '@/lib/agent/models/conversation';
 import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } from '@/lib/agent/registry';
+import { getGreetingMessage } from '@/components/agent/parts/greetings';
+import { checkAllModelCachesHelper } from '@/components/agent/parts/modelHelpers';
+import { processAugmentations } from '@/components/agent/parts/augmentations';
 
 export type ModelChoiceId = ModelRole | 'none';
 
@@ -302,39 +305,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   );
 
   const pickRandomGreeting = useCallback((role?: ModelChoiceId) => {
-    const defaultVariations = [
-      'What do you want to know about me? Give me your JDK, and I will give you an honest answer as far as possible.',
-      'What would you like to explore about Noman? Share your requirements or tech stack, and I will provide precise insights.',
-      'Curious about Noman’s experience? Ask me anything about architectures, distributed systems, or skills, and I will answer truthfully.',
-      'What do you want to analyze today? Paste a job description or query, and I will evaluate Noman’s exact fit.',
-      'Ready to assist! Ask me about Noman’s past engineering achievements, codebases, or system design decisions.',
-    ];
-
-    const qwen05Variations = [
-      'Qwen 0.5B Instruct model is ready! Ask me anything about Noman’s backend architecture, Kubernetes experience, or project history.',
-      'Loaded Qwen 0.5B! Give me your job description or tech stack (e.g. JDK/Node/Go), and I will evaluate Noman’s direct fit.',
-      'Qwen 0.5B is active locally! What would you like to know about Noman’s experience at Ktrade or Verseye?',
-    ];
-
-    const qwen15Variations = [
-      'Qwen 1.5B High-Quality LLM is active! Ask me deep questions about system design, microservices, or team leadership.',
-      'Loaded Qwen 1.5B Instruct! Paste your role requirements or engineering challenges, and let us discuss Noman’s qualifications in detail.',
-      'Qwen 1.5B neural engine ready! What technical achievements or architecture patterns would you like to explore?',
-    ];
-
-    const e5Variations = [
-      'Neural Vector Brain (E5 Small) is online! Searching 384-dimensional vector space for semantic concept matches across portfolio passages.',
-      'Vector Search engine ready! Ask any conceptual question to search Noman’s portfolio by semantic meaning.',
-    ];
-
-    let pool = defaultVariations;
-    if (role === 'conversation') pool = qwen05Variations;
-    else if (role === 'fluent') pool = qwen15Variations;
-    else if (role === 'embedding') pool = e5Variations;
-
-    const randomIndex = Math.floor(Math.random() * pool.length);
-    const chosen = pool[randomIndex];
-    if (chosen) setGreetingMessage(chosen);
+    setGreetingMessage(getGreetingMessage(role));
   }, []);
   const modelPickerRef = useRef<HTMLDivElement>(null);
   const knowledgeRef = useRef<PortfolioKnowledge | null>(null);
@@ -431,20 +402,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   }, [open]);
 
   const checkAllModelCaches = useCallback(async () => {
-    const embeddingUrl = modelForRole('embedding').artifact.url;
-    const conversationUrl = modelForRole('conversation').artifact.url;
-    const fluentUrl = modelForRole('fluent').artifact.url;
-
-    const embeddingCached = await isCached(embeddingUrl);
-    const conversationCached = await isCached(conversationUrl);
-    const fluentCached = await isCached(fluentUrl);
-
-    const newMap: Record<ModelChoiceId, boolean> = {
-      embedding: embeddingCached,
-      conversation: conversationCached,
-      fluent: fluentCached,
-      none: true,
-    };
+    const newMap = await checkAllModelCachesHelper();
     setCachedModels(newMap);
     return newMap;
   }, []);
@@ -653,47 +611,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           chat.status === 'ready' &&
           Boolean(conversationRef.current);
 
-        let thinkingTrace: string | undefined = undefined;
-        let searchSources: Array<{ title: string; href: string }> | undefined = undefined;
-
-        if (isQwenModel) {
-          // If Think is enabled, generate step-by-step reasoning analysis
-          if (enableThink) {
-            const hasMatchedRecords = (answer.cards?.length ?? 0) > 0;
-            const recordsMentioned = answer.cards?.map((c) => c.name).join(', ') || 'general records';
-            thinkingTrace = `1. Analyzing query intent: "${trimmed}"\n` +
-              `2. Querying local portfolio knowledge base and cross-referencing verified entity graph.\n` +
-              (hasMatchedRecords
-                ? `3. Correlating primary evidence against: ${recordsMentioned}.\n4. Synthesizing verified answer with strict evidentiary grounding.`
-                : `3. Checking fallback indexed corpus and aliases.\n4. Formulating verified portfolio response.`);
-          }
-
-          // If Web Search is enabled and the query mentions an unknown field or has low direct matches,
-          // search the portfolio website index dynamically
-          if (enableWebSearch) {
-            const isUnknownOrSparse =
-              (answer.cards?.length ?? 0) === 0 ||
-              answer.caveats?.length > 0 ||
-              /unknown|where|search|find|website|more|who|what/i.test(trimmed);
-
-            if (isUnknownOrSparse) {
-              try {
-                const searchRes = await fetch(`/api/search?q=${encodeURIComponent(trimmed)}`);
-                if (searchRes.ok) {
-                  const hits: Array<{ title?: string; name?: string; href?: string; url?: string }> = await searchRes.json();
-                  if (Array.isArray(hits) && hits.length > 0) {
-                    searchSources = hits.slice(0, 3).map((h) => ({
-                      title: h.title || h.name || 'Portfolio Item',
-                      href: h.href || h.url || '/',
-                    }));
-                  }
-                }
-              } catch {
-                // Silently fallback if network is offline
-              }
-            }
-          }
-        }
+        const { thinkingTrace, searchSources } = await processAugmentations({
+          trimmed,
+          answer,
+          isQwenModel,
+          enableThink,
+          enableWebSearch,
+        });
 
         // Fast streaming effect: progressively reveal text character by character
         const fullText = answer.text;
@@ -1000,19 +924,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       if (saved && ['embedding', 'conversation', 'fluent', 'none'].includes(saved)) {
         if (saved === 'none' || cachedMap[saved]) {
           setSelectedModelChoice(saved);
-          if (saved === 'embedding' && cachedMap.embedding) {
-            if (semantic.status === 'unavailable') {
-              startModel();
-            }
-          } else if (saved === 'conversation' && cachedMap.conversation) {
-            if (chat.status === 'idle') {
-              startChat('conversation');
-            }
-          } else if (saved === 'fluent' && cachedMap.fluent) {
-            if (chat.status === 'idle') {
-              startChat('fluent');
-            }
-          }
         } else {
           setSelectedModelChoice('none');
         }
@@ -1022,7 +933,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       active = false;
     };
     return cleanup;
-  }, [checkAllModelCaches, startModel, startChat, semantic.status, chat.status]);
+  }, [checkAllModelCaches]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
