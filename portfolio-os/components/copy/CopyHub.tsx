@@ -6,144 +6,13 @@ import styles from './CopyHub.module.css';
 
 interface CopyHubProps {
   rawJson: string;
+  starterJson: string;
+  starterConfig: string;
 }
-
-const MINIMAL_STARTER = JSON.stringify(
-  {
-    schemaVersion: '1.0',
-    exampleContent: false,
-    profile: {
-      name: 'Noman Ali',
-      discipline: 'Solutions Architecture & Distributed Systems',
-      positioning: 'Software Engineer with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms.',
-      location: 'Karachi, Pakistan',
-      email: 'nomansoomro51@gmail.com',
-      briefing: {
-        focus: 'Designing and engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
-        yearsActive: 5,
-        domains: ['Distributed Systems Architecture', 'Cloud & Container Platforms', 'Computer Vision & Deep Learning', 'Enterprise Security & IAM'],
-        philosophy: 'Resilient systems prioritize clear service boundaries, predictable failure modes, end-to-end telemetry, and rigorous security boundaries.',
-        specialisation: 'Solutions Architecture, .NET Core, Go, Python, Kubernetes EKS, SAML 2.0 / OIDC, and multi-tenant AI tracking pipelines.',
-        leadership: 'Technical leadership across multi-tenant SaaS, cross-functional squads, microservice standardization, and modern cloud migrations.',
-        industries: ['Enterprise SaaS', 'Computer Vision & AI', 'Securities & Fintech', 'Retail AI Auditing']
-      },
-      links: [
-        { label: 'LinkedIn Profile', url: 'https://www.linkedin.com/in/noman-a-70604a175', type: 'contact' },
-        { label: 'GitHub Profile', url: 'https://github.com/noman-ali', type: 'repository' },
-        { label: 'Google Scholar', url: 'https://scholar.google.com/citations?user=SFLfK9oAAAAJ&hl=en', type: 'website' },
-        { label: 'Direct Email', url: 'mailto:nomansoomro51@gmail.com', type: 'contact' }
-      ]
-    },
-    products: [
-      {
-        id: 'prod-verseye',
-        slug: 'verseye',
-        name: 'VERSEYE',
-        tagline: 'Production-Grade Computer Vision & Multi-Tenant Video AI Platform',
-        summary: 'Architected high-throughput AI computer vision pipeline ingesting 100+ camera streams in real-time.',
-        description: 'Engineered an end-to-end distributed video analytics architecture utilizing deep neural networks for real-time tracking, edge inference, and event notification.',
-        status: 'live',
-        featured: true,
-        category: 'Computer Vision & AI Platform',
-        technologies: ['Python', 'PyTorch', 'TensorRT', 'FastAPI', 'Redis', 'Docker', 'Kafka'],
-        period: { startDate: '2021-11', ongoing: true },
-        features: [
-          { name: 'Multi-Camera Tracking', detail: 'Real-time multi-target multi-camera video inference with low-latency event emission.' }
-        ],
-        metrics: [
-          { label: 'Tracking Uptime', value: '99.7%' },
-          { label: 'Pipeline Latency', value: '<45ms' }
-        ],
-        media: [],
-        links: [],
-        relatedSkills: ['sk-python', 'sk-redis', 'sk-docker']
-      }
-    ],
-    projects: [
-      {
-        id: 'proj-planogram-pipeline',
-        slug: 'retail-planogram-audit-pipeline',
-        name: 'Retail Planogram Audit Pipeline',
-        category: 'Applied AI & Computer Vision',
-        summary: 'Multimodal agentic computer vision pipeline combining object detection, SKU recognition, and LLM reasoning for retail compliance.',
-        technologies: ['Python', 'PyTorch', 'LangChain', 'FastAPI', 'Docker'],
-        period: { startDate: '2024-01', ongoing: true },
-        featured: true
-      }
-    ],
-    research: [],
-    experience: [
-      {
-        id: 'exp-qbs',
-        slug: 'qbs-co',
-        name: 'Lead Software Engineer / Solutions Architect',
-        organisation: 'QBS Co.',
-        summary: 'Architecting polyglot microservices (Go, C#, Python) and enterprise identity platforms on Kubernetes.',
-        period: { startDate: '2024-02', ongoing: true },
-        featured: true,
-        technologies: ['Go', 'C#', '.NET Core', 'Kubernetes', 'PostgreSQL', 'Redis']
-      }
-    ],
-    skills: [
-      {
-        id: 'sk-python',
-        slug: 'python',
-        name: 'Python',
-        category: 'Programming Languages',
-        depth: 'specialist',
-        summary: 'Core language for deep learning architectures, asynchronous web microservices, and CV pipelines.'
-      },
-      {
-        id: 'sk-csharp',
-        slug: 'csharp',
-        name: 'C#',
-        category: 'Programming Languages',
-        depth: 'specialist',
-        summary: 'High-throughput enterprise services, distributed API gateways, and IAM infrastructure.'
-      }
-    ],
-    publications: [],
-    education: [],
-    awards: [],
-    certifications: [],
-    leadership: [],
-    volunteering: [],
-    languages: []
-  },
-  null,
-  2
-);
-
-const CONFIG_SAMPLE = `export const portfolioConfig = {
-  site: {
-    url: 'https://nomanali.online',
-    title: 'Noman Ali — Solutions Architecture & Distributed Systems',
-    description: 'Software Engineer & Solutions Architect with 5+ years of experience engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
-    locale: 'en',
-  },
-  dataSource: { type: 'local' }, // or { type: 'remote', url: 'https://raw.githubusercontent.com/nomi181472/portfolio-os/main/content/portfolio.json' }
-  theme: {
-    primary: 'oklch(0.12 0.005 260)',   // Obsidian substrate (deep architectural black)
-    secondary: 'oklch(0.98 0.002 260)',  // Crisp Silver / Luminescent White signal
-    // 'system' | 'dark' | 'light' | 'contrast' | 'sepia'
-    defaultAppearance: 'dark',
-  },
-  features: {
-    editMode: true,
-    search: true,
-    graph: true,
-    analytics: true,
-    exampleNotice: false,
-  },
-  navigation: {
-    primary: ['experience', 'products', 'projects', 'startup', 'research', 'skills', 'awards'],
-    secondary: ['publications', 'education', 'leadership', 'certifications', 'volunteering', 'languages'],
-  },
-};`;
 
 type Tab = 'json' | 'starter' | 'quickstart' | 'config' | 'deploy';
 
-export function CopyHub({ rawJson }: CopyHubProps) {
+export function CopyHub({ rawJson, starterJson, starterConfig }: CopyHubProps) {
   const [activeTab, setActiveTab] = useState<Tab>('json');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [searchFilter, setSearchFilter] = useState('');
@@ -305,14 +174,14 @@ export function CopyHub({ rawJson }: CopyHubProps) {
               type="button"
               className="control"
               data-emphasis="signal"
-              onClick={() => copyToClipboard(MINIMAL_STARTER, 'starter')}
+              onClick={() => copyToClipboard(starterJson, 'starter')}
             >
               {copiedKey === 'starter' ? '✓ Copied Starter Template!' : 'Copy Starter Skeleton'}
             </button>
             <button
               type="button"
               className="control"
-              onClick={() => downloadJson(MINIMAL_STARTER, 'portfolio.starter.json')}
+              onClick={() => downloadJson(starterJson, 'portfolio.starter.json')}
             >
               Download Skeleton
             </button>
@@ -323,7 +192,7 @@ export function CopyHub({ rawJson }: CopyHubProps) {
               <span>portfolio.starter.json (Minimal Valid Schema)</span>
             </div>
             <pre className={styles.codePre}>
-              <code>{MINIMAL_STARTER}</code>
+              <code>{starterJson}</code>
             </pre>
           </div>
         </div>
@@ -424,7 +293,7 @@ export function CopyHub({ rawJson }: CopyHubProps) {
               type="button"
               className="control"
               data-emphasis="signal"
-              onClick={() => copyToClipboard(CONFIG_SAMPLE, 'config')}
+              onClick={() => copyToClipboard(starterConfig, 'config')}
             >
               {copiedKey === 'config' ? '✓ Copied Config!' : 'Copy portfolio.config.ts'}
             </button>
@@ -435,7 +304,7 @@ export function CopyHub({ rawJson }: CopyHubProps) {
               <span>config/portfolio.config.ts</span>
             </div>
             <pre className={styles.codePre}>
-              <code>{CONFIG_SAMPLE}</code>
+              <code>{starterConfig}</code>
             </pre>
           </div>
         </div>

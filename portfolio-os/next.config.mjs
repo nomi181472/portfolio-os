@@ -18,5 +18,24 @@ const nextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },
   experimental: { optimizePackageImports: ['react-markdown'] },
+  async redirects() {
+    return [
+      {
+        source: '/admin/dashboard',
+        destination: '/analytics',
+        permanent: true,
+      },
+      {
+        source: '/admin/login',
+        destination: '/analytics/login',
+        permanent: true,
+      },
+      {
+        source: '/admin',
+        destination: '/analytics',
+        permanent: true,
+      },
+    ];
+  },
 };
 export default nextConfig;

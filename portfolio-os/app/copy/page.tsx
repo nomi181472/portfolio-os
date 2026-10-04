@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getGraph } from '@/lib/source';
+import { getStarterJson, getStarterConfig } from '@/lib/starter';
 import { Ruler } from '@/components/layout/Ruler';
 import { Breadcrumbs } from '@/components/layout/Breadcrumbs';
 import { CopyHub } from '@/components/copy/CopyHub';
@@ -15,6 +16,8 @@ export const metadata: Metadata = staticPage({
 export default async function CopyPage() {
   const { bundle } = await getGraph();
   const rawJson = JSON.stringify(bundle.data, null, 2);
+  const starterJson = getStarterJson();
+  const starterConfig = getStarterConfig();
 
   return (
     <div className="page">
@@ -30,7 +33,7 @@ export default async function CopyPage() {
         </p>
       </header>
 
-      <CopyHub rawJson={rawJson} />
+      <CopyHub rawJson={rawJson} starterJson={starterJson} starterConfig={starterConfig} />
     </div>
   );
 }

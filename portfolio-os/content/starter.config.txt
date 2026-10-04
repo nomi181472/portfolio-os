@@ -1,0 +1,26 @@
+export const portfolioConfig = {
+  site: {
+    url: 'https://nomanali.online',
+    title: 'Noman Ali — Solutions Architecture & Distributed Systems',
+    description: 'Software Engineer & Solutions Architect with 5+ years of experience engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
+    locale: 'en',
+  },
+  dataSource: { type: 'local' }, // or { type: 'remote', url: 'https://raw.githubusercontent.com/nomi181472/portfolio-os/main/content/portfolio.json' }
+  theme: {
+    primary: 'oklch(0.12 0.005 260)',   // Obsidian substrate (deep architectural black)
+    secondary: 'oklch(0.98 0.002 260)',  // Crisp Silver / Luminescent White signal
+    // 'system' | 'dark' | 'light' | 'contrast' | 'sepia'
+    defaultAppearance: 'dark',
+  },
+  features: {
+    editMode: true,
+    search: true,
+    graph: true,
+    analytics: true,
+    exampleNotice: false,
+  },
+  navigation: {
+    primary: ['experience', 'products', 'projects', 'startup', 'research', 'skills', 'awards'],
+    secondary: ['publications', 'education', 'leadership', 'certifications', 'volunteering', 'languages'],
+  },
+};
