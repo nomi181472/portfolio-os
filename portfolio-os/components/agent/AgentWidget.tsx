@@ -506,9 +506,9 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // Only the generation half is timed, and only when a model ran.
         setInferenceMs(conversationRef.current?.lastInferenceMs() ?? null);
 
-        // Fast streaming effect: progressively reveal summary text character by character
-        const fullSummary = answer.summary;
-        const totalChars = fullSummary.length;
+        // Fast streaming effect: progressively reveal text character by character
+        const fullText = answer.text;
+        const totalChars = fullText.length;
         
         if (totalChars === 0) {
           setTurns((current) =>
@@ -523,7 +523,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           setTurns((current) =>
             current.map((turn) =>
               turn.id === id
-                ? { ...turn, answer: { ...answer, summary: '' } }
+                ? { ...turn, answer: { ...answer, text: '' } }
                 : turn,
             ),
           );
@@ -531,14 +531,14 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           await new Promise<void>((resolve) => {
             const interval = setInterval(() => {
               currentLen = Math.min(totalChars, currentLen + chunkSize);
-              const partialSummary = fullSummary.slice(0, currentLen);
+              const partialText = fullText.slice(0, currentLen);
 
               setTurns((current) =>
                 current.map((turn) =>
                   turn.id === id
                     ? {
                         ...turn,
-                        answer: { ...answer, summary: partialSummary },
+                        answer: { ...answer, text: partialText },
                       }
                     : turn,
                 ),
@@ -652,7 +652,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
    */
   // `brain.ts` already memoises loaded pipelines by role, so the timings are
   // re-read from the loader's own record rather than measured twice here.
-  const startChat = useCallback((role: 'conversation' | 'fluent' = 'conversation') => {
+  const startChat = useCallback((role: 'conversation' = 'conversation') => {
     setChat({ status: 'loading' });
 
     // Captured here because `createConversation` returns only the pipeline and the
@@ -950,7 +950,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             {/* Selected Model Details & Action Card */}
             {(() => {
               const selectedModel =
-                AVAILABLE_MODELS.find((m) => m.role === selectedModelRole) ?? AVAILABLE_MODELS[0];
+                AVAILABLE_MODELS.find((m) => m.role === selectedModelRole) || AVAILABLE_MODELS[0]!;
               const displaySize =
                 selectedModel.role === 'embedding'
                   ? backend
@@ -1000,7 +1000,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                       <button
                         type="button"
                         className={styles.brainButton}
-                        onClick={() => startChat(selectedModel.role as 'conversation' | 'fluent')}
+                        onClick={() => startChat(selectedModel.role === 'conversation' ? 'conversation' : 'conversation')}
                       >
                         Download {selectedModel.name}
                       </button>
@@ -1132,7 +1132,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             {chat.status === 'failed' ? (
               <div className={styles.brainActions}>
                 <p className={styles.brainNote}>{chat.message} Answers are unaffected.</p>
-                <button type="button" className={styles.brainButton} onClick={startChat}>
+                <button type="button" className={styles.brainButton} onClick={() => startChat()}>
                   Try again
                 </button>
               </div>
