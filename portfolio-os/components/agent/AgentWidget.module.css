@@ -742,10 +742,16 @@
   transition: background 0.15s ease, border-color 0.15s ease;
 }
 
-.modelPickerTrigger:hover {
+.modelPickerTrigger:hover:not(:disabled) {
   background: var(--fill-strong);
   border-color: var(--line-strong);
   color: var(--ink-bright);
+}
+
+.modelPickerTriggerDisabled,
+.modelPickerTrigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .modelPickerPlus {

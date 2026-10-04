@@ -629,7 +629,14 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
    * to download half a gigabyte for that, before they have asked a single question,
    * is a bad trade.
    */
+  const isDownloading =
+    brain.status === 'downloading' ||
+    brain.status === 'detecting' ||
+    chat.status === 'loading' ||
+    semantic.status === 'indexing';
+
   const startModel = useCallback(() => {
+    if (isDownloading) return;
     setBrain({ status: 'detecting' });
     setSemantic({ status: 'unavailable' });
 
@@ -694,6 +701,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   // `brain.ts` already memoises loaded pipelines by role, so the timings are
   // re-read from the loader's own record rather than measured twice here.
   const startChat = useCallback((role: 'conversation' | 'fluent' = 'conversation') => {
+    if (isDownloading) return;
     setChat({ status: 'loading' });
 
     let loaded: LoadedModel | null = null;
@@ -742,9 +750,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         if (chatAttempt.current !== attempt) return;
         setChat({ status: 'failed', message: 'The conversational model could not be loaded.' });
       });
-  }, [checkAllModelCaches]);
+  }, [isDownloading, checkAllModelCaches]);
 
   const handleSelectModel = useCallback((item: ModelListItem) => {
+    if (isDownloading) return;
     setIsModelPickerOpen(false);
     if (item.role === 'none') {
       setSelectedModelChoice('none');
@@ -761,20 +770,21 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       setSelectedModelChoice(item.role);
       localStorage.setItem('portfolio-agent-selected-model', item.role);
       if (item.role === 'embedding') {
-        if (semantic.status !== 'ready' && brain.status !== 'downloading') {
+        if (semantic.status !== 'ready') {
           startModel();
         }
       } else {
-        if (chat.status !== 'ready' && chat.status !== 'loading') {
+        if (chat.status !== 'ready') {
           startChat(item.role);
         }
       }
     } else {
       setPendingDownloadModel(item);
     }
-  }, [cachedModels, semantic.status, brain.status, chat.status, startModel, startChat]);
+  }, [isDownloading, cachedModels, semantic.status, brain.status, chat.status, startModel, startChat]);
 
   const handleConfirmDownload = useCallback((item: ModelListItem) => {
+    if (isDownloading) return;
     setPendingDownloadModel(null);
     setSelectedModelChoice(item.role);
     localStorage.setItem('portfolio-agent-selected-model', item.role);
@@ -784,11 +794,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     } else if (item.role === 'conversation' || item.role === 'fluent') {
       startChat(item.role);
     }
-  }, [startModel, startChat]);
+  }, [isDownloading, startModel, startChat]);
 
   const handleRemoveModel = useCallback(async (e: React.MouseEvent, item: ModelListItem) => {
     e.stopPropagation();
-    if (!item.url || item.role === 'none') return;
+    if (isDownloading || !item.url || item.role === 'none') return;
 
     await deleteCachedModel(item.url);
     await checkAllModelCaches();
@@ -811,7 +821,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       setSelectedModelChoice('none');
       localStorage.setItem('portfolio-agent-selected-model', 'none');
     }
-  }, [checkAllModelCaches, selectedModelChoice]);
+  }, [isDownloading, checkAllModelCaches, selectedModelChoice]);
 
   useEffect(() => {
     let active = true;
@@ -1178,8 +1188,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                 <div className={styles.modelPickerWrapper} ref={modelPickerRef}>
                   <button
                     type="button"
-                    className={styles.modelPickerTrigger}
-                    onClick={() => setIsModelPickerOpen((prev) => !prev)}
+                    className={`${styles.modelPickerTrigger}${isDownloading ? ` ${styles.modelPickerTriggerDisabled}` : ''}`}
+                    onClick={() => {
+                      if (!isDownloading) {
+                        setIsModelPickerOpen((prev) => !prev);
+                      }
+                    }}
+                    disabled={isDownloading}
                     aria-expanded={isModelPickerOpen}
                     aria-label="Select Model"
                   >
@@ -1190,7 +1205,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     <span className={styles.modelPickerChevron}>{isModelPickerOpen ? '▲' : '▼'}</span>
                   </button>
 
-                  {isModelPickerOpen && (
+                  {isModelPickerOpen && !isDownloading && (
                     <div className={styles.modelPopover}>
                       <div className={styles.modelPopoverHeader}>Model</div>
                       <div className={styles.modelPopoverList}>
@@ -1278,6 +1293,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     type="button"
                     className={styles.modalCancelBtn}
                     onClick={() => setPendingDownloadModel(null)}
+                    disabled={isDownloading}
                   >
                     Cancel
                   </button>
@@ -1285,6 +1301,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     type="button"
                     className={styles.modalConfirmBtn}
                     onClick={() => handleConfirmDownload(pendingDownloadModel)}
+                    disabled={isDownloading}
                   >
                     Download ({pendingDownloadModel.size})
                   </button>
