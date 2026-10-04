@@ -53,7 +53,7 @@ export const metadata: Metadata = {
   },
   twitter: { card: 'summary_large_image' },
   formatDetection: { email: false, address: false, telephone: false },
-  icons: { icon: '/icon' },
+  icons: { icon: '/icon.svg' },
   manifest: '/manifest.webmanifest',
 };
 

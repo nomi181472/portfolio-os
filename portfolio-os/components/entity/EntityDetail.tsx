@@ -11,6 +11,8 @@
  * render open, everything heavier sits behind a disclosure.
  */
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import Link from 'next/link';
 import { Disclosure } from './Disclosure';
 import { StatusBadge, SourceBadge, OrganisationBadge } from './Badges';
@@ -81,7 +83,9 @@ export function EntityDetail({ entity }: { entity: ResolvedEntity }) {
         ) : null}
         {entity.data.description ? (
           <div className="prose lead">
-            {entity.data.description.split('\n\n').map((p) => <p key={p.slice(0, 24)}>{p}</p>)}
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {entity.data.description}
+            </ReactMarkdown>
           </div>
         ) : null}
       </div>

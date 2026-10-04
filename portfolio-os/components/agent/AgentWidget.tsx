@@ -1066,10 +1066,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               </p>
             ) : null}
 
-            {/* Real measured timings, and nothing else. */}
+            {/* Real measured timings, and active model indicator. */}
             {chat.status === 'ready' ? (
               <p className={styles.brainTimings}>
-                {chat.backend.toUpperCase()}
+                {AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'} · {chat.backend.toUpperCase()}
                 {chat.fromCache ? ' · already downloaded' : ` · loaded in ${formatSeconds(chat.loadMs)}`}
                 {inferenceMs !== null ? ` · last question in ${formatSeconds(inferenceMs)}` : ''}
               </p>

@@ -405,6 +405,11 @@ function configure(mod: TransformersModule): TransformersModule {
     // causing ONNX WASM `Aborted() ort-wasm-simd-threaded.jsep.wasm` crashes.
     (wasm as { numThreads?: number }).numThreads = 1;
   }
+  // Also configure global ONNX Runtime environment directly if available in window/globalThis
+  const globalOrt = (globalThis as { ort?: { env?: { wasm?: { numThreads?: number } } } }).ort;
+  if (globalOrt?.env?.wasm) {
+    globalOrt.env.wasm.numThreads = 1;
+  }
   return mod;
 }
 
@@ -471,6 +476,11 @@ async function attempt(
     // why it reads from the registry rather than being re-chosen here.
     dtype: artifact.dtype,
     device: backend,
+    session_options: {
+      intraOpNumThreads: 1,
+      interOpNumThreads: 1,
+      executionMode: 'sequential',
+    },
     progress_callback: (event: unknown) => {
       const progress = event as {
         status?: string;
