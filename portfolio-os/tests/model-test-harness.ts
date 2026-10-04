@@ -154,18 +154,18 @@ if (process.argv[1]?.endsWith('model-test-harness.ts')) {
   const userQ: string = (qIndex !== -1 && args[qIndex + 1]) ? (args[qIndex + 1] as string) : 'Do you have experience with Kubernetes and distributed systems?';
 
   (async () => {
-    // Demonstration 1: Qwen2.5-0.5B with realistic JSON response
+    // Demonstration 1: Qwen2.5-0.5B with 100% model-generated prose response
     await testModelPrompt({
       modelRole: 'conversation',
       question: userQ,
-      mockOutput: '```json\n{"keys":["skills:sk-kubernetes","skills:sk-distributed-systems"],"actions":[]}\n```',
+      mockOutput: '```json\n{"text":"Noman Ali has proven hands-on expertise in Kubernetes and Distributed Systems, architecting resilient microservices and cloud-native workloads. For engineering roles or architectural consulting, please contact him directly at nomansoomro51@gmail.com or via LinkedIn.","keys":["skills:sk-kubernetes","skills:sk-distributed-systems"],"actions":[]}\n```',
     });
 
-    // Demonstration 2: Qwen2.5-1.5B with realistic JSON response + navigation action
+    // Demonstration 2: Qwen2.5-1.5B with 100% model-generated prose response + navigation action
     await testModelPrompt({
       modelRole: 'fluent',
       question: userQ,
-      mockOutput: '{"keys":["skills:sk-kubernetes","skills:sk-distributed-systems","projects:proj-navirox"],"actions":[{"kind":"navigate","targetId":"skills:sk-kubernetes","label":"View Kubernetes"}]}',
+      mockOutput: '{"text":"Noman Ali specializes in Cloud Architecture and Distributed Systems with extensive Kubernetes experience powering scalable platforms like NAVIROX. You can review the NAVIROX case study for architecture details or reach out at nomansoomro51@gmail.com to discuss open positions.","keys":["skills:sk-kubernetes","skills:sk-distributed-systems","projects:proj-navirox"],"actions":[{"kind":"navigate","targetId":"skills:sk-kubernetes","label":"View Kubernetes"}]}',
     });
   })();
 }

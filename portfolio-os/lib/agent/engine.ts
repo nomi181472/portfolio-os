@@ -67,6 +67,12 @@ export interface ConversationLayer {
     keys: readonly string[];
     dropped?: readonly { key: string; reason: string }[];
     /**
+     * Optional 100% model-generated prose synthesized by Qwen models following the system prompt.
+     * When present and non-empty, the engine uses this text directly for the answer,
+     * while retaining deterministic fallback when no conversational model is active.
+     */
+    text?: string;
+    /**
      * Actions the model proposed, unresolved.
      *
      * Optional because a caller may supply only ordering — which is all this interface
@@ -410,12 +416,17 @@ export function buildEngineFromKnowledge(
     // way rather than a variant path.
     const conversation = answerOptions.conversation ?? null;
     let modelActions: readonly CheckedAction[] | undefined;
+    let modelText: string | undefined;
     if (conversation) {
       const selection = await conversation.select(
         trimmed,
         relevant.map((hit) => ({ key: hit.key, name: hit.record.name })),
         history,
       );
+
+      if (selection.text && selection.text.trim().length > 0) {
+        modelText = selection.text.trim();
+      }
 
       if (selection.proposals && selection.proposals.length > 0) {
         // Scoped to the retrieved set before resolving, for the same reason the key
@@ -486,13 +497,14 @@ export function buildEngineFromKnowledge(
         // more truthful set.
         const cards = readingsAnswer.cards;
         const nav = navigationFor(cards, navigation, knowledge);
-        remember(trimmed, readingsAnswer.text, cards);
+        const text = modelText ?? readingsAnswer.text;
+        remember(trimmed, text, cards);
         return {
           question: trimmed,
           intent: routing.intent,
           routing,
           normalised,
-          text: readingsAnswer.text,
+          text,
           cards,
           navigation: nav,
           // No `match`. There is no score to show, and handing back a `MatchResult`
@@ -509,7 +521,7 @@ export function buildEngineFromKnowledge(
     // Named `nav` because `navigation` is the registry closed over by `buildEngine`.
     const nav = navigationFor(cards, navigation, knowledge);
 
-    const text = composeAnswer(scoredTerms, match, cards, knowledge);
+    const text = modelText ?? composeAnswer(scoredTerms, match, cards, knowledge);
     remember(trimmed, text, cards);
 
     return {

@@ -178,10 +178,14 @@ export function buildInstruction(records: readonly { key: string; name: string }
     'Your primary objective is to help recruiters, engineering hiring managers, and clients evaluate technical fit and competencies.',
     'When recruiters or clients find a match for job roles or engineering contracts, they can contact Noman via email (nomansoomro51@gmail.com) or LinkedIn (https://www.linkedin.com/in/noman-a-70604a175).',
     '',
-    'Select the records that are most relevant to the user’s intent and hiring/technical requirements.',
+    'Provide a direct, professional, 100% model-generated answer grounded in Noman’s portfolio evidence, and select the records that are most relevant to the user’s intent and hiring/technical requirements.',
     '',
     'Return exactly one JSON object and nothing else:',
-    '{"keys":[],"actions":[]}',
+    '{"text":"Your concise, grounded conversational response answering the user directly. Follow the system persona, highlight relevant technical qualifications, and invite recruiters/clients to reach out via email or LinkedIn if there is a match.","keys":[],"actions":[]}',
+    '',
+    'text:',
+    '- Natural, professional response answering the question directly based on the provided records.',
+    '- If matching opportunities are discussed, mention contacting Noman at nomansoomro51@gmail.com or LinkedIn.',
     '',
     'keys:',
     '- Select at most 3 relevant record keys (0–3).',
@@ -243,11 +247,11 @@ export function renderMessages(
 /* ----------------------------------------------------- output parsing */
 
 export type ParseOutcome =
-  | { ok: true; keys: string[]; actions: ProposedAction[] }
+  | { ok: true; keys: string[]; actions: ProposedAction[]; text?: string }
   | { ok: false; reason: 'not-json' | 'not-an-array' | 'no-keys' };
 
 /** Shape the prompt asks for, in the order the sections appear. */
-const SELECTION_FIELDS = ['keys', 'actions'] as const;
+const SELECTION_FIELDS = ['text', 'keys', 'actions'] as const;
 
 function stringList(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
@@ -291,13 +295,13 @@ function actionList(value: unknown): ProposedAction[] {
 }
 
 /**
- * Parse the model's raw output into record keys and proposed actions.
+ * Parse the model's raw output into record keys, proposed actions, and model-generated prose.
  *
  * Forgiving about shape, strict about content. A small model wraps its JSON in prose
  * or a code fence about half the time, and refusing that would mean falling back on
  * almost every turn. Both shapes are accepted, in this order:
  *
- *  - `{"keys":[…],"actions":[…]}`, which is what the prompt asks for;
+ *  - `{"text":"…","keys":[…],"actions":[…]}`, which is what the prompt asks for;
  *  - a bare `[…]` of keys, which is what a 0.5B model falls back to when it ignores
  *    the object shape. Accepted with no actions, since a bare array cannot carry any.
  *
@@ -343,8 +347,9 @@ export function parseSelection(raw: string): ParseOutcome {
 
     const record = parsed as Record<string, unknown>;
     const keys = stringList(record.keys);
+    const text = typeof record.text === 'string' && record.text.trim().length > 0 ? record.text.trim() : undefined;
     if (keys.length === 0) return { ok: false, reason: 'no-keys' };
-    return { ok: true, keys, actions: actionList(record.actions) };
+    return { ok: true, keys, actions: actionList(record.actions), ...(text ? { text } : {}) };
   }
 
   // Prose around the array — "Sure! Here you go: […]" — is the common case, so the
@@ -389,6 +394,10 @@ export interface ValidationResult {
    * until it has been through `checkActions`.
    */
   readonly proposals: readonly ProposedAction[];
+  /**
+   * Model-generated prose response strictly grounded in portfolio knowledge and following the system prompt.
+   */
+  readonly text?: string;
 }
 
 /**
@@ -476,6 +485,8 @@ export interface GenerateResult {
    * holding the navigation registry, and the engine is that caller.
    */
   readonly actions: readonly ProposedAction[];
+  /** Model-generated text following the system prompt persona and context. */
+  readonly text?: string;
   /** Absent when keys were found. Named rather than a bare `[]` so a caller can tell
    * "the model chose nothing" from "the model said nothing usable". */
   readonly emptyReason?: EmptyReason;
@@ -485,23 +496,18 @@ export interface GenerateResult {
  * Generation settings, with the reasoning attached.
  *
  * `do_sample: false` is the important one. Greedy decoding is deterministic, which
- * means the same question gives the same selection — and, more practically, that a
- * bad selection is reproducible rather than a coin flip that hides behind sampling.
- * At 0.5B a little temperature buys some variety in prose, which is precisely the
- * variety this design does not want, because the output is ids and not text.
- *
- * The token cap is small because the answer is a JSON array of at most three keys.
- * Generation past that point is not adding information, and 64 tokens is enough for
- * the longest legal output with the fence closed.
+ * means the same question gives the same selection.
+ * Max new tokens is set to 256 to allow Qwen models to generate complete, fluent,
+ * and professional prose along with the keys and actions array.
  */
 const GENERATION_OPTIONS = {
   do_sample: false,
-  max_new_tokens: 64,
+  max_new_tokens: 256,
   repetition_penalty: 1.05,
 } as const;
 
 /**
- * Ask the model which records apply, and return validated keys.
+ * Ask the model which records apply, and return validated keys and generated text.
  *
  * Returns `keys: []` rather than throwing on every failure mode — unparseable output,
  * a model that refused, keys that all failed validation. Each is a normal outcome
@@ -534,7 +540,7 @@ export async function selectRecords(options: GenerateOptions): Promise<GenerateR
   const parsed = parseSelection(raw);
   if (!parsed.ok) return { raw, keys: [], actions: [], emptyReason: parsed.reason };
 
-  return { raw, keys: parsed.keys, actions: parsed.actions };
+  return { raw, keys: parsed.keys, actions: parsed.actions, ...(parsed.text ? { text: parsed.text } : {}) };
 }
 
 /**
@@ -578,7 +584,11 @@ export async function createConversation(
       // sit after it — an exception would skip the assignment and leave the panel
       // showing the previous call's timing, which reads as "this one was instant".
       inferenceMs = Date.now() - started;
-      return { ...validateSelection(result.keys, retrieved), proposals: result.actions };
+      return {
+        ...validateSelection(result.keys, retrieved),
+        proposals: result.actions,
+        ...(result.text ? { text: result.text } : {}),
+      };
     },
 
     lastInferenceMs() {

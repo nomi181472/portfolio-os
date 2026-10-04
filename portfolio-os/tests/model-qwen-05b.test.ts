@@ -74,12 +74,14 @@ test('Qwen 0.5B response simulation with allowlist filtering', async () => {
   const retrieved = await retrieve(q, knowledge, lexical, { limit: 5 });
   const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
 
-  // Simulate Qwen 0.5B markdown output with valid + invalid keys
+  // Simulate Qwen 0.5B markdown output with 100% model-generated text + valid + invalid keys
   const validKey = candidates[0]?.key || 'skills:sk-python';
-  const simulatedOutput = `\`\`\`json\n{"keys":["${validKey}","invented:key-999"],"actions":[]}\n\`\`\``;
+  const modelProse = 'Noman Ali has extensive experience with Computer Vision and Python across several production systems. If you have relevant engineering opportunities, reach out via nomansoomro51@gmail.com.';
+  const simulatedOutput = `\`\`\`json\n{"text":"${modelProse}","keys":["${validKey}","invented:key-999"],"actions":[]}\n\`\`\``;
 
   const parsedJson = parseSelection(simulatedOutput);
   assert.ok(parsedJson.ok);
+  assert.equal(parsedJson.text, modelProse);
 
   const validated = validateSelection(parsedJson.keys, candidates);
   assert.deepEqual(validated.keys, [validKey]);
@@ -95,7 +97,7 @@ test('Qwen 0.5B response simulation with allowlist filtering', async () => {
   });
 
   const answer = await engine.answer(q, { conversation: conv });
-  assert.ok(answer.text.length > 0);
+  assert.equal(answer.text, modelProse);
   assert.ok(answer.cards.length > 0);
 });
 

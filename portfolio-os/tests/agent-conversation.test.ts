@@ -316,7 +316,7 @@ test('pruneHistoryToTokenLimit drops oldest turns when token budget is exceeded'
   ];
 
   // Under a tight token budget, older turns must be pruned
-  const pruned = pruneHistoryToTokenLimit(instruction, q, history, 600);
+  const pruned = pruneHistoryToTokenLimit(instruction, q, history, 800);
   assert.ok(pruned.length < history.length);
   assert.equal(pruned.at(-1)?.question, 'Recent turn 3', 'newest turn must be preserved over older ones');
 });
@@ -532,10 +532,10 @@ test('generation is greedy and capped, so a bad selection is reproducible', () =
   }).then(() => {
     const options = stub.calls[0]?.options ?? {};
     assert.equal(options.do_sample, false);
-    assert.equal(options.max_new_tokens, 64);
+    assert.equal(options.max_new_tokens, 256);
     assert.ok(
-      Number(options.max_new_tokens) <= 64,
-      'the cap must bound output, and the answer is at most three keys',
+      Number(options.max_new_tokens) <= 256,
+      'the cap must bound output, allowing prose and keys',
     );
   });
 });
@@ -862,4 +862,23 @@ test('dispose releases the pipeline and survives a pipeline that will not', asyn
   });
   assert.ok(second);
   await second.dispose();
+});
+
+test('the layer preserves 100% model-generated prose and passes it through to the engine answer', async () => {
+  const modelProse = 'Noman Ali has comprehensive engineering experience building computer vision and lidar systems with Python and C++. Feel free to contact him via email at nomansoomro51@gmail.com.';
+  const payload = JSON.stringify({
+    text: modelProse,
+    keys: ['products:prod-verseye'],
+    actions: [],
+  });
+  const { pipeline } = fakePipeline(payload);
+  const conversation = await createConversation({
+    role: 'conversation',
+    load: async () => ({ pipeline, backend: 'wasm' }),
+  });
+  assert.ok(conversation);
+
+  const result = await conversation.select('What is your computer vision experience?', RETRIEVED, []);
+  assert.equal(result.text, modelProse);
+  assert.deepEqual(result.keys, ['products:prod-verseye']);
 });

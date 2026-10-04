@@ -73,7 +73,9 @@ test('Qwen 1.5B complex response with navigation actions', async () => {
   const candidates = retrieved.map((r) => ({ key: r.key, name: r.record.name }));
 
   const naviroxKey = candidates.find((c) => c.key.includes('navirox'))?.key || candidates[0]?.key || 'projects:proj-navirox';
+  const modelProse = 'Noman Ali has worked extensively with Kubernetes container orchestration and Python backend services. Check the NAVIROX project for deep systems details or connect at nomansoomro51@gmail.com.';
   const simulatedOutput = JSON.stringify({
+    text: modelProse,
     keys: [naviroxKey],
     actions: [
       {
@@ -86,6 +88,7 @@ test('Qwen 1.5B complex response with navigation actions', async () => {
 
   const parsedJson = parseSelection(simulatedOutput);
   assert.ok(parsedJson.ok);
+  assert.equal(parsedJson.text, modelProse);
   assert.equal(parsedJson.actions.length, 1);
   assert.equal(parsedJson.actions[0]?.kind, 'navigate');
 
@@ -98,7 +101,7 @@ test('Qwen 1.5B complex response with navigation actions', async () => {
   });
 
   const answer = await engine.answer(q, { conversation: conv });
-  assert.ok(answer.text.length > 0);
+  assert.equal(answer.text, modelProse);
   assert.ok(answer.cards.length > 0);
 });
 
