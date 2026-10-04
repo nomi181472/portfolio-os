@@ -458,6 +458,8 @@ export async function createE5Embedder(
           embedded += 1;
           report();
           onProgress?.(currentState);
+          // Yield execution to the event loop so the UI updates smoothly and doesn't hang.
+          await new Promise((resolve) => setTimeout(resolve, 0));
         }
 
         if (vectors.length > 0) target.set(record.key, vectors);

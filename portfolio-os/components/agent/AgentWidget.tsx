@@ -55,7 +55,47 @@ import {
   type LoadedModel,
 } from '@/lib/agent/models/brain';
 import { createConversation, type Conversation } from '@/lib/agent/models/conversation';
-import { coldBytes, formatMb, modelForRole, type ModelBackend } from '@/lib/agent/registry';
+import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } from '@/lib/agent/registry';
+
+interface ModelListItem {
+  id: string;
+  role: ModelRole;
+  name: string;
+  badge: string;
+  size: string;
+  url: string;
+  description: string;
+}
+
+const AVAILABLE_MODELS: ModelListItem[] = [
+  {
+    id: 'Xenova/multilingual-e5-small',
+    role: 'embedding',
+    name: 'Neural Vector Brain (E5 Small)',
+    badge: 'Vector Search',
+    size: '~118 MB',
+    url: modelForRole('embedding').artifact.url,
+    description: 'Local vector search engine. Converts portfolio passages into 384-dimensional vector space for instant concept & semantic matching.',
+  },
+  {
+    id: 'onnx-community/Qwen2.5-0.5B-Instruct',
+    role: 'conversation',
+    name: 'Conversational LLM (Qwen2.5 0.5B)',
+    badge: 'Dynamic Dialogue',
+    size: '~512 MB',
+    url: modelForRole('conversation').artifact.url,
+    description: 'Local conversational AI model. Enables dynamic generative dialogue grounded strictly in verified portfolio facts. Note: It cannot change the wording, the score, or what is documented, keeping answers strictly grounded in portfolio evidence.',
+  },
+  {
+    id: 'onnx-community/Qwen2.5-1.5B-Instruct',
+    role: 'fluent',
+    name: 'High-Quality Fluent LLM (Qwen2.5 1.5B)',
+    badge: 'Advanced AI',
+    size: '~1.58 GB',
+    url: modelForRole('fluent').artifact.url,
+    description: 'Advanced 1.5B parameter conversational model for deeper natural phrasing and dynamic conversation.',
+  },
+];
 import {
   corpusHash,
   createE5Embedder,
@@ -224,6 +264,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   /** Real generation time for the last question, or null when no model ran. */
   const [inferenceMs, setInferenceMs] = useState<number | null>(null);
   const [semantic, setSemantic] = useState<SemanticState>({ status: 'unavailable' });
+  const [selectedModelRole, setSelectedModelRole] = useState<ModelRole>('embedding');
   const knowledgeRef = useRef<PortfolioKnowledge | null>(null);
 
   /**
@@ -386,6 +427,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     });
   }, [pathname, state.status, turns]);
 
+  const [isEnlarged, setIsEnlarged] = useState(false);
+
   /**
    * Close, release the models, and start over.
    *
@@ -426,6 +469,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     setInferenceMs(null);
     setChat({ status: 'idle' });
     setSemantic({ status: 'unavailable' });
+    setIsEnlarged(false);
 
     // Both pipelines are disposed, not just dereferenced. Nulling the ref releases the
     // only reference this component holds, which lets a pipeline be collected — but a
@@ -453,21 +497,60 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // broken, `answer()` falls back to deterministic retrieval and composition,
         // which is the entire design. Nothing here is load-bearing for a correct
         // answer — only for a better-ordered one.
+        // Retrieve full answer from engine
         const answer = await state.engine.answer(trimmed, {
           embedder: embedderRef.current,
           conversation: conversationRef.current,
         });
 
-        // Only the generation half is timed, and only when a model ran. Embedding is
-        // excluded on purpose: it is per-chunk over 125 passages at load time, and
-        // adding it to a per-question figure would attribute index-time cost to the
-        // reader's reply. Left at `null` when no model is loaded, so the panel shows
-        // nothing rather than a round placeholder number.
+        // Only the generation half is timed, and only when a model ran.
         setInferenceMs(conversationRef.current?.lastInferenceMs() ?? null);
 
-        setTurns((current) =>
-          current.map((turn) => (turn.id === id ? { ...turn, answer } : turn)),
-        );
+        // Fast streaming effect: progressively reveal summary text character by character
+        const fullSummary = answer.summary;
+        const totalChars = fullSummary.length;
+        
+        if (totalChars === 0) {
+          setTurns((current) =>
+            current.map((turn) => (turn.id === id ? { ...turn, answer } : turn)),
+          );
+        } else {
+          // Stream in small fast chunks (~4-8 characters every 15-20ms)
+          const chunkSize = Math.max(3, Math.ceil(totalChars / 40));
+          let currentLen = 0;
+
+          // Set initial partial answer turn
+          setTurns((current) =>
+            current.map((turn) =>
+              turn.id === id
+                ? { ...turn, answer: { ...answer, summary: '' } }
+                : turn,
+            ),
+          );
+
+          await new Promise<void>((resolve) => {
+            const interval = setInterval(() => {
+              currentLen = Math.min(totalChars, currentLen + chunkSize);
+              const partialSummary = fullSummary.slice(0, currentLen);
+
+              setTurns((current) =>
+                current.map((turn) =>
+                  turn.id === id
+                    ? {
+                        ...turn,
+                        answer: { ...answer, summary: partialSummary },
+                      }
+                    : turn,
+                ),
+              );
+
+              if (currentLen >= totalChars) {
+                clearInterval(interval);
+                resolve();
+              }
+            }, 16);
+          });
+        }
       } catch {
         setTurns((current) =>
           current.map((turn) =>
@@ -511,6 +594,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
     void loadModel({ onState: setBrain })
       .then(async (loaded) => {
+        setSemantic({ status: 'indexing', done: 0, total: 0 });
+
         /*
          * Vectors survive a reload; the weights are cached separately by `brain.ts`.
          *
@@ -537,7 +622,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         }
 
         embedderRef.current = embedder;
-        setSemantic({ status: 'indexing', done: 0, total: 0 });
 
         const records = knowledgeRecords();
         const report = (progress: EmbedderState): void =>
@@ -568,7 +652,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
    */
   // `brain.ts` already memoises loaded pipelines by role, so the timings are
   // re-read from the loader's own record rather than measured twice here.
-  const startChat = useCallback(() => {
+  const startChat = useCallback((role: 'conversation' | 'fluent' = 'conversation') => {
     setChat({ status: 'loading' });
 
     // Captured here because `createConversation` returns only the pipeline and the
@@ -594,10 +678,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     const attempt = (chatAttempt.current += 1);
 
     void createConversation({
-      role: 'conversation',
+      role,
       load: async () => {
         loaded = await loadModel({
-          role: 'conversation',
+          role,
           onState: (state) => {
             if (chatAttempt.current !== attempt) return;
             if (state.status === 'downloading') {
@@ -645,7 +729,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   const summary = describeBrain(brain);
 
   return (
-    <div className={styles.widget}>
+    <div className={`${styles.widget}${isEnlarged ? ` ${styles.widgetEnlarged}` : ''}`}>
       {!open ? (
         <button
           type="button"
@@ -662,7 +746,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
       {open ? (
         <section
-          className={styles.panel}
+          className={`${styles.panel}${isEnlarged ? ` ${styles.panelEnlarged}` : ''}`}
           aria-label="Ask the portfolio"
           ref={panelRef}
           onKeyDown={(event) => {
@@ -709,9 +793,46 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                 Answered from the content file. Nothing here is recalled.
               </p>
             </div>
-            <button type="button" className={styles.close} onClick={closeAndRelease} aria-label="Close">
-              ×
-            </button>
+            <div className={styles.headActions}>
+              <button
+                type="button"
+                className={styles.enlarge}
+                onClick={() => setIsEnlarged((prev) => !prev)}
+                aria-label={isEnlarged ? 'Minimize chatbot' : 'Enlarge chatbot'}
+                title={isEnlarged ? 'Minimize' : 'Enlarge'}
+              >
+                {isEnlarged ? (
+                  <svg
+                    className={styles.enlargeIcon}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M8 3v5H3M16 3v5h5M8 21v-5H3M16 21v-5h5" />
+                  </svg>
+                ) : (
+                  <svg
+                    className={styles.enlargeIcon}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                  </svg>
+                )}
+              </button>
+              <button type="button" className={styles.close} onClick={closeAndRelease} aria-label="Close">
+                ×
+              </button>
+            </div>
           </header>
 
           {state.status === 'loading' ? (
@@ -797,6 +918,98 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               <span className={styles.brainDetail}>{summary.detail}</span>
             </div>
 
+            {/* Model Selection List */}
+            <div className={styles.modelList}>
+              <p className={styles.modelListTitle}>🤖 Select AI Model ({AVAILABLE_MODELS.length})</p>
+              <div className={styles.modelTabs}>
+                {AVAILABLE_MODELS.map((item) => {
+                  const isSelected = selectedModelRole === item.role;
+                  const displaySize =
+                    item.role === 'embedding'
+                      ? backend
+                        ? coldLoadSummary(backend, ['embedding'])
+                        : item.size
+                      : item.role === 'conversation'
+                        ? formatMb(coldBytes(['conversation']))
+                        : item.size;
+                  return (
+                    <button
+                      key={item.role}
+                      type="button"
+                      className={`${styles.modelTab}${isSelected ? ` ${styles.modelTabSelected}` : ''}`}
+                      onClick={() => setSelectedModelRole(item.role)}
+                    >
+                      <span className={styles.modelTabName}>{item.name}</span>
+                      <span className={styles.modelTabBadge}>{displaySize}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Selected Model Details & Action Card */}
+            {(() => {
+              const selectedModel =
+                AVAILABLE_MODELS.find((m) => m.role === selectedModelRole) ?? AVAILABLE_MODELS[0];
+              const displaySize =
+                selectedModel.role === 'embedding'
+                  ? backend
+                    ? coldLoadSummary(backend, ['embedding'])
+                    : selectedModel.size
+                  : selectedModel.role === 'conversation'
+                    ? formatMb(coldBytes(['conversation']))
+                    : selectedModel.size;
+              return (
+                <div className={styles.modelDetailCard}>
+                  <div className={styles.modelDetailHeader}>
+                    <h4 className={styles.modelDetailTitle}>{selectedModel.name}</h4>
+                    <span className={styles.modelDetailBadge}>
+                      {selectedModel.badge} · {displaySize}
+                    </span>
+                  </div>
+                  <p className={styles.brainNote}>{selectedModel.description}</p>
+                  <p className={styles.brainNote}>
+                    Direct weights from HuggingFace:{' '}
+                    <a
+                      href={selectedModel.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{ textDecoration: 'underline', color: 'inherit' }}
+                    >
+                      ONNX weights
+                    </a>
+                    . Runs 100% in browser ({backend ? backend.toUpperCase() : 'WASM'}), private & zero data leaves device.
+                  </p>
+
+                  <div className={styles.brainActions}>
+                    {selectedModel.role === 'embedding' ? (
+                      semantic.status === 'ready' ? (
+                        <span className={styles.modelActiveBadge}>✓ Neural Vector Brain Active</span>
+                      ) : brain.status === 'downloading' || semantic.status === 'indexing' ? (
+                        <span className={styles.modelActiveBadge}>Loading Neural Brain...</span>
+                      ) : (
+                        <button type="button" className={styles.brainButton} onClick={startModel}>
+                          Download Neural Brain
+                        </button>
+                      )
+                    ) : chat.status === 'ready' ? (
+                      <span className={styles.modelActiveBadge}>✓ Conversational LLM Active</span>
+                    ) : chat.status === 'loading' ? (
+                      <span className={styles.modelActiveBadge}>Loading Conversational LLM...</span>
+                    ) : (
+                      <button
+                        type="button"
+                        className={styles.brainButton}
+                        onClick={() => startChat(selectedModel.role as 'conversation' | 'fluent')}
+                      >
+                        Download {selectedModel.name}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })()}
+
             {brain.status === 'downloading' ? (
               <div className={styles.brainProgress}>
                 <div
@@ -818,14 +1031,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               </div>
             ) : null}
 
-            {/*
-             * The indexing phase, once the model is down.
-             *
-             * `semantic.status === 'ready'` has no bar, because the work is over and a
-             * full green bar would be a claim rather than a report. It states the count
-             * instead, which is also what tells a reader the match widened rather than
-             * the answers changed.
-             */}
             {semantic.status === 'ready' ? (
               <p className={styles.brainNote}>
                 🧠 <strong>Vector Brain Active:</strong> Semantic matching is now searching concepts & meaning across {semantic.chunks} passages in local memory.
@@ -842,41 +1047,21 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                   role="progressbar"
                   className={styles.brainTrack}
                   aria-valuemin={0}
-                  aria-valuemax={semantic.total}
-                  aria-valuenow={semantic.done}
+                  aria-valuemax={semantic.total || 100}
+                  aria-valuenow={semantic.total > 0 ? semantic.done : undefined}
                   aria-label="Indexing the portfolio for matching"
                 >
                   <div
                     className={styles.brainFill}
-                    style={{ width: `${semantic.total > 0 ? (semantic.done / semantic.total) * 100 : 0}%` }}
+                    style={{ width: `${semantic.total > 0 ? (semantic.done / semantic.total) * 100 : 100}%` }}
                   />
                 </div>
                 <p className={styles.brainNote}>
-                  Indexing {semantic.done} of {semantic.total} passages into local vector space.
+                  {semantic.total > 0
+                    ? `Indexing ${semantic.done} of ${semantic.total} passages into local vector space.`
+                    : 'Initializing neural engine & vector index...'}
                 </p>
               </div>
-            ) : null}
-
-            {brain.status === 'idle' && backend ? (
-              <>
-                <p className={styles.brainNote}>
-                  💡 <strong>Upgrade my Brain:</strong> Want deeper semantic intelligence? Download my local ONNX neural weights (~{coldLoadSummary(backend, ['embedding'])}) directly from HuggingFace:{' '}
-                  <a
-                    href={modelForRole('embedding').artifact.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ textDecoration: 'underline', color: 'inherit' }}
-                  >
-                    e5-small ONNX weights
-                  </a>
-                  . Runs 100% in your browser ({backend.toUpperCase()}), private & zero data leaves your device.
-                </p>
-                <div className={styles.brainActions}>
-                  <button type="button" className={styles.brainButton} onClick={startModel}>
-                    Download Neural Brain
-                  </button>
-                </div>
-              </>
             ) : null}
 
             {brain.status === 'failed' && brain.reason.kind !== 'cancelled' ? (
@@ -890,46 +1075,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               </div>
             ) : null}
 
-            {/*
-             * The conversational model, offered after the embedder and priced
-             * separately.
-             *
-             * Only shown once the embedder is ready, because that is the point at which
-             * a reader has seen what matching alone does. The two are genuinely
-             * different offers — this one reorders which records lead an answer, and
-             * writes nothing that is not already in the content file — so it says so
-             * rather than overselling a "smarter agent".
-             */}
-            {semantic.status === 'ready' && chat.status === 'idle' && backend ? (
-              <>
-                <p className={styles.brainNote}>
-                  🚀 <strong>Enable Conversational AI:</strong> Download my Qwen2.5-0.5B ONNX LLM (~{formatMb(coldBytes(['conversation']))}) directly from HuggingFace:{' '}
-                  <a
-                    href={modelForRole('conversation').artifact.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ textDecoration: 'underline', color: 'inherit' }}
-                  >
-                    Qwen2.5-0.5B ONNX weights
-                  </a>
-                  . If you download my full brain, I will be super intelligent and converse dynamically! Note: It cannot change the wording, the score, or what is documented, keeping answers strictly grounded in portfolio evidence.
-                </p>
-                <div className={styles.brainActions}>
-                  <button type="button" className={styles.brainButton} onClick={startChat}>
-                    Unlock Full Conversational LLM
-                  </button>
-                </div>
-              </>
-            ) : null}
-
             {chat.status === 'loading' ? (
               <div className={styles.brainProgress}>
-                {/*
-                 * Measured progress whenever the loader has reported bytes, and an
-                 * indeterminate bar before that — during backend detection and session
-                 * creation there is genuinely nothing to count, so no percentage is
-                 * invented for it.
-                 */}
                 {chat.bytesTotal ? (
                   <div
                     role="progressbar"
