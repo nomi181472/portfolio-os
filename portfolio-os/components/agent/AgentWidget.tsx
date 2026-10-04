@@ -873,11 +873,17 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         if (saved === 'none' || cachedMap[saved]) {
           setSelectedModelChoice(saved);
           if (saved === 'embedding' && cachedMap.embedding) {
-            startModel();
+            if (semantic.status === 'unavailable') {
+              startModel();
+            }
           } else if (saved === 'conversation' && cachedMap.conversation) {
-            startChat('conversation');
+            if (chat.status === 'idle') {
+              startChat('conversation');
+            }
           } else if (saved === 'fluent' && cachedMap.fluent) {
-            startChat('fluent');
+            if (chat.status === 'idle') {
+              startChat('fluent');
+            }
           }
         } else {
           setSelectedModelChoice('none');
@@ -888,7 +894,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       active = false;
     };
     return cleanup;
-  }, [checkAllModelCaches, startModel, startChat]);
+  }, [checkAllModelCaches, startModel, startChat, semantic.status, chat.status]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
