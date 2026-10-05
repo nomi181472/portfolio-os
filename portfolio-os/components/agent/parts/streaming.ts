@@ -4,8 +4,6 @@ interface StreamTurnAnswerOptions {
   id: number;
   answer: AgentAnswer;
   answeringModelName: string;
-  thinkingTrace?: string;
-  searchSources?: Array<{ title: string; href: string }>;
   setTurns: React.Dispatch<
     React.SetStateAction<
       Array<{
@@ -13,8 +11,6 @@ interface StreamTurnAnswerOptions {
         question: string;
         answer: AgentAnswer | null;
         modelName?: string;
-        thinking?: string;
-        searchSources?: Array<{ title: string; href: string }>;
       }>
     >
   >;
@@ -28,8 +24,6 @@ export async function streamTurnAnswer({
   id,
   answer,
   answeringModelName,
-  thinkingTrace,
-  searchSources,
   setTurns,
 }: StreamTurnAnswerOptions): Promise<void> {
   const fullText = answer.text;
@@ -43,8 +37,6 @@ export async function streamTurnAnswer({
               ...turn,
               answer,
               modelName: answeringModelName,
-              thinking: thinkingTrace,
-              searchSources,
             }
           : turn,
       ),
@@ -64,8 +56,6 @@ export async function streamTurnAnswer({
             ...turn,
             answer: { ...answer, text: '' },
             modelName: answeringModelName,
-            thinking: thinkingTrace,
-            searchSources,
           }
         : turn,
     ),
@@ -83,8 +73,6 @@ export async function streamTurnAnswer({
                 ...turn,
                 answer: { ...answer, text: partialText },
                 modelName: answeringModelName,
-                thinking: thinkingTrace,
-                searchSources,
               }
             : turn,
         ),

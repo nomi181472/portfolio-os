@@ -66,7 +66,6 @@ import {
 import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } from '@/lib/agent/registry';
 import { getGreetingMessage } from '@/components/agent/parts/greetings';
 import { checkAllModelCachesHelper } from '@/components/agent/parts/modelHelpers';
-import { processAugmentations } from '@/components/agent/parts/augmentations';
 import { streamTurnAnswer } from '@/components/agent/parts/streaming';
 
 export type ModelChoiceId = ModelRole | 'none';
@@ -144,8 +143,6 @@ interface Turn {
   question: string;
   answer: AgentAnswer | null;
   modelName?: string;
-  thinking?: string;
-  searchSources?: Array<{ title: string; href: string }>;
 }
 
 /**
@@ -299,8 +296,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   });
   const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
   const [pendingDownloadModel, setPendingDownloadModel] = useState<ModelListItem | null>(null);
-  const [enableThink, setEnableThink] = useState(true);
-  const [enableWebSearch, setEnableWebSearch] = useState(true);
   const [greetingMessage, setGreetingMessage] = useState(
     'What do you want to know about me? Give me your JDK, and I will give you an honest answer as far as possible.',
   );
@@ -603,30 +598,15 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           conversationRef.current && chat.status === 'ready'
             ? AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'
             : embedderRef.current && semantic.status === 'ready'
-              ? 'Neural Vector Brain (E5 Small)'
+              ? 'Qwen3 Embedding (0.6B INT8)'
               : 'Direct Search Engine';
 
         // Qwen model-exclusive capabilities: Think mode & Web search
-        const isQwenModel =
-          (selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') &&
-          chat.status === 'ready' &&
-          Boolean(conversationRef.current);
-
-        const { thinkingTrace, searchSources } = await processAugmentations({
-          trimmed,
-          answer,
-          isQwenModel,
-          enableThink,
-          enableWebSearch,
-        });
-
         // Fast streaming effect: progressively reveal text character by character
         await streamTurnAnswer({
           id,
           answer,
           answeringModelName,
-          thinkingTrace,
-          searchSources,
           setTurns,
         });
       } catch {
@@ -639,7 +619,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         setBusy(false);
       }
     },
-    [state, busy, chat.status, selectedModelChoice, semantic.status, enableThink, enableWebSearch],
+    [state, busy, chat.status, selectedModelChoice, semantic.status],
   );
 
   /**
@@ -1104,7 +1084,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
             {semantic.status === 'ready' ? (
               <p className={styles.brainNote}>
-                🧠 <strong>Vector Brain Active:</strong> Searching concepts & meaning across {semantic.chunks} passages in local memory.
+                🧠 <strong>Qwen3 Vector Search Active:</strong> Searching concepts & meaning across {semantic.chunks} passages in local memory.
               </p>
             ) : null}
 
@@ -1282,30 +1262,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     </div>
                   )}
                 </div>
-
-                {/* Think & Web Search capability toggles — available only for Qwen models */}
-                {(selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && (
-                  <div className={styles.qwenToggles}>
-                    <button
-                      type="button"
-                      className={`${styles.capabilityToggle} ${enableThink ? styles.capabilityToggleActive : ''}`}
-                      onClick={() => setEnableThink((v) => !v)}
-                      title={enableThink ? 'Thinking mode active: reasoning traces generated' : 'Turn on deep thinking mode'}
-                    >
-                      <span className={styles.capabilityIcon}>💭</span>
-                      <span>Think</span>
-                    </button>
-                    <button
-                      type="button"
-                      className={`${styles.capabilityToggle} ${enableWebSearch ? styles.capabilityToggleActive : ''}`}
-                      onClick={() => setEnableWebSearch((v) => !v)}
-                      title={enableWebSearch ? 'Web search active: searches website for missing fields' : 'Turn on website search'}
-                    >
-                      <span className={styles.capabilityIcon}>🌐</span>
-                      <span>Web Search</span>
-                    </button>
-                  </div>
-                )}
 
                 {/* Token Context Usage & Session Reset */}
                 {(() => {
@@ -1501,33 +1457,6 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
                 <li key={caveat}>{caveat}</li>
               ))}
             </ul>
-          ) : null}
-
-          {/* Deep thinking reasoning trace — available when Qwen model generates thinking */}
-          {turn.thinking ? (
-            <details className={styles.thinkingBlock}>
-              <summary className={styles.thinkingSummary}>
-                <span className={styles.thinkingIcon}>💭</span>
-                <span>Thinking Process</span>
-              </summary>
-              <pre className={styles.thinkingContent}>{turn.thinking}</pre>
-            </details>
-          ) : null}
-
-          {/* Web search sources — available when Qwen model web search finds matching pages */}
-          {turn.searchSources && turn.searchSources.length > 0 ? (
-            <div className={styles.searchSourcesBlock}>
-              <span className={styles.searchSourcesTitle}>🌐 Searched from website:</span>
-              <ul className={styles.searchSourcesList}>
-                {turn.searchSources.map((source, idx) => (
-                  <li key={idx}>
-                    <Link href={source.href} className={styles.searchSourceLink}>
-                      {source.title} ↗
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           ) : null}
 
           {turn.modelName ? (

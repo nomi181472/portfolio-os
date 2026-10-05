@@ -26,8 +26,8 @@ export function getGreetingMessage(role?: string): string {
   ];
 
   const e5Variations = [
-    'Neural Vector Brain (E5 Small) is online! Searching 384-dimensional vector space for semantic concept matches across portfolio passages.',
-    'Vector Search engine ready! Ask any conceptual question to search Noman’s portfolio by semantic meaning.',
+    'Qwen3 Embedding (0.6B INT8) is online! Searching 1024-dimensional vector space for semantic concept matches across portfolio passages.',
+    'Qwen3 Vector Search ready! Ask any conceptual question to search Noman’s portfolio by semantic meaning.',
   ];
 
   let pool = defaultVariations;

@@ -1,8 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" class="cb-widget">
   <style>
-    .cb-widget { --c1: #6C63FF; --c2: #FFFFFF; }
-    @media (prefers-color-scheme: dark) {
-      .cb-widget { --c1: #8B83FF; --c2: #0F0F1E; }
+    /* Default / Dark Appearance (Obsidian substrate + Silver luminescent signal) */
+    .cb-widget {
+      --c1: #111318;
+      --c2: #f5f7fa;
+      --c-border: rgba(255, 255, 255, 0.15);
+      --pulse: rgba(255, 255, 255, 0.25);
+    }
+    /* Light Appearance */
+    @media (prefers-color-scheme: light) {
+      .cb-widget {
+        --c1: #ffffff;
+        --c2: #090a0d;
+        --c-border: rgba(9, 10, 13, 0.15);
+        --pulse: rgba(9, 10, 13, 0.15);
+      }
     }
   </style>
 
@@ -32,21 +44,21 @@
   </defs>
 
   <!-- ─── Outer pulse rings (breathing highlight) ─── -->
-  <circle cx="60" cy="60" r="54" fill="none" stroke="var(--c1)" stroke-width="2" opacity="0">
-    <animate attributeName="r" values="54;72;72" dur="2.6s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" values="0.7;0;0" dur="2.6s" repeatCount="indefinite"/>
+  <circle cx="60" cy="60" r="54" fill="none" stroke="var(--pulse)" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="54;70;70" dur="2.6s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0;0" dur="2.6s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="60" cy="60" r="54" fill="none" stroke="var(--c1)" stroke-width="2" opacity="0">
-    <animate attributeName="r" values="54;72;72" dur="2.6s" begin="0.9s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" values="0.7;0;0" dur="2.6s" begin="0.9s" repeatCount="indefinite"/>
+  <circle cx="60" cy="60" r="54" fill="none" stroke="var(--pulse)" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="54;70;70" dur="2.6s" begin="0.9s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0;0" dur="2.6s" begin="0.9s" repeatCount="indefinite"/>
   </circle>
-  <circle cx="60" cy="60" r="54" fill="none" stroke="var(--c1)" stroke-width="2" opacity="0">
-    <animate attributeName="r" values="54;72;72" dur="2.6s" begin="1.8s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" values="0.7;0;0" dur="2.6s" begin="1.8s" repeatCount="indefinite"/>
+  <circle cx="60" cy="60" r="54" fill="none" stroke="var(--pulse)" stroke-width="1.5" opacity="0">
+    <animate attributeName="r" values="54;70;70" dur="2.6s" begin="1.8s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0;0" dur="2.6s" begin="1.8s" repeatCount="indefinite"/>
   </circle>
 
   <!-- ─── Main circle base ─── -->
-  <circle cx="60" cy="60" r="54" fill="var(--c1)"/>
+  <circle cx="60" cy="60" r="53" fill="var(--c1)" stroke="var(--c-border)" stroke-width="2"/>
 
   <!-- ─── Rotating highlight sweep across the circle ─── -->
   <g clip-path="url(#circleClip)">
