@@ -85,37 +85,37 @@ const AVAILABLE_MODELS: ModelListItem[] = [
   {
     id: 'onnx-community/Qwen3-Embedding-0.6B-INT8-ONNX',
     role: 'embedding',
-    name: 'Qwen3 Embedding (0.6B INT8)',
-    badge: 'Qwen3 Vector Search',
+    name: 'Qwen3 Embedding (Vector Search)',
+    badge: 'Vector Search',
     size: '~597 MB',
     url: 'https://huggingface.co/onnx-community/Qwen3-Embedding-0.6B-INT8-ONNX/resolve/main/onnx/model_int8.onnx',
-    description: 'Qwen3 local vector embedding model. Embeds portfolio chunks into 1024-dimensional semantic space. Features pre-computed zero-wait client hydration with local ONNX execution. 100% private, no API keys.',
+    description: 'Qwen3 local vector embedding model. Embeds portfolio chunks into 1024-dimensional semantic space for semantic similarity search. Runs 100% locally in browser via ONNX Runtime. No API keys.',
   },
   {
     id: 'onnx-community/Qwen3.5-0.8B-ONNX',
     role: 'conversation',
-    name: 'Qwen 0.8B / 0.5B (Qwen3.5-0.8B-ONNX)',
-    badge: 'Local Qwen ONNX',
+    name: 'Qwen 0.8B (Vector + LLM)',
+    badge: 'Vector + LLM',
     size: '~512 MB',
     url: modelForRole('conversation').artifact.url,
-    description: 'Local conversational AI model running via ONNX Runtime in the browser (Qwen3.5 0.8B / Qwen2.5 0.5B class). Generates dialogue grounded strictly in verified portfolio facts. Note: It cannot change the wording, the score, or what is documented, keeping answers strictly grounded in portfolio evidence. 100% private, no cloud calls, no API keys.',
+    description: 'Local conversational AI (Qwen 0.8B) for natural language responses. Uses vector search for retrieval, then generates grounded answers. Runs 100% locally via ONNX Runtime. No cloud calls, no API keys.',
   },
   {
     id: 'onnx-community/Qwen2.5-1.5B-Instruct',
     role: 'fluent',
-    name: 'Qwen 1.5B — Local Fluent AI',
-    badge: 'Local Qwen ONNX',
+    name: 'Qwen 1.5B (Vector + LLM)',
+    badge: 'Vector + LLM',
     size: '~1.58 GB',
     url: modelForRole('fluent').artifact.url,
-    description: 'Larger 1.5B parameter local Qwen model for deeper natural language synthesis. Runs entirely on-device with ONNX Runtime. No cloud server or API key required.',
+    description: 'Larger 1.5B parameter Qwen model for deeper natural language synthesis. Uses vector search + LLM generation. Runs entirely on-device with ONNX Runtime. No cloud server or API key required.',
   },
   {
     id: 'none',
     role: 'none',
-    name: 'Direct SQLite / FTS5 Search (No Model)',
-    badge: 'Direct Search',
+    name: 'Direct SQLite/FTS5 Search (Keyword Only)',
+    badge: 'Keyword Search',
     size: '0 MB',
-    description: 'Runs directly using deterministic keyword search and indexing from the portfolio database without downloading any neural models.',
+    description: 'Deterministic keyword search using SQLite FTS5 indexing. No neural models downloaded. Fast, lightweight, works offline.',
   },
 ];
 import {
@@ -596,10 +596,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // Determine which model answered the question
         const answeringModelName =
           conversationRef.current && chat.status === 'ready'
-            ? AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'
+            ? AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM (Vector + LLM)'
             : embedderRef.current && semantic.status === 'ready'
-              ? 'Qwen3 Embedding (0.6B INT8)'
-              : 'Direct Search Engine';
+              ? 'Qwen3 Embedding (Vector Search)'
+              : 'Direct SQLite/FTS5 Search';
 
         // Qwen model-exclusive capabilities: Think mode & Web search
         // Fast streaming effect: progressively reveal text character by character
@@ -612,7 +612,18 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       } catch {
         setTurns((current) =>
           current.map((turn) =>
-            turn.id === id ? { ...turn, answer: failureAnswer(trimmed, state.engine.aliases), modelName: 'Direct Search Engine' } : turn,
+            turn.id === id
+              ? {
+                  ...turn,
+                  answer: failureAnswer(trimmed, state.engine.aliases),
+                  modelName:
+                    conversationRef.current && chat.status === 'ready'
+                      ? 'Conversational LLM (Vector + LLM)'
+                      : embedderRef.current && semantic.status === 'ready'
+                        ? 'Qwen3 Embedding (Vector Search)'
+                        : 'Direct SQLite/FTS5 Search',
+                }
+              : turn,
           ),
         );
       } finally {
@@ -652,12 +663,12 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     chat.status === 'loading' ||
     semantic.status === 'indexing';
 
-  const startModel = useCallback(() => {
-    if (isDownloading) return;
+  const startModel = useCallback((): Promise<void> => {
+    if (isDownloading) return Promise.resolve();
     setBrain({ status: 'detecting' });
     setSemantic({ status: 'unavailable' });
 
-    void loadModel({ onState: setBrain })
+    return loadModel({ onState: setBrain })
       .then(async (loaded) => {
         setSemantic({ status: 'indexing', done: 0, total: 0 });
 
@@ -706,7 +717,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // `loadModel` has already reported through `onState`; this only stops the
         // rejection becoming an unhandled one.
       });
-  }, [pickRandomGreeting]);
+  }, [isDownloading, pickRandomGreeting]);
 
   /**
    * Load the conversational model. Separate from `startModel` on purpose.
@@ -782,6 +793,12 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         conversationRef.current = null;
         setChat({ status: 'idle' });
       }
+      if (embedderRef.current) {
+        void embedderRef.current.dispose();
+        embedderRef.current = null;
+        setSemantic({ status: 'unavailable' });
+        setBrain({ status: 'idle' });
+      }
       return;
     }
 
@@ -792,9 +809,23 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         if (semantic.status !== 'ready') {
           startModel();
         }
-      } else {
-        if (chat.status !== 'ready') {
-          startChat(item.role);
+        if (conversationRef.current) {
+          void conversationRef.current.dispose();
+          conversationRef.current = null;
+          setChat({ status: 'idle' });
+        }
+      } else if (item.role === 'conversation' || item.role === 'fluent') {
+        const chatRole = item.role as 'conversation' | 'fluent';
+        if (semantic.status !== 'ready') {
+          startModel().then(() => {
+            if (chat.status !== 'ready') {
+              startChat(chatRole);
+            }
+          });
+        } else {
+          if (chat.status !== 'ready') {
+            startChat(chatRole);
+          }
         }
       }
     } else {
@@ -811,9 +842,16 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     if (item.role === 'embedding') {
       startModel();
     } else if (item.role === 'conversation' || item.role === 'fluent') {
-      startChat(item.role);
+      const chatRole = item.role as 'conversation' | 'fluent';
+      if (semantic.status !== 'ready' && brain.status !== 'ready') {
+        startModel().then(() => {
+          startChat(chatRole);
+        });
+      } else {
+        startChat(chatRole);
+      }
     }
-  }, [isDownloading, startModel, startChat]);
+  }, [isDownloading, semantic.status, brain.status, startModel, startChat]);
 
   const handleRemoveModel = useCallback(async (e: React.MouseEvent, item: ModelListItem) => {
     e.stopPropagation();
@@ -850,6 +888,18 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       if (saved && ['embedding', 'conversation', 'fluent', 'none'].includes(saved)) {
         if (saved === 'none' || cachedMap[saved]) {
           setSelectedModelChoice(saved);
+          if (saved === 'embedding') {
+            if (semantic.status !== 'ready') startModel();
+          } else if (saved === 'conversation' || saved === 'fluent') {
+            const chatRole = saved as 'conversation' | 'fluent';
+            if (semantic.status !== 'ready' && brain.status !== 'ready') {
+              startModel().then(() => {
+                if (chat.status !== 'ready') startChat(chatRole);
+              });
+            } else if (chat.status !== 'ready') {
+              startChat(chatRole);
+            }
+          }
         } else {
           setSelectedModelChoice('none');
         }
@@ -859,7 +909,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       active = false;
     };
     return cleanup;
-  }, [checkAllModelCaches]);
+  }, [checkAllModelCaches, semantic.status, brain.status, chat.status, startModel, startChat]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -1034,8 +1084,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             {/* Real measured timings, and active model indicator. */}
             {chat.status === 'ready' ? (
               <p className={styles.brainTimings}>
-                {AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'} · {chat.backend.toUpperCase()}
+                {AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM (Vector + LLM)'} · {chat.backend.toUpperCase()}
                 {chat.fromCache ? ' · already downloaded' : ` · loaded in ${formatSeconds(chat.loadMs)}`}
+                {inferenceMs !== null ? ` · last question in ${formatSeconds(inferenceMs)}` : ''}
+              </p>
+            ) : semantic.status === 'ready' ? (
+              <p className={styles.brainTimings}>
+                Qwen3 Embedding (Vector Search) · {semantic.chunks} passages indexed
                 {inferenceMs !== null ? ` · last question in ${formatSeconds(inferenceMs)}` : ''}
               </p>
             ) : null}
