@@ -5,7 +5,8 @@
   "description": "A forkable, data-driven personal technology OS. Content lives in portfolio.json; the app is the renderer.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "index": "tsx scripts/index-portfolio.ts --with-embeddings",
+    "build": "tsx scripts/check-index.ts && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -15,6 +16,8 @@
   },
   "dependencies": {
     "@huggingface/transformers": "^3.8.1",
+    "@types/better-sqlite3": "^9.6.0",
+    "better-sqlite3": "^13.0.3",
     "highlight.js": "11.10.0",
     "katex": "0.16.11",
     "next": "15.5.25",

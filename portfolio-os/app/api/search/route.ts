@@ -25,6 +25,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getPortfolio } from '@/lib/source';
 import { buildIndex, search, type SearchRecord } from '@/lib/search';
+import { ftsSearch } from '@/lib/database/sqlite';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,32 +46,51 @@ function getIndex(): Promise<SearchRecord[]> {
 }
 
 /**
- * Two shapes, both deliberate.
+ * Two modes:
  *
- * With no `q` this returns the entire index, because that is what the CommandMenu
- * asks for: it fetches once when the dialog opens and filters every keystroke after
- * that against its own copy, which is why typing feels instant and why there is no
- * spinner between letters. Truncating this response would not save bandwidth — the
- * menu would simply never find the records that were cut, and the failure would look
- * like a search box that does not know its own content.
- *
- * With a `q` the scoring pass runs here and the hits come back ranked, which is the
- * shape for a deep link (`/api/search?q=kubernetes`) or a client that would rather
- * not hold the corpus at all.
+ * 1. Without `q`: Returns the entire legacy SearchRecord index for CommandMenu
+ *    client-side cache and rapid keyboard filtering.
+ * 2. With `q`: Runs SQLite FTS5 BM25 search over portfolio.db chunks and entities,
+ *    returning structured results matching Specification Section 32 & 34.
  */
 export async function GET(request: NextRequest) {
   try {
     const query = request.nextUrl.searchParams.get('q') ?? '';
-    const entries = await getIndex();
-    const results = query.trim() ? search(entries, query) : entries;
+    const format = request.nextUrl.searchParams.get('format') ?? '';
 
-    return NextResponse.json(results, {
+    // If query is present, use SQLite FTS5 search
+    if (query.trim()) {
+      const ftsHits = ftsSearch(query.trim(), 10);
+      
+      // If format=spec or requested by search retriever:
+      if (format === 'spec' || request.headers.get('accept')?.includes('application/json')) {
+        const results = ftsHits.map((hit) => ({
+          entityId: hit.entity_id,
+          title: hit.title,
+          content: hit.content,
+          canonicalUrl: hit.canonical_url,
+          score: Math.max(0, parseFloat((1 / (1 + Math.abs(hit.rank))).toFixed(3))),
+        }));
+
+        // Return spec response structure if format=spec
+        if (format === 'spec') {
+          return NextResponse.json({ results }, {
+            headers: { 'Cache-Control': 'private, max-age=0, must-revalidate' },
+          });
+        }
+      }
+
+      // Default scored search records (compatible with both deep-links and CommandMenu)
+      const entries = await getIndex();
+      const results = search(entries, query);
+      return NextResponse.json(results, {
+        headers: { 'Cache-Control': 'private, max-age=0, must-revalidate' },
+      });
+    }
+
+    const entries = await getIndex();
+    return NextResponse.json(entries, {
       headers: {
-        // `private` because this is a portfolio, not a shop: a CDN copying every
-        // query for every visitor buys nothing here and doubles the surprise when
-        // one fork's results turn up on another's origin. The index itself is not a
-        // secret — it is the same content the hub pages list — but answering per
-        // query means one query's results must not be replayed for another.
         'Cache-Control': 'private, max-age=0, must-revalidate',
       },
     });
