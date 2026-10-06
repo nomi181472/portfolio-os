@@ -420,14 +420,35 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (userHasConversationRef.current) {
+      const hasActiveModel = Boolean(embedderRef.current || conversationRef.current);
+      if (hasActiveModel || userHasConversationRef.current) {
         e.preventDefault();
-        e.returnValue = '';
-        return '';
+        const confirmationMessage = hasActiveModel
+          ? 'Reloading will remove the loaded model. Are you sure you want to remove it?'
+          : 'You have an active conversation. Are you sure you want to leave?';
+        e.returnValue = confirmationMessage;
+        return confirmationMessage;
+      }
+    };
+
+    const handlePageHide = () => {
+      if (embedderRef.current) {
+        void embedderRef.current.dispose();
+        embedderRef.current = null;
+      }
+      if (conversationRef.current) {
+        void conversationRef.current.dispose();
+        conversationRef.current = null;
       }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    const cleanup = () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+    };
+    return cleanup;
   }, []);
 
   /**
@@ -1424,32 +1445,60 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                 })()}
               </div>
 
-              <div className={styles.inputRow}>
-                <textarea
-                  ref={inputRef}
-                  className={styles.input}
-                  value={draft}
-                  rows={2}
-                  placeholder="Ask about a technology, or paste a job description."
-                  onChange={(event) => setDraft(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' && !event.shiftKey) {
-                      event.preventDefault();
-                      void ask(draft);
-                      return;
-                    }
-                    if (event.key === 'Escape') closeAndRelease();
-                  }}
-                  disabled={state.status !== 'ready'}
-                />
-                <button
-                  type="submit"
-                  className={styles.send}
-                  disabled={state.status !== 'ready' || busy || draft.trim().length === 0}
-                >
-                  Ask
-                </button>
-              </div>
+              {(() => {
+                const isSelectedModelPreparing =
+                  (selectedModelChoice === 'embedding' && semantic.status !== 'ready') ||
+                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status !== 'ready');
+                const selectedModelName = AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name ?? 'Model';
+
+                return (
+                  <>
+                    {isSelectedModelPreparing && (
+                      <div className={styles.composerLoadingBanner}>
+                        <span className={styles.composerLoadingDot} />
+                        <span>
+                          {selectedModelName} is loading into browser memory... Please wait before asking.
+                        </span>
+                      </div>
+                    )}
+                    <div className={styles.inputRow}>
+                      <textarea
+                        ref={inputRef}
+                        className={styles.input}
+                        value={draft}
+                        rows={2}
+                        placeholder={
+                          isSelectedModelPreparing
+                            ? `${selectedModelName} is loading, please wait...`
+                            : 'Ask about a technology, or paste a job description.'
+                        }
+                        onChange={(event) => setDraft(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' && !event.shiftKey) {
+                            event.preventDefault();
+                            void ask(draft);
+                            return;
+                          }
+                          if (event.key === 'Escape') closeAndRelease();
+                        }}
+                        disabled={state.status !== 'ready' || isSelectedModelPreparing}
+                      />
+                      <button
+                        type="submit"
+                        className={styles.send}
+                        disabled={
+                          state.status !== 'ready' ||
+                          busy ||
+                          isSelectedModelPreparing ||
+                          draft.trim().length === 0
+                        }
+                      >
+                        Ask
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </form>
 

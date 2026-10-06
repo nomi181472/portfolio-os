@@ -799,6 +799,38 @@
   width: 100%;
 }
 
+.composerLoadingBanner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  padding: var(--space-snug) var(--space);
+  background: var(--surface-float);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-card);
+  font-size: 0.8125rem;
+  color: var(--ink-quiet);
+}
+
+.composerLoadingDot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--signal);
+  animation: pulseDot 1.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
 .composerControlsRow {
   display: flex;
   align-items: center;
