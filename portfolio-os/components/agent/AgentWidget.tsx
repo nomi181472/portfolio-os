@@ -288,6 +288,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   const [inferenceMs, setInferenceMs] = useState<number | null>(null);
   const [semantic, setSemantic] = useState<SemanticState>({ status: 'unavailable' });
   const [selectedModelChoice, setSelectedModelChoice] = useState<ModelChoiceId>('none');
+  const [webgpuFallbackNotice, setWebgpuFallbackNotice] = useState<string | null>(null);
   const [cachedModels, setCachedModels] = useState<Record<ModelChoiceId, boolean>>({
     embedding: false,
     conversation: false,
@@ -394,7 +395,14 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   useEffect(() => {
     if (!open || detectedBackend.current) return;
     detectedBackend.current = true;
-    void detectBackend(modelForRole('embedding').devices).then((result) => setBackend(result.backend));
+    void detectBackend(modelForRole('embedding').devices).then((result) => {
+      setBackend(result.backend);
+      if (result.fellBack || result.backend === 'wasm') {
+        setWebgpuFallbackNotice(
+          'Your browser or hardware does not support WebGPU (or hardware acceleration is disabled). Falling back to WASM for local neural processing.',
+        );
+      }
+    });
   }, [open]);
 
   const checkAllModelCaches = useCallback(async () => {
@@ -573,6 +581,60 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         return;
       }
 
+      // If user selected a neural model and it is currently downloading or preparing,
+      // NEVER use fallback. Inform user to be patient while model finishes preparing.
+      if (selectedModelChoice === 'embedding' && semantic.status !== 'ready') {
+        const id = nextId.current++;
+        setDraft('');
+        const normalised = normaliseQuestion(trimmed, state.engine.aliases);
+        setTurns((current) => [
+          ...current,
+          {
+            id,
+            question: trimmed,
+            answer: {
+              question: trimmed,
+              intent: 'general',
+              routing: { intent: 'general', confidence: 0, signals: [], uncertain: true },
+              normalised,
+              text: 'Please be patient — the embedding model is currently being loaded and indexed into vector memory. Your question will be answered once it is ready.',
+              cards: [],
+              navigation: [],
+              empty: true,
+              caveats: ['Model is preparing. Fallback is disabled by policy.'],
+            },
+            modelName: 'Neural Loader',
+          },
+        ]);
+        return;
+      }
+
+      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status !== 'ready') {
+        const id = nextId.current++;
+        setDraft('');
+        const normalised = normaliseQuestion(trimmed, state.engine.aliases);
+        setTurns((current) => [
+          ...current,
+          {
+            id,
+            question: trimmed,
+            answer: {
+              question: trimmed,
+              intent: 'general',
+              routing: { intent: 'general', confidence: 0, signals: [], uncertain: true },
+              normalised,
+              text: 'Please be patient — the local conversational model is currently loading into your browser. Once prepared, it will converse naturally without falling back.',
+              cards: [],
+              navigation: [],
+              empty: true,
+              caveats: ['Conversational model is preparing. Fallback is disabled by policy.'],
+            },
+            modelName: 'Neural Loader',
+          },
+        ]);
+        return;
+      }
+
       const id = nextId.current++;
       setDraft('');
       setBusy(true);
@@ -580,24 +642,28 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       setTurns((current) => [...current, { id, question: trimmed, answer: null }]);
 
       try {
-        // Both optional layers are optional at every step: absent, half-indexed, or
-        // broken, `answer()` falls back to deterministic retrieval and composition,
-        // which is the entire design. Nothing here is load-bearing for a correct
-        // answer — only for a better-ordered one.
-        // Retrieve full answer from engine
+        // Mode-specific execution:
+        // 1. Without model ('none'): Pass no embedder and no conversation (pure SQLite / FTS / deterministic retrieval).
+        // 2. Embedding ('embedding'): Pass embedder only (vector search, semantic ranking, no LLM prose synthesis).
+        // 3. Conversational ('conversation' / 'fluent'): Pass both embedder (for vector search) and conversation (for local LLM natural speech).
+        const activeEmbedder = selectedModelChoice === 'none' ? null : embedderRef.current;
+        const activeConversation = (selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent')
+          ? conversationRef.current
+          : null;
+
         const answer = await state.engine.answer(trimmed, {
-          embedder: embedderRef.current,
-          conversation: conversationRef.current,
+          embedder: activeEmbedder,
+          conversation: activeConversation,
         });
 
         // Only the generation half is timed, and only when a model ran.
-        setInferenceMs(conversationRef.current?.lastInferenceMs() ?? null);
+        setInferenceMs(activeConversation?.lastInferenceMs() ?? null);
 
         // Determine which model answered the question
         const answeringModelName =
-          conversationRef.current && chat.status === 'ready'
+          activeConversation && chat.status === 'ready'
             ? AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'
-            : embedderRef.current && semantic.status === 'ready'
+            : activeEmbedder && semantic.status === 'ready'
               ? 'Qwen3 Embedding (0.6B INT8)'
               : 'Direct Search Engine';
 
@@ -982,6 +1048,20 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               </button>
             </div>
           </header>
+
+          {webgpuFallbackNotice ? (
+            <div className={styles.fallbackWarning}>
+              <span className={styles.fallbackWarningText}>⚡ {webgpuFallbackNotice}</span>
+              <button
+                type="button"
+                className={styles.fallbackWarningDismiss}
+                onClick={() => setWebgpuFallbackNotice(null)}
+                aria-label="Dismiss notice"
+              >
+                ×
+              </button>
+            </div>
+          ) : null}
 
           {state.status === 'loading' ? (
             <p className={styles.status}>Reading the portfolio…</p>

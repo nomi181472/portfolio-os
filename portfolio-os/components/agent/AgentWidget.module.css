@@ -152,6 +152,38 @@
   color: var(--ink-quiet);
 }
 
+.fallbackWarning {
+  margin: 0;
+  padding: var(--space-tight) var(--space);
+  font-size: 0.75rem;
+  background: var(--fill-faint);
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-quiet);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-tight);
+}
+
+.fallbackWarningText {
+  flex: 1 1 auto;
+}
+
+.fallbackWarningDismiss {
+  appearance: none;
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding: 0 var(--space-hair);
+}
+
+.fallbackWarningDismiss:hover {
+  color: var(--ink-bright);
+}
+
 /*
  * The optional model panel. Deliberately quieter than the conversation: the agent
  * already answers without a model, so this is an offer, not a blocker. Nothing
