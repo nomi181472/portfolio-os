@@ -143,6 +143,7 @@ interface Turn {
   question: string;
   answer: AgentAnswer | null;
   modelName?: string;
+  pendingMessage?: string;
 }
 
 /**
@@ -659,8 +660,16 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       const id = nextId.current++;
       setDraft('');
       setBusy(true);
+
+      const pendingMessage =
+        selectedModelChoice === 'embedding'
+          ? 'Computing embeddings & ranking vectors…'
+          : selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent'
+            ? 'Analyzing context & synthesizing answer with local LLM…'
+            : 'Searching portfolio records…';
+
       // The question renders immediately, so the log never appears to stall.
-      setTurns((current) => [...current, { id, question: trimmed, answer: null }]);
+      setTurns((current) => [...current, { id, question: trimmed, answer: null, pendingMessage }]);
 
       try {
         // Mode-specific execution:
@@ -1468,9 +1477,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                         value={draft}
                         rows={2}
                         placeholder={
-                          isSelectedModelPreparing
-                            ? `${selectedModelName} is loading, please wait...`
-                            : 'Ask about a technology, or paste a job description.'
+                          busy
+                            ? 'Thinking and generating answer...'
+                            : isSelectedModelPreparing
+                              ? `${selectedModelName} is loading, please wait...`
+                              : 'Ask about a technology, or paste a job description.'
                         }
                         onChange={(event) => setDraft(event.target.value)}
                         onKeyDown={(event) => {
@@ -1481,7 +1492,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                           }
                           if (event.key === 'Escape') closeAndRelease();
                         }}
-                        disabled={state.status !== 'ready' || isSelectedModelPreparing}
+                        disabled={state.status !== 'ready' || busy || isSelectedModelPreparing}
                       />
                       <button
                         type="submit"
@@ -1572,7 +1583,7 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
     <article className={styles.turn}>
       <p className={styles.question}>{turn.question}</p>
       {!answer ? (
-        <p className={styles.pending}>Checking the records…</p>
+        <p className={styles.pending}>{turn.pendingMessage ?? 'Checking the records…'}</p>
       ) : (
         <>
           <p className={styles.answer}>{answer.text}</p>
