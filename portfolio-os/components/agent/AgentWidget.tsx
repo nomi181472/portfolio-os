@@ -98,7 +98,7 @@ const AVAILABLE_MODELS: ModelListItem[] = [
     badge: 'Vector + LLM',
     size: '~512 MB',
     url: modelForRole('conversation').artifact.url,
-    description: 'Local conversational AI (Qwen 0.8B) for natural language responses. Uses vector search for retrieval, then generates grounded answers. Runs 100% locally via ONNX Runtime. No cloud calls, no API keys.',
+    description: 'Local conversational AI (Qwen 0.8B) for natural language responses. Uses vector search for retrieval, then generates grounded answers. Runs 100% locally via ONNX Runtime. Note: it cannot change the wording, the score, or what is documented outside verified portfolio evidence.',
   },
   {
     id: 'onnx-community/Qwen2.5-1.5B-Instruct',
@@ -955,16 +955,12 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         if (saved === 'none' || cachedMap[saved]) {
           setSelectedModelChoice(saved);
           if (saved === 'embedding') {
-            if (semantic.status !== 'ready') startModel();
+            startModel();
           } else if (saved === 'conversation' || saved === 'fluent') {
             const chatRole = saved as 'conversation' | 'fluent';
-            if (semantic.status !== 'ready' && brain.status !== 'ready') {
-              startModel().then(() => {
-                if (chat.status !== 'ready') startChat(chatRole);
-              });
-            } else if (chat.status !== 'ready') {
+            startModel().then(() => {
               startChat(chatRole);
-            }
+            });
           }
         } else {
           setSelectedModelChoice('none');
@@ -975,7 +971,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       active = false;
     };
     return cleanup;
-  }, [checkAllModelCaches, semantic.status, brain.status, chat.status, startModel, startChat]);
+  }, [checkAllModelCaches]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
