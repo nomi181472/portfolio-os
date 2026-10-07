@@ -220,7 +220,7 @@ export function websiteEntity(profile: Profile, portfolio: Portfolio): Json {
     description: profile.positioning ?? portfolioConfig.site.description,
     inLanguage: portfolioConfig.site.locale,
     publisher: { '@id': PERSON_ID },
-    codeRepository: 'https://github.com/nomi181472/portfolio-os',
+    codeRepository: profile.links?.find((l) => l.type === 'repository' && l.url.includes('github.com'))?.url || profile.links?.find((l) => l.type === 'repository')?.url,
     hasPart: sections.length ? sections : undefined,
   });
 }

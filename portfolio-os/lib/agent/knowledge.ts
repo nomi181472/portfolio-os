@@ -52,22 +52,20 @@ import type {
  * the three real states to be expressed as the absence of the others, and
  * "not open to work" is a claim too.
  */
-const AVAILABILITY_STATEMENT: Record<AvailabilityKnowledge['status'], string | null> = {
-  'open-to-work': 'Noman is currently open to work.',
-  'looking-for-opportunities':
-    'Noman is open to conversations about opportunities, though the portfolio does not state he is actively looking.',
-  // Null, not a sentence. "Noman is not open to work" is still an availability
-  // claim, and making it would be asserting something the document never said.
-  closed: null,
-};
-
 function buildAvailability(portfolio: Portfolio): AvailabilityKnowledge {
   const raw = portfolio.availability;
+  const name = portfolio.profile?.name || 'The candidate';
+  const statements: Record<AvailabilityKnowledge['status'], string | null> = {
+    'open-to-work': `${name} is currently open to work.`,
+    'looking-for-opportunities': `${name} is open to conversations about opportunities, though the portfolio does not state an active search.`,
+    closed: null,
+  };
+
   return {
     status: raw.status,
     ...(raw.note === undefined ? {} : { note: raw.note }),
     ...(raw.updatedAt === undefined ? {} : { updatedAt: raw.updatedAt }),
-    statement: AVAILABILITY_STATEMENT[raw.status],
+    statement: statements[raw.status],
   };
 }
 
@@ -332,6 +330,7 @@ export function buildKnowledge(
         text: corpusFor(entity, kind),
         technologies: [...entity.technologies],
         tags: [...entity.tags],
+        ...('aliases' in entity && Array.isArray(entity.aliases) ? { aliases: [...entity.aliases] } : {}),
         featured: Boolean(entity.featured),
         evidence,
         links,
@@ -379,6 +378,14 @@ export function buildKnowledge(
       links: portfolio.profile.links.map((link) => ({ label: link.label, url: link.url, type: link.type })),
     },
     availability: buildAvailability(portfolio),
+    ...(portfolio.taxonomy
+      ? {
+          taxonomy: {
+            families: portfolio.taxonomy.families ?? {},
+            aliases: portfolio.taxonomy.aliases ?? {},
+          },
+        }
+      : {}),
     services: [],
     records,
     byKey,

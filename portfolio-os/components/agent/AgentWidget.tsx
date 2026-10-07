@@ -36,6 +36,7 @@ import { usePathname } from 'next/navigation';
 
 import {
   buildEngineFromKnowledge,
+  buildConversationalEngineFromKnowledge,
   type AgentAnswer,
   type CardPlan,
   type ConversationLayer,
@@ -63,6 +64,7 @@ import {
   MAX_INPUT_QUESTION_TOKENS,
   type Conversation,
 } from '@/lib/agent/models/conversation';
+import { createWorkerConversation } from '@/lib/agent/workers/worker-client';
 import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } from '@/lib/agent/registry';
 import { getGreetingMessage } from '@/components/agent/parts/greetings';
 import { checkAllModelCachesHelper } from '@/components/agent/parts/modelHelpers';
@@ -80,42 +82,33 @@ export interface ModelListItem {
   description: string;
 }
 
-// Calculated model sizes for UI display: formatMb(coldBytes(['conversation'])) and coldLoadSummary(backend, ['embedding'])
+// Calculated model sizes for UI display
 const AVAILABLE_MODELS: ModelListItem[] = [
   {
-    id: 'onnx-community/Qwen3-Embedding-0.6B-INT8-ONNX',
+    id: 'Xenova/all-MiniLM-L6-v2',
     role: 'embedding',
-    name: 'Qwen3 Embedding (Vector Search)',
+    name: 'Semantic Search (all-MiniLM-L6-v2)',
     badge: 'Vector Search',
-    size: '~597 MB',
-    url: 'https://huggingface.co/onnx-community/Qwen3-Embedding-0.6B-INT8-ONNX/resolve/main/onnx/model_int8.onnx',
-    description: 'Qwen3 local vector embedding model. Embeds portfolio chunks into 1024-dimensional semantic space for semantic similarity search. Runs 100% locally in browser via ONNX Runtime. No API keys.',
+    size: formatMb(modelForRole('embedding').artifact.bytes),
+    url: modelForRole('embedding').artifact.url,
+    description: 'All-MiniLM-L6-v2 lightweight local embedding model (~23 MB, 384 dimensions). Runs 100% locally in browser via ONNX Runtime for semantic similarity matching.',
   },
   {
-    id: 'onnx-community/Qwen3.5-0.8B-ONNX',
+    id: 'onnx-community/Qwen2.5-0.5B-Instruct',
     role: 'conversation',
-    name: 'Qwen 0.8B (Vector + LLM)',
+    name: 'Qwen2.5 0.5B Instruct (Vector + LLM)',
     badge: 'Vector + LLM',
-    size: '~512 MB',
+    size: formatMb(modelForRole('conversation').artifact.bytes),
     url: modelForRole('conversation').artifact.url,
-    description: 'Local conversational AI (Qwen 0.8B) for natural language responses. Uses vector search for retrieval, then generates grounded answers. Runs 100% locally via ONNX Runtime. Note: it cannot change the wording, the score, or what is documented outside verified portfolio evidence.',
-  },
-  {
-    id: 'onnx-community/Qwen2.5-1.5B-Instruct',
-    role: 'fluent',
-    name: 'Qwen 1.5B (Vector + LLM)',
-    badge: 'Vector + LLM',
-    size: '~1.58 GB',
-    url: modelForRole('fluent').artifact.url,
-    description: 'Larger 1.5B parameter Qwen model for deeper natural language synthesis. Uses vector search + LLM generation. Runs entirely on-device with ONNX Runtime. No cloud server or API key required.',
+    description: 'Local conversational AI (Qwen2.5 0.5B Instruct) for natural language responses. Uses vector search for retrieval, then generates grounded answers. Runs 100% locally in browser via ONNX Runtime.',
   },
   {
     id: 'none',
     role: 'none',
-    name: 'Direct SQLite/FTS5 Search (Keyword Only)',
+    name: 'Direct Search Engine (Keyword Only)',
     badge: 'Keyword Search',
     size: '0 MB',
-    description: 'Deterministic keyword search using SQLite FTS5 indexing. No neural models downloaded. Fast, lightweight, works offline.',
+    description: 'Deterministic keyword search using lexical BM25 indexing. No neural models downloaded. Fast, lightweight, works offline.',
   },
 ];
 import {
@@ -128,7 +121,7 @@ import {
   type EmbedderState,
   type FeatureExtractionPipeline,
 } from '@/lib/agent/models/embeddings';
-import { persistVectors, restoreVectors } from '@/lib/agent/models/vector-persistence';
+import { getVectorPersistenceRepository } from '@/lib/repositories';
 import type { KnowledgePayload, PortfolioKnowledge } from '@/lib/agent/types';
 import styles from './AgentWidget.module.css';
 
@@ -188,17 +181,20 @@ type ChatState =
  * says what happened rather than blaming the visitor's question, and no partial
  * answer is offered — a failed lookup and an honest absence must not look alike.
  */
-function failureAnswer(question: string, aliases: AliasTable): AgentAnswer {
+function failureAnswer(question: string, aliases: AliasTable, error?: unknown): AgentAnswer {
+  const errorMsg = error instanceof Error ? error.message : typeof error === 'string' ? error : null;
   return {
     question,
     intent: 'general',
     routing: { intent: 'general', confidence: 0, signals: [], uncertain: true },
     normalised: normaliseQuestion(question, aliases),
-    text: 'Something went wrong reading the portfolio. Nothing has been guessed in its place.',
+    text: errorMsg
+      ? `Something went wrong while processing your request:\n\n${errorMsg}`
+      : 'Something went wrong reading the portfolio. Nothing has been guessed in its place.',
     cards: [],
     navigation: [],
     empty: true,
-    caveats: [],
+    caveats: errorMsg ? [`Error details: ${errorMsg}`] : [],
   };
 }
 
@@ -303,10 +299,12 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   );
 
   const pickRandomGreeting = useCallback((role?: ModelChoiceId) => {
-    setGreetingMessage(getGreetingMessage(role));
+    setGreetingMessage(getGreetingMessage(role, knowledgeRef.current?.profile.name));
   }, []);
   const modelPickerRef = useRef<HTMLDivElement>(null);
   const knowledgeRef = useRef<PortfolioKnowledge | null>(null);
+  const standardEngineRef = useRef<Engine | null>(null);
+  const conversationalEngineRef = useRef<Engine | null>(null);
 
   /**
    * The records to embed, as key and text only.
@@ -363,17 +361,33 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // without depending on a re-render, and the callback that starts the download
         // must not close over the whole engine.
         knowledgeRef.current = knowledge;
+        const nav = navigationRegistryFromTargets(knowledge.navigation);
+        const standardEngine = buildEngineFromKnowledge(knowledge, { navigation: nav });
+        const conversationalEngine = buildConversationalEngineFromKnowledge(knowledge, { navigation: nav });
+        standardEngineRef.current = standardEngine;
+        conversationalEngineRef.current = conversationalEngine;
+
+        const savedChoice = (localStorage.getItem('portfolio-agent-selected-model') as ModelChoiceId | null) ?? 'none';
+        const isLocalLLM = savedChoice === 'conversation' || savedChoice === 'fluent';
         setState({
           status: 'ready',
-          engine: buildEngineFromKnowledge(knowledge, {
-            navigation: navigationRegistryFromTargets(knowledge.navigation),
-          }),
+          engine: isLocalLLM ? conversationalEngine : standardEngine,
         });
       })
       .catch(() => setState({ status: 'failed' }));
     // No cleanup, deliberately: the payload is wanted from here on, so a close
     // mid-fetch should not throw the work away. State set after unmount is inert.
   }, [open]);
+
+  // Switch engine when user selects between local LLM and direct/embedding models
+  useEffect(() => {
+    if (state.status !== 'ready') return;
+    const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent';
+    const targetEngine = isLocalLLM ? conversationalEngineRef.current : standardEngineRef.current;
+    if (targetEngine && state.engine !== targetEngine) {
+      setState((prev) => (prev.status === 'ready' ? { ...prev, engine: targetEngine } : prev));
+    }
+  }, [selectedModelChoice, state]);
 
   useEffect(() => {
     if (open) inputRef.current?.focus();
@@ -554,6 +568,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     // Narrowed rather than assumed: `state` is a union, and an engine only exists
     // once the knowledge file has loaded. There is no history to clear before that,
     // because nothing has been answered yet.
+    standardEngineRef.current?.clearHistory();
+    conversationalEngineRef.current?.clearHistory();
     if (state.status === 'ready') state.engine.clearHistory();
     setDraft('');
     setInferenceMs(null);
@@ -598,6 +614,59 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               caveats: ['Prompt exceeds maximum input token capacity.'],
             },
             modelName: 'System Guard',
+          },
+        ]);
+        return;
+      }
+
+      // If the selected model failed / is unsupported, prevent inference and inform user.
+      if (selectedModelChoice === 'embedding' && semantic.status === 'failed') {
+        const id = nextId.current++;
+        setDraft('');
+        const normalised = normaliseQuestion(trimmed, state.engine.aliases);
+        setTurns((current) => [
+          ...current,
+          {
+            id,
+            question: trimmed,
+            answer: {
+              question: trimmed,
+              intent: 'general',
+              routing: { intent: 'general', confidence: 0, signals: [], uncertain: true },
+              normalised,
+              text: 'Model is not supported on your device or browser. Please try a supported browser or device.',
+              cards: [],
+              navigation: [],
+              empty: true,
+              caveats: ['Model execution failed or backend is unsupported.'],
+            },
+            modelName: 'System Notice',
+          },
+        ]);
+        return;
+      }
+
+      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status === 'failed') {
+        const id = nextId.current++;
+        setDraft('');
+        const normalised = normaliseQuestion(trimmed, state.engine.aliases);
+        setTurns((current) => [
+          ...current,
+          {
+            id,
+            question: trimmed,
+            answer: {
+              question: trimmed,
+              intent: 'general',
+              routing: { intent: 'general', confidence: 0, signals: [], uncertain: true },
+              normalised,
+              text: 'Model is not supported on your device or browser. Please try a supported browser or device.',
+              cards: [],
+              navigation: [],
+              empty: true,
+              caveats: ['Model execution failed or backend is unsupported.'],
+            },
+            modelName: 'System Notice',
           },
         ]);
         return;
@@ -671,17 +740,23 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       // The question renders immediately, so the log never appears to stall.
       setTurns((current) => [...current, { id, question: trimmed, answer: null, pendingMessage }]);
 
+      // Allow the UI thread to paint the pending state and not freeze the window
+      await new Promise((resolve) => setTimeout(resolve, 30));
+
       try {
         // Mode-specific execution:
         // 1. Without model ('none'): Pass no embedder and no conversation (pure SQLite / FTS / deterministic retrieval).
         // 2. Embedding ('embedding'): Pass embedder only (vector search, semantic ranking, no LLM prose synthesis).
         // 3. Conversational ('conversation' / 'fluent'): Pass both embedder (for vector search) and conversation (for local LLM natural speech).
-        const activeEmbedder = selectedModelChoice === 'none' ? null : embedderRef.current;
-        const activeConversation = (selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent')
-          ? conversationRef.current
-          : null;
+        const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent';
+        const activeEngine = isLocalLLM
+          ? (conversationalEngineRef.current ?? state.engine)
+          : (standardEngineRef.current ?? state.engine);
 
-        const answer = await state.engine.answer(trimmed, {
+        const activeEmbedder = selectedModelChoice === 'none' ? null : embedderRef.current;
+        const activeConversation = isLocalLLM ? conversationRef.current : null;
+
+        const answer = await activeEngine.answer(trimmed, {
           embedder: activeEmbedder,
           conversation: activeConversation,
         });
@@ -705,13 +780,14 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           answeringModelName,
           setTurns,
         });
-      } catch {
+      } catch (err: unknown) {
+        console.error('Agent ask error:', err);
         setTurns((current) =>
           current.map((turn) =>
             turn.id === id
               ? {
                   ...turn,
-                  answer: failureAnswer(trimmed, state.engine.aliases),
+                  answer: failureAnswer(trimmed, state.engine.aliases, err),
                   modelName:
                     conversationRef.current && chat.status === 'ready'
                       ? 'Conversational LLM (Vector + LLM)'
@@ -724,6 +800,9 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         );
       } finally {
         setBusy(false);
+        setTimeout(() => {
+          inputRef.current?.focus();
+        }, 0);
       }
     },
     [state, busy, chat.status, selectedModelChoice, semantic.status],
@@ -759,8 +838,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     chat.status === 'loading' ||
     semantic.status === 'indexing';
 
-  const startModel = useCallback((): Promise<void> => {
-    if (isDownloading) return Promise.resolve();
+  const startModel = useCallback((): Promise<boolean> => {
+    if (isDownloading) return Promise.resolve(false);
     setBrain({ status: 'detecting' });
     setSemantic({ status: 'unavailable' });
 
@@ -777,12 +856,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
          * producing a different key rather than by anything this code has to compare.
          */
         const model = modelIdForRole('embedding');
+        const vectorPersistenceRepo = getVectorPersistenceRepository();
         const embedder = await createE5Embedder(emptyVectorStore(), {
           pipeline: loaded.pipeline as FeatureExtractionPipeline,
           backend: loaded.backend,
-          restore: (hash) => restoreVectors(hash, model, E5_DIMENSIONS),
+          restore: (hash) => vectorPersistenceRepo.restoreVectors(hash, model, E5_DIMENSIONS),
           save: async (hash, vectors) => {
-            await persistVectors(hash, model, loaded.backend, vectors);
+            await vectorPersistenceRepo.persistVectors(hash, model, loaded.backend, vectors);
           },
         });
         if (!embedder) {
@@ -790,7 +870,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             status: 'failed',
             message: 'The model downloaded but could not be used for matching.',
           });
-          return;
+          return false;
         }
 
         embedderRef.current = embedder;
@@ -804,14 +884,26 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         const after = embedder.state();
         if (after.error) {
           setSemantic({ status: 'failed', message: after.error });
-          return;
+          return false;
         }
         setSemantic({ status: 'ready', chunks: after.total });
         pickRandomGreeting('embedding');
+        return true;
       })
-      .catch(() => {
-        // `loadModel` has already reported through `onState`; this only stops the
-        // rejection becoming an unhandled one.
+      .catch((err: unknown) => {
+        const errorMsg = err instanceof Error ? err.message : String(err);
+        setSemantic((prev) =>
+          prev.status === 'failed'
+            ? prev
+            : {
+                status: 'failed',
+                message:
+                  brain.status === 'failed' && 'reason' in brain && 'message' in brain.reason
+                    ? brain.reason.message
+                    : errorMsg || 'The embedding model could not be loaded.',
+              },
+        );
+        return false;
       });
   }, [isDownloading, pickRandomGreeting]);
 
@@ -829,52 +921,93 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     if (isDownloading) return;
     setChat({ status: 'loading' });
 
-    let loaded: LoadedModel | null = null;
-
     const attempt = (chatAttempt.current += 1);
 
-    void createConversation({
+    let lastFailedMessage = 'The conversational model could not be loaded.';
+
+    // Attempt to load via dedicated Web Worker first for 100% async non-blocking execution
+    createWorkerConversation({
       role,
-      load: async () => {
-        loaded = await loadModel({
-          role,
-          onState: (state) => {
-            if (chatAttempt.current !== attempt) return;
-            if (state.status === 'downloading') {
-              setChat({
-                status: 'loading',
-                bytesLoaded: state.bytesLoaded,
-                bytesTotal: state.bytesTotal,
-                backend: state.backend,
-              });
-            }
-          },
-        });
-        return { pipeline: loaded.pipeline, backend: loaded.backend };
+      onState: (state) => {
+        if (chatAttempt.current !== attempt) return;
+        if (state.status === 'downloading') {
+          setChat({
+            status: 'loading',
+            bytesLoaded: state.bytesLoaded ?? 0,
+            bytesTotal: state.bytesTotal ?? 0,
+            backend: state.backend ?? 'wasm',
+          });
+        }
       },
     })
-      .then((conversation) => {
+      .then(async (workerConversation) => {
+        if (chatAttempt.current !== attempt) {
+          void workerConversation?.dispose().catch(() => {});
+          return;
+        }
+
+        if (workerConversation) {
+          conversationRef.current = workerConversation;
+          pickRandomGreeting(role);
+          setChat({
+            status: 'ready',
+            backend: 'wasm',
+            loadMs: 0,
+            fromCache: true,
+          });
+          void checkAllModelCaches();
+          return;
+        }
+
+        // Fallback: If Web Worker is unavailable, load via standard in-memory pipeline
+        const loadedContainer: { current: LoadedModel | null } = { current: null };
+        const conversation = await createConversation({
+          role,
+          load: async () => {
+            const loaded = await loadModel({
+              role,
+              onState: (state) => {
+                if (chatAttempt.current !== attempt) return;
+                if (state.status === 'downloading') {
+                  setChat({
+                    status: 'loading',
+                    bytesLoaded: state.bytesLoaded,
+                    bytesTotal: state.bytesTotal,
+                    backend: state.backend,
+                  });
+                } else if (state.status === 'failed') {
+                  if (state.reason.kind === 'unsupported' || state.reason.kind === 'load' || state.reason.kind === 'fetch') {
+                    lastFailedMessage = state.reason.message;
+                  }
+                }
+              },
+            });
+            loadedContainer.current = loaded;
+            return { pipeline: loaded.pipeline, backend: loaded.backend };
+          },
+        });
+
         if (chatAttempt.current !== attempt) {
           void conversation?.dispose().catch(() => {});
           return;
         }
-        if (!conversation || !loaded) {
-          setChat({ status: 'failed', message: 'The conversational model could not be loaded.' });
+        if (!conversation || !loadedContainer.current) {
+          setChat({ status: 'failed', message: lastFailedMessage });
           return;
         }
         conversationRef.current = conversation;
         pickRandomGreeting(role);
         setChat({
           status: 'ready',
-          backend: loaded.backend,
-          loadMs: loaded.loadMs,
-          fromCache: loaded.fromCache,
+          backend: loadedContainer.current.backend,
+          loadMs: loadedContainer.current.loadMs,
+          fromCache: loadedContainer.current.fromCache,
         });
         void checkAllModelCaches();
       })
       .catch(() => {
         if (chatAttempt.current !== attempt) return;
-        setChat({ status: 'failed', message: 'The conversational model could not be loaded.' });
+        setChat({ status: 'failed', message: lastFailedMessage });
       });
   }, [isDownloading, checkAllModelCaches, pickRandomGreeting]);
 
@@ -913,8 +1046,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       } else if (item.role === 'conversation' || item.role === 'fluent') {
         const chatRole = item.role as 'conversation' | 'fluent';
         if (semantic.status !== 'ready') {
-          startModel().then(() => {
-            if (chat.status !== 'ready') {
+          startModel().then((ok) => {
+            if (ok && chat.status !== 'ready') {
               startChat(chatRole);
             }
           });
@@ -940,8 +1073,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     } else if (item.role === 'conversation' || item.role === 'fluent') {
       const chatRole = item.role as 'conversation' | 'fluent';
       if (semantic.status !== 'ready' && brain.status !== 'ready') {
-        startModel().then(() => {
-          startChat(chatRole);
+        startModel().then((ok) => {
+          if (ok) {
+            startChat(chatRole);
+          }
         });
       } else {
         startChat(chatRole);
@@ -1160,6 +1295,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     type="button"
                     className={styles.suggestion}
                     onClick={() => void ask(suggestion)}
+                    disabled={busy || isDownloading}
                   >
                     {suggestion}
                   </button>
@@ -1361,13 +1497,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                 <div className={styles.modelPickerWrapper} ref={modelPickerRef}>
                   <button
                     type="button"
-                    className={`${styles.modelPickerTrigger}${isDownloading ? ` ${styles.modelPickerTriggerDisabled}` : ''}`}
+                    className={`${styles.modelPickerTrigger}${isDownloading || busy ? ` ${styles.modelPickerTriggerDisabled}` : ''}`}
                     onClick={() => {
-                      if (!isDownloading) {
+                      if (!isDownloading && !busy) {
                         setIsModelPickerOpen((prev) => !prev);
                       }
                     }}
-                    disabled={isDownloading}
+                    disabled={isDownloading || busy}
                     aria-expanded={isModelPickerOpen}
                     aria-label="Select Model"
                   >
@@ -1378,7 +1514,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     <span className={styles.modelPickerChevron}>{isModelPickerOpen ? '▲' : '▼'}</span>
                   </button>
 
-                  {isModelPickerOpen && !isDownloading && (
+                  {isModelPickerOpen && !isDownloading && !busy && (
                     <div className={styles.modelPopover}>
                       <div className={styles.modelPopoverHeader}>Model</div>
                       <div className={styles.modelPopoverList}>
@@ -1439,8 +1575,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                         <button
                           type="button"
                           className={styles.contextResetBtn}
+                          disabled={busy || isDownloading}
                           onClick={() => {
                             setTurns([]);
+                            standardEngineRef.current?.clearHistory();
+                            conversationalEngineRef.current?.clearHistory();
                             if (state.status === 'ready') state.engine.clearHistory();
                             setDraft('');
                           }}
@@ -1456,8 +1595,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
               {(() => {
                 const isSelectedModelPreparing =
-                  (selectedModelChoice === 'embedding' && semantic.status !== 'ready') ||
-                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status !== 'ready');
+                  (selectedModelChoice === 'embedding' && semantic.status !== 'ready' && semantic.status !== 'failed') ||
+                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status !== 'ready' && chat.status !== 'failed');
+                const isSelectedModelUnsupported =
+                  (selectedModelChoice === 'embedding' && semantic.status === 'failed') ||
+                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status === 'failed');
                 const selectedModelName = AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name ?? 'Model';
 
                 return (
@@ -1470,6 +1612,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                         </span>
                       </div>
                     )}
+                    {isSelectedModelUnsupported && (
+                      <div className={styles.composerLoadingBanner}>
+                        <span>
+                          ⚠️ Model is not supported on your device or browser. Please try a supported browser or device.
+                        </span>
+                      </div>
+                    )}
                     <div className={styles.inputRow}>
                       <textarea
                         ref={inputRef}
@@ -1479,9 +1628,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                         placeholder={
                           busy
                             ? 'Thinking and generating answer...'
-                            : isSelectedModelPreparing
-                              ? `${selectedModelName} is loading, please wait...`
-                              : 'Ask about a technology, or paste a job description.'
+                            : isSelectedModelUnsupported
+                              ? 'Model is not supported on your device or browser.'
+                              : isSelectedModelPreparing
+                                ? `${selectedModelName} is loading, please wait...`
+                                : 'Ask about a technology, or paste a job description.'
                         }
                         onChange={(event) => setDraft(event.target.value)}
                         onKeyDown={(event) => {
@@ -1492,7 +1643,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                           }
                           if (event.key === 'Escape') closeAndRelease();
                         }}
-                        disabled={state.status !== 'ready' || busy || isSelectedModelPreparing}
+                        disabled={state.status !== 'ready' || busy || isSelectedModelPreparing || isSelectedModelUnsupported}
                       />
                       <button
                         type="submit"
@@ -1501,6 +1652,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                           state.status !== 'ready' ||
                           busy ||
                           isSelectedModelPreparing ||
+                          isSelectedModelUnsupported ||
                           draft.trim().length === 0
                         }
                       >
@@ -1581,84 +1733,117 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
 
   return (
     <article className={styles.turn}>
-      <p className={styles.question}>{turn.question}</p>
-      {!answer ? (
-        <p className={styles.pending}>{turn.pendingMessage ?? 'Checking the records…'}</p>
-      ) : (
-        <>
-          <p className={styles.answer}>{answer.text}</p>
+      {/* User Message (Right Side) */}
+      <div className={styles.userMessageRow}>
+        <div className={styles.userBubble}>
+          <div className={styles.messageSender}>You</div>
+          <p className={styles.question}>{turn.question}</p>
+        </div>
+        <div className={styles.userAvatar} aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
+      </div>
 
-          {answer.match ? <MatchBar answer={answer} /> : null}
-          {answer.match ? <Breakdown match={answer.match} /> : null}
+      {/* Agent Response (Left Side) */}
+      <div className={styles.agentMessageRow}>
+        <div className={styles.agentAvatar} aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" />
+            <path d="M9 9h.01M15 9h.01M8 15h8" />
+          </svg>
+        </div>
+        <div className={styles.agentBubble}>
+          <div className={styles.agentHeader}>
+            <span className={styles.messageSender}>
+              {turn.modelName || 'Portfolio OS Agent'}
+            </span>
+          </div>
 
-          {answer.cards.length > 0 ? (
-            <ul className={styles.cards}>
-              {answer.cards.map((card) => {
-                /*
-                 * The destination, decided by the engine rather than by the template.
-                 *
-                 * `planAction` has already passed this through the navigation
-                 * registry, so the href here is one the site actually has — the widget
-                 * does not get to decide that. What it decides is *which* link: a plain
-                 * route from anywhere else, or an in-page anchor once the reader is on
-                 * that page, where navigating would reload it and lose their place.
-                 *
-                 * A card that plans nothing is omitted rather than rendered dead. In
-                 * practice that does not happen for `navigate`, which every card uses —
-                 * the branch is here so an unplannable card cannot render as a dead link
-                 * if the action kinds ever widen.
-                 */
-                const plan = cardPlan?.get(card.key);
-                if (!plan || plan.action.kind === 'none') return null;
-
-                return (
-                  <li key={card.key}>
-                    <Link
-                      className={styles.card}
-                      href={plan.action.kind === 'anchor' ? plan.action.href : card.href}
-                      title={plan.action.kind === 'anchor' ? plan.action.note : undefined}
-                    >
-                      <span className={styles.cardKind}>{card.kind}</span>
-                      <span className={styles.cardName}>{card.name}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
-
-          {/*
-           * The "you are already here" case, stated once rather than per card.
-           *
-           * Only when at least one card is pointing at the current page, because a
-           * reader who was not expecting it would otherwise see a tooltip explaining
-           * something they never did.
-           */}
-          {cardsPointHere ? (
-            <p className={styles.caveatNote}>
-              Already on this page, so those links point at the record itself.
-            </p>
-          ) : null}
-
-          {compareNote ? <p className={styles.caveatNote}>{compareNote}</p> : null}
-
-          {answer.caveats.length > 0 ? (
-            <ul className={styles.caveats}>
-              {answer.caveats.map((caveat) => (
-                <li key={caveat}>{caveat}</li>
-              ))}
-            </ul>
-          ) : null}
-
-          {turn.modelName ? (
-            <div className={styles.turnModelFooter}>
-              <span className={styles.turnModelBadge}>
-                {turn.modelName}
-              </span>
+          {!answer ? (
+            <div className={styles.pendingRow}>
+              <span className={styles.pendingDot} />
+              <p className={styles.pending}>{turn.pendingMessage ?? 'Checking the records…'}</p>
             </div>
-          ) : null}
-        </>
-      )}
+          ) : (
+            <>
+              <p className={styles.answer}>{answer.text}</p>
+
+              {answer.match ? <MatchBar answer={answer} /> : null}
+              {answer.match ? <Breakdown match={answer.match} /> : null}
+
+              {answer.cards.length > 0 ? (
+                <ul className={styles.cards}>
+                  {answer.cards.map((card) => {
+                    /*
+                     * The destination, decided by the engine rather than by the template.
+                     *
+                     * `planAction` has already passed this through the navigation
+                     * registry, so the href here is one the site actually has — the widget
+                     * does not get to decide that. What it decides is *which* link: a plain
+                     * route from anywhere else, or an in-page anchor once the reader is on
+                     * that page, where navigating would reload it and lose their place.
+                     *
+                     * A card that plans nothing is omitted rather than rendered dead. In
+                     * practice that does not happen for `navigate`, which every card uses —
+                     * the branch is here so an unplannable card cannot render as a dead link
+                     * if the action kinds ever widen.
+                     */
+                    const plan = cardPlan?.get(card.key);
+                    if (!plan || plan.action.kind === 'none') return null;
+
+                    return (
+                      <li key={card.key}>
+                        <Link
+                          className={styles.card}
+                          href={plan.action.kind === 'anchor' ? plan.action.href : card.href}
+                          title={plan.action.kind === 'anchor' ? plan.action.note : undefined}
+                        >
+                          <span className={styles.cardKind}>{card.kind}</span>
+                          <span className={styles.cardName}>{card.name}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+
+              {/*
+               * The "you are already here" case, stated once rather than per card.
+               *
+               * Only when at least one card is pointing at the current page, because a
+               * reader who was not expecting it would otherwise see a tooltip explaining
+               * something they never did.
+               */}
+              {cardsPointHere ? (
+                <p className={styles.caveatNote}>
+                  Already on this page, so those links point at the record itself.
+                </p>
+              ) : null}
+
+              {compareNote ? <p className={styles.caveatNote}>{compareNote}</p> : null}
+
+              {answer.caveats.length > 0 ? (
+                <ul className={styles.caveats}>
+                  {answer.caveats.map((caveat) => (
+                    <li key={caveat}>{caveat}</li>
+                  ))}
+                </ul>
+              ) : null}
+
+              {turn.modelName ? (
+                <div className={styles.turnModelFooter}>
+                  <span className={styles.turnModelBadge}>
+                    {turn.modelName}
+                  </span>
+                </div>
+              ) : null}
+            </>
+          )}
+        </div>
+      </div>
     </article>
   );
 }

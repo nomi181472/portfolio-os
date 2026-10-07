@@ -27,7 +27,7 @@
 
 import { emptyVectorStore, type RecordVectors, type VectorStore } from './embeddings';
 
-const DATABASE_NAME = 'noman-agent-vectors';
+const DATABASE_NAME = 'portfolio-agent-vectors';
 const DATABASE_VERSION = 1;
 const STORE_NAME = 'corpora';
 

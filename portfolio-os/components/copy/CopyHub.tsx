@@ -8,11 +8,12 @@ interface CopyHubProps {
   rawJson: string;
   starterJson: string;
   starterConfig: string;
+  repoUrl?: string;
 }
 
 type Tab = 'json' | 'starter' | 'quickstart' | 'config' | 'deploy';
 
-export function CopyHub({ rawJson, starterJson, starterConfig }: CopyHubProps) {
+export function CopyHub({ rawJson, starterJson, starterConfig, repoUrl = 'https://github.com/nomi181472/portfolio-os.git' }: CopyHubProps) {
   const [activeTab, setActiveTab] = useState<Tab>('json');
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [searchFilter, setSearchFilter] = useState('');
@@ -210,7 +211,7 @@ export function CopyHub({ rawJson, starterJson, starterConfig }: CopyHubProps) {
                   style={{ fontSize: '11px' }}
                   onClick={() =>
                     copyToClipboard(
-                      'git clone https://github.com/nomi181472/portfolio-os.git my-portfolio',
+                      `git clone ${repoUrl} my-portfolio`,
                       'cmd1'
                     )
                   }
@@ -219,7 +220,7 @@ export function CopyHub({ rawJson, starterJson, starterConfig }: CopyHubProps) {
                 </button>
               </div>
               <div className={styles.commandBox}>
-                <code>git clone https://github.com/nomi181472/portfolio-os.git my-portfolio</code>
+                <code>git clone {repoUrl} my-portfolio</code>
               </div>
             </li>
 

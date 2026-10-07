@@ -47,6 +47,7 @@ interface ShellProps {
   footer?: React.ReactNode;
   profile: { name: string; avatar?: string };
   startupName?: string;
+  repoUrl?: string;
   /**
    * The configured default choice (not a cookie: reading one in the root layout
    * opts every route out of static generation). It seeds ThemeToggle's select so a
@@ -57,7 +58,7 @@ interface ShellProps {
   appearance?: AppearanceChoice;
 }
 
-export function Shell({ children, footer, profile, startupName, appearance }: ShellProps) {
+export function Shell({ children, footer, profile, startupName, appearance, repoUrl }: ShellProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchMounted, setSearchMounted] = useState(false);
   const [agentOpen, setAgentOpen] = useState(false);
@@ -85,8 +86,8 @@ export function Shell({ children, footer, profile, startupName, appearance }: Sh
   return (
     <div className="shell">
       <a className="skip-link" href="#main">Skip to content</a>
-      <GitHubBadge repoUrl="https://github.com/nomi181472/portfolio-os" />
-      <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} appearance={appearance} />
+      <GitHubBadge repoUrl={repoUrl} />
+      <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} appearance={appearance} repoUrl={repoUrl} />
       <div className="shell__main">
         <main id="main">{children}</main>
         {footer}

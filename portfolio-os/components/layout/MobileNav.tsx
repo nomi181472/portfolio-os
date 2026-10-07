@@ -14,9 +14,10 @@ interface MobileNavProps {
   profile: { name: string; avatar?: string };
   startupName?: string;
   appearance?: AppearanceChoice;
+  repoUrl?: string;
 }
 
-export function MobileNav({ onOpenSearch, profile, startupName, appearance = 'system' }: MobileNavProps) {
+export function MobileNav({ onOpenSearch, profile, startupName, appearance = 'system', repoUrl }: MobileNavProps) {
   const pathname = usePathname();
   const { sheetTranslateY, isDragging, isOpen, toggle, close, touchHandlers } = useSwipeGesture();
 
@@ -66,6 +67,7 @@ export function MobileNav({ onOpenSearch, profile, startupName, appearance = 'sy
         profile={profile}
         onOpenSearch={onOpenSearch}
         onToggleDrawer={toggle}
+        repoUrl={repoUrl}
       />
       
       <MobileBottomBar

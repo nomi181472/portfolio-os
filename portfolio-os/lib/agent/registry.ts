@@ -120,24 +120,18 @@ export interface ModelDefinition {
 }
 
 /**
- * The E5 embedder. 384 dimensions, mean-pooled and L2-normalised at use time.
+ * The all-MiniLM-L6-v2 embedder. 384 dimensions, mean-pooled and L2-normalised at use time.
  *
- * The `int8` build at 112.6 MB is what every device downloads. The `q4f16` build
- * exists at 195.3 MB but fails session creation on this machine's WebGPU, so nothing
- * selects it — and it is *larger*, which is what made the old split so costly.
- *
- * Note for anyone tempted to use `model.onnx` here: it exists, it resolves, and it
- * is the **fp32** build at 448.5 MB — 2.3x the q4f16 file and 4x the int8 one. It
- * would have made the embedder the single largest download in the project.
+ * Highly efficient quantized (~23 MB) lightweight embedding model running locally via ONNX Runtime.
  */
 export const EMBEDDING_MODEL: ModelDefinition = {
-  id: 'Xenova/multilingual-e5-small',
+  id: 'Xenova/all-MiniLM-L6-v2',
   role: 'embedding',
-  label: 'Semantic search (E5 small)',
+  label: 'Semantic search (all-MiniLM-L6-v2)',
   autoDownload: true,
   artifact: {
-    url: 'https://huggingface.co/Xenova/multilingual-e5-small/resolve/main/onnx/model_int8.onnx',
-    bytes: 118_054_593,
+    url: 'https://huggingface.co/Xenova/all-MiniLM-L6-v2/resolve/main/onnx/model_int8.onnx',
+    bytes: 22_972_370,
     dtype: 'int8',
   },
   devices: ['wasm'],
@@ -239,8 +233,8 @@ export const FALLBACK_FORBIDDEN = [
   'onnx-community/Qwen2.5-1.5B-Instruct/resolve/main/onnx/model_fp16.onnx',
 ] as const;
 
-/** Below this, a `.onnx` URL is an LFS pointer rather than weights. */
-export const MIN_PLAUSIBLE_ONNX_BYTES = 50_000_000;
+/** Below this, a `.onnx` URL is an LFS pointer rather than weights (~20 MB min). */
+export const MIN_PLAUSIBLE_ONNX_BYTES = 20_000_000;
 
 export interface RegistryProblem {
   readonly model: string;

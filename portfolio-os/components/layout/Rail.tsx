@@ -38,12 +38,14 @@ export function Rail({
   profile,
   startupName,
   appearance = 'system',
+  repoUrl,
 }: {
   onOpenSearch: () => void;
   profile: { name: string; avatar?: string };
   startupName?: string;
   /** An optional palette hint. See the note on Shell's prop of the same name. */
   appearance?: AppearanceChoice;
+  repoUrl?: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(true);
@@ -155,7 +157,7 @@ export function Rail({
         <span className={styles.itemLabel}>{open ? 'Collapse' : 'Show names'}</span>
       </button>
     </nav>
-    <MobileNav onOpenSearch={onOpenSearch} profile={profile} startupName={startupName} appearance={appearance} />
+    <MobileNav onOpenSearch={onOpenSearch} profile={profile} startupName={startupName} appearance={appearance} repoUrl={repoUrl} />
     </>
   );
 }

@@ -99,7 +99,7 @@ export function unverified(term: string): EvidenceClassification {
     state: 'unverified',
     weight: 0,
     receipts: [],
-    rationale: `The portfolio does not document ${term}. That is a statement about this site, not a claim that Noman cannot do it.`,
+    rationale: `The portfolio does not document ${term}. That is a statement about this site, not a claim that the candidate cannot do it.`,
   };
 }
 

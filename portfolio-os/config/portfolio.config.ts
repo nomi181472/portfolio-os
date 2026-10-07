@@ -51,11 +51,22 @@ export interface PortfolioConfig {
   };
 }
 
+import portfolioData from '@/content/portfolio.json';
+
+const profileName = portfolioData.profile?.name ?? 'Portfolio OS';
+const profileDiscipline = portfolioData.profile?.discipline;
+const profilePositioning = portfolioData.profile?.positioning;
+const livePortfolioLink = portfolioData.profile?.links?.find(
+  (l: { label?: string; url?: string }) => l.label?.toLowerCase().includes('live portfolio')
+)?.url;
+
 export const portfolioConfig: PortfolioConfig = {
   site: {
-    url: 'https://nomanali.online',
-    title: 'Noman Ali — Solutions Architecture & Distributed Systems',
-    description: 'Software Engineer & Solutions Architect with 5+ years of experience engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
+    url: process.env.NEXT_PUBLIC_SITE_URL || livePortfolioLink || 'https://example.com',
+    title: profileDiscipline ? `${profileName} — ${profileDiscipline}` : profileName,
+    description:
+      profilePositioning ||
+      'Portfolio OS — A forkable, data-driven personal technology operating system.',
     locale: 'en',
   },
 

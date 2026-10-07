@@ -26,7 +26,7 @@
 
 Most developer portfolio templates are simple single-page landing sites. **Portfolio OS** is an engineering artifact: a connected **knowledge graph** that models real-world engineering depth across **16 structured collections** — with bidirectional linking, an in-browser zero-dependency visual editor, full-text fuzzy command palette search (`⌘/Ctrl + K`), and privacy-first analytics.
 
-- **Author / Architect:** [Noman Ali](https://www.nomanali.online/) (Solutions Architecture & Distributed Systems)
+- **Author / Architect:** [Noman Ali](https://www.nomanali.online/) (Software Engineer & Solutions Architect)
 - **Primary Live Deployment:** [https://www.nomanali.online](https://www.nomanali.online)
 - **Repository:** [https://github.com/nomi181472/portfolio-os](https://github.com/nomi181472/portfolio-os)
 - **Tech Stack:** Next.js 15 (App Router, Server Components), TypeScript, OKLCH Two-Color Token Engine, Zod, KaTeX, Schema.org JSON-LD.

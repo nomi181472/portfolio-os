@@ -8,7 +8,7 @@ interface GitHubBadgeProps {
 }
 
 export function GitHubBadge({
-  repoUrl = 'https://github.com/nomi181472/portfolio-os',
+  repoUrl = 'https://github.com',
 }: GitHubBadgeProps) {
   const [mounted, setMounted] = useState(false);
 
@@ -28,7 +28,7 @@ export function GitHubBadge({
         target="_blank"
         rel="noopener noreferrer"
         className={styles.badge}
-        title="View Portfolio OS on GitHub (nomi181472/portfolio-os)"
+        title="View Repository on GitHub"
       >
         <span className={styles.pulseGlow} aria-hidden="true" />
         <span className={styles.iconWrapper} aria-hidden="true">

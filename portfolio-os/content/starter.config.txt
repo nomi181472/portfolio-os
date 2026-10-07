@@ -1,8 +1,8 @@
 export const portfolioConfig = {
   site: {
     url: 'https://nomanali.online',
-    title: 'Noman Ali — Solutions Architecture & Distributed Systems',
-    description: 'Software Engineer & Solutions Architect with 5+ years of experience engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.',
+    title: 'Noman Ali — Software Engineer & Solutions Architect',
+    description: 'Software Engineer with 8+ years of software development experience, including 5+ years of professional experience designing and building high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms, with 2+ years of AI-assisted software development.',
     locale: 'en',
   },
   dataSource: { type: 'local' }, // or { type: 'remote', url: 'https://raw.githubusercontent.com/nomi181472/portfolio-os/main/content/portfolio.json' }

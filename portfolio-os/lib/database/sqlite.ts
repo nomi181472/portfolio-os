@@ -81,30 +81,70 @@ export interface FtsResult {
   rank: number;
 }
 
+import { getPortfolioRepository } from '../repositories/server';
+
 /* ------------------------------------------------------------- accessors */
 
 /** Retrieve a single entity by its stable id (bare or compound). */
 export function getEntity(id: string): DbEntity | null {
-  const db = openDb();
-  return (db.prepare('SELECT * FROM entities WHERE id = ?').get(id) as DbEntity | undefined) ?? null;
+  const entity = getPortfolioRepository().getEntity(id);
+  if (!entity) return null;
+  return {
+    id: entity.id,
+    type: entity.type,
+    name: entity.name,
+    slug: entity.slug,
+    canonical_url: entity.canonicalUrl,
+    metadata_json: entity.metadataJson,
+    content_hash: entity.contentHash,
+    created_at: entity.createdAt ?? '',
+    updated_at: entity.updatedAt ?? '',
+  };
 }
 
 /** Retrieve all entities. */
 export function getAllEntities(): DbEntity[] {
-  const db = openDb();
-  return db.prepare('SELECT * FROM entities').all() as DbEntity[];
+  return getPortfolioRepository().getAllEntities().map((entity) => ({
+    id: entity.id,
+    type: entity.type,
+    name: entity.name,
+    slug: entity.slug,
+    canonical_url: entity.canonicalUrl,
+    metadata_json: entity.metadataJson,
+    content_hash: entity.contentHash,
+    created_at: entity.createdAt ?? '',
+    updated_at: entity.updatedAt ?? '',
+  }));
 }
 
 /** Retrieve all chunks for a given entity id. */
 export function getChunksByEntityId(entityId: string): DbChunk[] {
-  const db = openDb();
-  return db.prepare('SELECT * FROM chunks WHERE entity_id = ?').all(entityId) as DbChunk[];
+  return getPortfolioRepository().getChunksByEntityId(entityId).map((chunk) => ({
+    id: chunk.id,
+    entity_id: chunk.entityId,
+    chunk_type: chunk.chunkType,
+    title: chunk.title,
+    content: chunk.content,
+    content_hash: chunk.contentHash,
+    embedding_json: chunk.embeddingJson ?? null,
+    created_at: chunk.createdAt ?? '',
+  }));
 }
 
 /** Retrieve a chunk by its id. */
 export function getChunk(id: string): DbChunk | null {
-  const db = openDb();
-  return (db.prepare('SELECT * FROM chunks WHERE id = ?').get(id) as DbChunk | undefined) ?? null;
+  const chunk = getPortfolioRepository().getChunk(id);
+  if (!chunk) return null;
+  return {
+    id: chunk.id,
+    entity_id: chunk.entityId,
+    chunk_type: chunk.chunkType,
+    title: chunk.title,
+    content: chunk.content,
+    content_hash: chunk.contentHash,
+    embedding_json: chunk.embeddingJson ?? null,
+    created_at: chunk.createdAt ?? '',
+  };
 }
 
 /**
@@ -113,35 +153,24 @@ export function getChunk(id: string): DbChunk | null {
  * Returns ranked results (BM25 by default in FTS5).
  */
 export function ftsSearch(query: string, limit = 20): FtsResult[] {
-  const db = openDb();
-  const sanitised = sanitiseFtsQuery(query);
-  if (!sanitised) return [];
-
-  const rows = db
-    .prepare(
-      `SELECT c.id, c.entity_id, e.name as entity_name, e.canonical_url,
-              c.chunk_type, c.title, c.content,
-              c.content_hash, c.embedding_json, c.created_at, cf.rank
-       FROM chunks_fts cf
-       JOIN chunks c ON c.rowid = cf.rowid
-       LEFT JOIN entities e ON e.id = c.entity_id
-       WHERE chunks_fts MATCH ?
-       ORDER BY cf.rank
-       LIMIT ?`,
-    )
-    .all(sanitised, limit) as FtsResult[];
-
-  return rows;
+  const hits = getPortfolioRepository().search(query, limit);
+  return (hits as any[]).map((hit) => ({
+    id: hit.id,
+    entity_id: hit.entityId,
+    entity_name: hit.entityName,
+    canonical_url: hit.canonicalUrl,
+    chunk_type: hit.chunkType,
+    title: hit.title,
+    content: hit.content,
+    content_hash: hit.contentHash,
+    embedding_json: hit.embeddingJson ?? null,
+    created_at: hit.createdAt ?? '',
+    rank: hit.rank,
+  }));
 }
 
 /**
  * Prevent FTS5 query errors from malformed input.
- *
- * FTS5 has its own query language (MATCH) and will throw on unbalanced quotes,
- * leading operators, etc. This sanitiser wraps each token in double quotes so
- * the input is always treated as a literal-phrase set rather than an FTS5
- * expression. Returns `null` when the query produces no usable tokens, so the
- * caller can skip the database round-trip entirely.
  */
 function sanitiseFtsQuery(raw: string): string | null {
   const tokens = raw
@@ -163,29 +192,16 @@ function sanitiseFtsQuery(raw: string): string | null {
  * Returns a Map so callers can do O(1) lookups per id.
  */
 export function resolveEntityUrls(ids: string[]): Map<string, { name: string; type: string; canonical_url: string }> {
-  if (ids.length === 0) return new Map();
-  const db = openDb();
-
-  const result = new Map<string, { name: string; type: string; canonical_url: string }>();
-  for (const id of ids) {
-    const row = db
-      .prepare('SELECT id, name, type, canonical_url FROM entities WHERE id = ? AND canonical_url IS NOT NULL')
-      .get(id) as { id: string; name: string; type: string; canonical_url: string } | undefined;
-    if (row?.canonical_url) {
-      result.set(id, { name: row.name, type: row.type, canonical_url: row.canonical_url });
-    }
-  }
-  return result;
+  return getPortfolioRepository().resolveEntityUrls(ids) as Map<string, { name: string; type: string; canonical_url: string }>;
 }
 
 /** Confirm the database is reachable and has the expected tables. */
 export function healthCheck(): { ok: boolean; entityCount: number; chunkCount: number } {
-  try {
-    const db = openDb();
-    const entityCount = (db.prepare('SELECT COUNT(*) as n FROM entities').get() as { n: number }).n;
-    const chunkCount = (db.prepare('SELECT COUNT(*) as n FROM chunks').get() as { n: number }).n;
-    return { ok: true, entityCount, chunkCount };
-  } catch {
-    return { ok: false, entityCount: 0, chunkCount: 0 };
-  }
+  const health = getPortfolioRepository().healthCheck();
+  return {
+    ok: health.ok,
+    entityCount: health.entityCount,
+    chunkCount: health.chunkCount,
+  };
 }
+

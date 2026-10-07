@@ -25,7 +25,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getPortfolio } from '@/lib/source';
 import { buildIndex, search, type SearchRecord } from '@/lib/search';
-import { ftsSearch } from '@/lib/database/sqlite';
+import { getPortfolioRepository } from '@/lib/repositories/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -60,15 +60,16 @@ export async function GET(request: NextRequest) {
 
     // If query is present, use SQLite FTS5 search
     if (query.trim()) {
-      const ftsHits = ftsSearch(query.trim(), 10);
+      const portfolioRepo = getPortfolioRepository();
+      const ftsHits = await portfolioRepo.search(query.trim(), 10);
       
       // If format=spec or requested by search retriever:
       if (format === 'spec' || request.headers.get('accept')?.includes('application/json')) {
         const results = ftsHits.map((hit) => ({
-          entityId: hit.entity_id,
+          entityId: hit.entityId,
           title: hit.title,
           content: hit.content,
-          canonicalUrl: hit.canonical_url,
+          canonicalUrl: hit.canonicalUrl,
           score: Math.max(0, parseFloat((1 / (1 + Math.abs(hit.rank))).toFixed(3))),
         }));
 

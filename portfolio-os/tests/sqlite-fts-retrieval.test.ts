@@ -92,11 +92,11 @@ test('SQLite database and public/data/vectors.json contain valid pre-computed em
   assert.ok(row, 'at least one chunk must have embedding_json');
   const parsed = JSON.parse(row.embedding_json);
   assert.ok(Array.isArray(parsed));
-  assert.equal(parsed.length, 1024, 'Qwen3 Embedding vectors must have exactly 1024 dimensions');
+  assert.equal(parsed.length, 384, 'all-MiniLM-L6-v2 Embedding vectors must have exactly 384 dimensions');
 
   const vectorsRaw = readFileSync(resolve(process.cwd(), 'public/data/vectors.json'), 'utf-8');
   const vectors = JSON.parse(vectorsRaw);
   assert.ok(Array.isArray(vectors) && vectors.length > 50, 'public/data/vectors.json must contain pre-computed vectors');
-  assert.equal(vectors[0].vector.length, 1024, 'Vector array elements must be 1024 dimensions');
+  assert.equal(vectors[0].vector.length, 384, 'Vector array elements must be 384 dimensions');
 });
 

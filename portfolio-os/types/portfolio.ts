@@ -37,9 +37,11 @@ import type {
   VolunteeringSchema,
   LanguageSchema,
   FutureSchema,
+  TaxonomySchema,
 } from '@/lib/schema';
 
 export type Portfolio = z.infer<typeof PortfolioSchema>;
+export type Taxonomy = z.infer<typeof TaxonomySchema>;
 export type Entity = z.infer<typeof EntitySchema>;
 export type Media = z.infer<typeof MediaSchema>;
 export type OverlayBox = z.infer<typeof OverlayBoxSchema>;

@@ -186,6 +186,7 @@ export const EntitySchema = z.object({
   media: z.array(MediaSchema).default([]),
   evidence: z.array(EvidenceSchema).default([]),
   timeline: z.array(TimelineEventSchema).default([]),
+  aliases: z.array(z.string()).default([]),
   featured: z.boolean().default(false),
   order: z.number().int().optional(),
   /**
@@ -466,12 +467,18 @@ export const FutureSchema = z.object({
 
 /* -------------------------------------------------------------- document */
 
+export const TaxonomySchema = z.object({
+  families: z.record(z.array(z.string())).default({}),
+  aliases: z.record(z.array(z.string())).default({}),
+});
+
 export const PortfolioSchema = z.object({
   schemaVersion: z.string().default(SCHEMA_VERSION),
   /** Set true on the shipped sample so the UI can say so out loud (§96). */
   exampleContent: z.boolean().default(false),
   profile: ProfileSchema,
   availability: AvailabilitySchema.default({ status: 'closed' }),
+  taxonomy: TaxonomySchema.optional(),
   experience: z.array(ExperienceSchema).default([]),
   education: z.array(EducationSchema).default([]),
   products: z.array(ProductSchema).default([]),

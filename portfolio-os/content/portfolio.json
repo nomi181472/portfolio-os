@@ -3,8 +3,8 @@
   "exampleContent": false,
   "profile": {
     "name": "Noman Ali",
-    "discipline": "Solutions Architecture & Distributed Systems",
-    "positioning": "Software Engineer with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms. Skilled at decomposing legacy monoliths into scalable, multi-tenant architectures and modernizing enterprise systems for demanding real-time workloads, with a focus on reliability, performance, and scalability.",
+    "discipline": "Software Engineer & Solutions Architect",
+    "positioning": "Software Engineer with 8+ years of software development experience, including 5+ years of professional experience designing and building high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms, with 2+ years of AI-assisted software development.",
     "location": "Karachi, Pakistan",
     "avatar": "/media/profilep.jpeg",
     "email": "nomansoomro51@gmail.com",
@@ -18,7 +18,7 @@
         "High-Frequency Fintech Trading Systems",
         "Logistics, Track & Trace"
       ],
-      "yearsActive": 5,
+      "yearsActive": 8,
       "philosophy": "Resilient systems prioritize clear service boundaries, predictable failure modes, end-to-end telemetry, and rigorous security boundaries.",
       "specialisation": "Solutions Architecture, .NET Core, Go, Python, Kubernetes EKS, SAML 2.0 / OIDC, and multi-tenant AI tracking pipelines.",
       "leadership": "Technical leadership across multi-tenant SaaS, cross-functional squads, microservice standardization, and modern cloud migrations.",
@@ -48,6 +48,11 @@
       {
         "label": "Google Scholar",
         "url": "https://scholar.google.com/citations?user=SFLfK9oAAAAJ&hl=en",
+        "type": "website"
+      },
+      {
+        "label": "Live Portfolio",
+        "url": "https://nomanali.online",
         "type": "website"
       },
       {
@@ -187,7 +192,8 @@
         "proj-tracker-simulator",
         "proj-lab",
         "proj-bscs-fyp",
-        "proj-resume-hr"
+        "proj-resume-hr",
+        "proj-portfolio-os"
       ]
     },
     {
@@ -462,7 +468,8 @@
         "proj-zero-shots-trackers",
         "proj-tracker-simulator",
         "proj-resume-hr",
-        "proj-need"
+        "proj-need",
+        "proj-portfolio-os"
       ]
     },
     {
@@ -630,6 +637,50 @@
       ]
     },
     {
+      "id": "sk-computer-vision",
+      "slug": "computer-vision",
+      "name": "Computer Vision",
+      "category": "AI & Deep Learning Frameworks",
+      "level": "9/10",
+      "depth": "specialist",
+      "firstUsed": "2020",
+      "context": "Level: 9/10 | Type: Visual Perception & Deep Learning | Domains: Multi-Object Tracking, Segmentation, Real-time CV Pipelines & Sensor Fusion",
+      "summary": "Specialist in real-time computer vision pipelines, multi-object tracking (YOLO, MOTA benchmarks), convolutional neural networks (Mask R-CNN), and edge AI inference.",
+      "description": "Extensive specialist experience in computer vision, visual deep learning, and multi-sensor tracking architectures. Architected production CV engines combining YOLO object detectors, DeepSORT/ByteTrack multi-object trackers, Mask R-CNN human muscle segmentation, 360° LiDAR depth fusion for unmanned surface vessels (NAVIROX), and high-throughput real-time video streaming with OpenCV and FFmpeg.",
+      "featured": true,
+      "tags": [
+        "Computer Vision",
+        "CV",
+        "Object Detection",
+        "Multi-Object Tracking",
+        "Deep Learning",
+        "YOLO",
+        "OpenCV",
+        "Image Segmentation"
+      ],
+      "technologies": [
+        "Computer Vision",
+        "OpenCV",
+        "PyTorch",
+        "YOLO",
+        "DeepSORT",
+        "Mask R-CNN",
+        "FFmpeg"
+      ],
+      "relatedProjects": [
+        "proj-zero-shots-trackers",
+        "proj-tracker-simulator",
+        "proj-navirox",
+        "proj-bscs-fyp"
+      ],
+      "relatedProducts": [
+        "prod-verseye"
+      ],
+      "relatedPublications": [
+        "pub-ieee-2021"
+      ]
+    },
+    {
       "id": "sk-onnx",
       "slug": "onnx",
       "name": "ONNX",
@@ -654,6 +705,9 @@
         "ONNX Runtime",
         "Model Export",
         "Cross-Platform Inference"
+      ],
+      "relatedProjects": [
+        "proj-portfolio-os"
       ]
     },
     {
@@ -3164,6 +3218,69 @@
     }
   ],
   "projects": [
+    {
+      "id": "proj-portfolio-os",
+      "slug": "portfolio-os",
+      "name": "Portfolio OS — Universal Data-Driven Personal Operating System",
+      "organisation": "Independent / Open Source",
+      "status": "active",
+      "source": {
+        "type": "open-source"
+      },
+      "period": {
+        "startDate": "2026-09",
+        "ongoing": true
+      },
+      "summary": "A universal, data-driven personal operating system and interactive portfolio built with Next.js, WebAssembly/ONNX Runtime, in-browser vector search, and SQLite.",
+      "description": "Portfolio OS is an open-source, universal personal operating system designed for software engineers and solutions architects. Operating on a strict zero-hardcoded-profile-data architecture, all profile information, skills, projects, and work history are ingested dynamically from JSON into SQLite, vector embeddings, and an in-browser AI assistant.\n\nFeaturing multi-window desktop interactions, client-side neural inference via ONNX Runtime Web and WebGPU/WASM, local BM25 + 64D/384D semantic search, and deterministic evidence matching, Portfolio OS turns a traditional portfolio into a verifiable, interactive technical operating system.",
+      "concept": "An open-source desktop operating system interface for engineering portfolios, replacing static pages with dynamic query engines, multi-window multitasking, and local on-device AI inference.",
+      "problem": "Engineering portfolios are typically static, fragile markdown sites or hardcoded templates that fail to demonstrate real systems architecture, cannot dynamically prove claims with grounded evidence, and require high backend hosting costs for AI features.",
+      "hypothesis": "Building a data-driven personal OS that runs 100% on the client — using in-browser ONNX Runtime neural models, vector search, and relational SQLite — delivers an engaging recruiter experience with zero server inference overhead and universal reusability.",
+      "approach": "Designed a decoupled architecture where structured JSON config seeds SQLite and generates vector embeddings. Created an OS desktop shell with window management, a hybrid BM25 + cosine similarity retrieval engine, and an in-browser local LLM assistant.",
+      "implementation": "Next.js App Router, React, TypeScript, Transformers.js / ONNX Runtime Web (WebGPU & WASM fallback), client-side SQLite with FTS5, and CSS-driven windowing mechanics.",
+      "results": "Fully responsive desktop OS running client-side with 0ms server inference costs, sub-millisecond 64D/384D hybrid vector retrieval, and universal plug-and-play profile configurability for any engineer.",
+      "lessons": [
+        "Zero hardcoded data guarantees clean extensibility and universal open-source reusability",
+        "Client-side ONNX Runtime with WebGPU enables powerful in-browser neural assistance without backend GPU infrastructure",
+        "Hybrid lexical (BM25) and semantic vector search eliminates hallucination while preserving high recall"
+      ],
+      "futureWork": [
+        "Support pluggable web desktop themes and custom window widgets",
+        "Expand local fine-tuned student LLMs with WebGPU quantization"
+      ],
+      "links": [
+        {
+          "label": "GitHub Repository",
+          "url": "https://github.com/nomi181472/portfolio-os",
+          "type": "repository"
+        }
+      ],
+      "technologies": [
+        "Next.js",
+        "TypeScript",
+        "React",
+        "ONNX",
+        "WebAssembly",
+        "WebGPU",
+        "SQLite",
+        "Vector Search",
+        "Transformers.js"
+      ],
+      "tags": [
+        "Operating System",
+        "Open Source",
+        "AI / ML",
+        "Next.js",
+        "ONNX",
+        "WebAssembly"
+      ],
+      "featured": true,
+      "relatedSkills": [
+        "sk-frontend-nextjs",
+        "sk-onnx",
+        "sk-typescript"
+      ]
+    },
     {
       "id": "proj-lab",
       "slug": "lab-nomanali-online",

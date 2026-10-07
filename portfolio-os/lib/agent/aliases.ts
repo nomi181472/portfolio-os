@@ -142,6 +142,17 @@ const HAND_ALIASES: Readonly<Record<string, readonly string[]>> = {
   grpc: ['grpc', 'protobuf', 'protocol buffers', 'grpc apis'],
   nextjs: ['next.js', 'nextjs', 'next js'],
   flutter: ['flutter', 'flutter bloc'],
+  'computer-vision': [
+    'computer vision',
+    'cv',
+    'vision',
+    'image processing',
+    'object detection',
+    'visual tracking',
+    'image segmentation',
+    'opencv',
+    'yolo',
+  ],
   'ffmpeg-real-time-video-streaming': ['ffmpeg', 'real-time video streaming', 'video streaming'],
   'temporal-io': ['temporal', 'temporal io', 'temporal.io'],
   microservices: ['microservices', 'microservice', 'micro services', 'microservice architecture'],
@@ -300,8 +311,8 @@ export function buildAliasTable(knowledge: PortfolioKnowledge): AliasTable {
   };
 
   // 1. Mined from the data. A record's own name and slug are the concept, and
-  //    are the authoritative spelling of it; its tags and technologies are the
-  //    vocabulary other people use to refer to it.
+  //    are the authoritative spelling of it; its tags, technologies, and declared
+  //    aliases are the vocabulary other people use to refer to it.
   for (const record of portfolioSkills) {
     const canonicalId = record.key;
     push(primaryByTerm, record.name, canonicalId);
@@ -309,34 +320,61 @@ export function buildAliasTable(knowledge: PortfolioKnowledge): AliasTable {
     for (const term of [record.name, record.slug, ...record.tags, ...record.technologies]) {
       add(term, canonicalId);
     }
+    // Dynamic aliases declared on individual skill records
+    if (record.aliases && Array.isArray(record.aliases)) {
+      for (const alias of record.aliases) {
+        add(alias, canonicalId);
+        push(primaryByTerm, alias, canonicalId);
+      }
+    }
   }
 
-  // 2. Hand-written abbreviations, resolved against the ids that actually exist.
-  //    An entry naming a skill this portfolio does not have is ignored rather
-  //    than inventing the skill. The check is on the exact slug, which is why the
-  //    table above is written in slugs.
-  const knownSlugs = new Set(portfolioSkills.map((record) => record.slug));
+  // 2. Dynamic top-level taxonomy aliases from portfolio.json (if present)
+  if (knowledge.taxonomy?.aliases) {
+    for (const [slug, aliases] of Object.entries(knowledge.taxonomy.aliases)) {
+      const canonicalId = canonicalIdForSlug.get(slug);
+      if (!canonicalId) continue;
+      for (const alias of aliases) {
+        add(alias, canonicalId);
+        push(primaryByTerm, alias, canonicalId);
+      }
+    }
+  }
+
+  // 3. Built-in universal technology aliases & abbreviations, resolved against
+  //    the ids that actually exist. Serves as a standard baseline.
   for (const [slug, aliases] of Object.entries(HAND_ALIASES)) {
     const canonicalId = canonicalIdForSlug.get(slug);
     if (!canonicalId) continue;
     for (const alias of aliases) {
       add(alias, canonicalId);
-      // A hand-written alias for the concept is primary too: "k8s" means
+      // A built-in alias for the concept is primary too: "k8s" means
       // Kubernetes the way "Kubernetes" does, not the way "PyTorch" is a
       // technology on the Python record.
       push(primaryByTerm, alias, canonicalId);
     }
   }
 
-  // 3. Families. Membership is resolved to canonical ids here, once, rather than
-  //    left in slug space for every caller to translate. `FAMILIES` is authored
-  //    in slugs because that is what is readable and checkable against the
-  //    content file, but nothing downstream of this function should ever see a
-  //    slug. A family whose members are not all present is kept: the
-  //    partial-match rationale reports only the members it actually found, so a
-  //    partially-populated family is still useful.
-  const families = new Map<string, string[]>();
+  // 4. Families. First load built-in tech families, then overlay/merge any
+  //    dynamic families defined in portfolio.json taxonomy.
+  //    Membership is resolved to canonical ids here, once, rather than
+  //    left in slug space for every caller to translate.
+  const combinedFamilies: Record<string, string[]> = {};
   for (const [family, members] of Object.entries(FAMILIES)) {
+    combinedFamilies[family] = [...members];
+  }
+  if (knowledge.taxonomy?.families) {
+    for (const [family, members] of Object.entries(knowledge.taxonomy.families)) {
+      if (combinedFamilies[family]) {
+        combinedFamilies[family] = [...new Set([...combinedFamilies[family], ...members])];
+      } else {
+        combinedFamilies[family] = [...members];
+      }
+    }
+  }
+
+  const families = new Map<string, string[]>();
+  for (const [family, members] of Object.entries(combinedFamilies)) {
     const present = members
       .map((slug) => canonicalIdForSlug.get(slug))
       .filter((id): id is string => id !== undefined);

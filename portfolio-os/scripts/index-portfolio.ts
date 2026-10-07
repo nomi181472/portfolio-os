@@ -11,7 +11,7 @@
  *   3. Generate semantic chunks for each entity.
  *   4. Hash every chunk with SHA-256 and reuse existing embeddings when hashes match.
  *   5. If --with-embeddings or local environment:
- *      Uses Xenova/multilingual-e5-small (model_int8) to compute 384-dim embeddings.
+ *      Uses Xenova/all-MiniLM-L6-v2 (model_int8) to compute 384-dim embeddings.
  *      Saves them in SQLite chunks.embedding_json and writes public/data/vectors.json.
  *   6. Write entities, chunks, FTS5 virtual table, and relationships to SQLite.
  */
@@ -239,7 +239,7 @@ async function main(): Promise<void> {
   const exportedVectors: ExportedVectorItem[] = [];
 
   if (withEmbeddings) {
-    console.log('\n🧠 Computing/verifying semantic embeddings (Qwen3-Embedding-0.6B-INT8-ONNX)...');
+    console.log('\n🧠 Computing/verifying semantic embeddings (Xenova/all-MiniLM-L6-v2)...');
     let extractor: any = null;
 
     let reusedCount = 0;
@@ -249,7 +249,7 @@ async function main(): Promise<void> {
       const chunk = chunks[i]!;
       const cached = existingVectorMap.get(chunk.contentHash);
 
-      if (cached && cached.length === 1024) {
+      if (cached && cached.length === 384) {
         chunk.embeddingJson = JSON.stringify(cached);
         exportedVectors.push({
           id: chunk.id,
@@ -262,9 +262,9 @@ async function main(): Promise<void> {
         reusedCount++;
       } else {
         if (!extractor) {
-          console.log('   Loading local onnx-community/Qwen3-Embedding-0.6B-INT8-ONNX model...');
-          extractor = await pipeline('feature-extraction', 'onnx-community/Qwen3-Embedding-0.6B-INT8-ONNX', {
-            model_file_name: 'model_int8',
+          console.log('   Loading local Xenova/all-MiniLM-L6-v2 model...');
+          extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2', {
+            dtype: 'int8',
           });
         }
 

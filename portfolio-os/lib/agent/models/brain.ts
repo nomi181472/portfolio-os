@@ -92,6 +92,7 @@ export type BrainFailure =
   | { kind: 'registry'; problems: string[] }
   | { kind: 'fetch'; message: string; url: string }
   | { kind: 'webgpu-unavailable'; message: string; fellBackTo: ModelBackend }
+  | { kind: 'unsupported'; message: string }
   | { kind: 'load'; message: string }
   | { kind: 'cancelled' };
 
@@ -586,38 +587,65 @@ export async function loadModel(options: LoadOptions): Promise<LoadedModel> {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
 
-    // Retry on WASM when WebGPU was the chosen backend. Worth being explicit about
-    // the asymmetry: the reverse is not attempted, because a WASM failure is a memory
-    // or an unsupported-op failure that WebGPU would not fix.
+    // If initial backend was not WebGPU, no GPU fallback chain applies.
     if (backend !== 'webgpu') {
       const failure = classifyLoadFailure(message, modelForRole(role).artifact.url);
       emit({ status: 'failed', reason: failure });
       throw error instanceof Error ? error : new Error(message);
     }
 
-    try {
-      // A *second module instance*, deliberately. Reusing the first is what turns a
-      // recoverable WebGPU failure into a total one — see `loadSeparateTransformers`.
-      const retryModule = options.load
-        ? await options.load()
-        : await loadSeparateTransformers(transformers.env.version);
-      const warm = await isCached(modelForRole(role).artifact.url);
-      loaded = await attempt(retryModule, role, 'wasm', warm, emit);
-      fellBack = true;
-      // A WebGPU session demonstrably did not work for this model on this machine.
-      // Remember it so the next visit does not attempt it again.
-      writePreference(modelForRole(role).id, 'wasm');
-    } catch {
-      // Both backends failed. Report the WebGPU error, which is the more informative
-      // of the two, rather than the WASM symptom of running out of memory.
-      const failure: BrainFailure = {
-        kind: 'webgpu-unavailable',
-        message,
-        fellBackTo: 'wasm',
-      };
-      emit({ status: 'failed', reason: failure });
-      throw error instanceof Error ? error : new Error(message);
+    // Fallback chain: WebGPU failed -> try WebGL (if genuinely supported) -> WASM.
+    let fallbackSuccess = false;
+
+    // Probe genuine WebGL support in installed Transformers.js / ONNX Runtime environment
+    const onnxBackends = transformers.env.backends?.onnx as Record<string, unknown> | undefined;
+    const isWebGlSupported = Boolean(onnxBackends && 'webgl' in onnxBackends && typeof (globalThis as { WebGLRenderingContext?: unknown }).WebGLRenderingContext !== 'undefined');
+
+    if (isWebGlSupported) {
+      try {
+        // Attempt WebGL only if supported by the runtime & model
+        const webglModule = options.load
+          ? await options.load()
+          : await loadSeparateTransformers(transformers.env.version);
+        const warm = await isCached(modelForRole(role).artifact.url);
+        loaded = await attempt(webglModule, role, 'webgl' as ModelBackend, warm, emit);
+        fellBack = true;
+        fallbackSuccess = true;
+      } catch {
+        // WebGL unavailable or failed for this model/device; proceed to WASM fallback
+      }
     }
+
+    if (!fallbackSuccess) {
+      try {
+        // Final fallback: WASM with a fresh module instance
+        const retryModule = options.load
+          ? await options.load()
+          : await loadSeparateTransformers(transformers.env.version);
+        const warm = await isCached(modelForRole(role).artifact.url);
+        loaded = await attempt(retryModule, role, 'wasm', warm, emit);
+        fellBack = true;
+        // A WebGPU session demonstrably did not work for this model on this machine.
+        // Remember it so the next visit does not attempt it again.
+        writePreference(modelForRole(role).id, 'wasm');
+      } catch {
+        // WebGPU, WebGL, and WASM all failed or are unavailable.
+        // Mark model as unsupported and emit clear failure state.
+        const failure: BrainFailure = {
+          kind: 'unsupported',
+          message: 'Model is not supported on your device or browser. Please try a supported browser or device.',
+        };
+        emit({ status: 'failed', reason: failure });
+        throw error instanceof Error ? error : new Error(message);
+      }
+    } else {
+      // TypeScript safety: loaded is assigned in try block when fallbackSuccess is true
+    }
+  }
+
+  // TypeScript assertion: loaded is guaranteed to be assigned if no exception was thrown
+  if (!loaded!) {
+    throw new Error('Model failed to initialize on any supported backend');
   }
 
   if (signal?.aborted) {
@@ -630,6 +658,9 @@ export async function loadModel(options: LoadOptions): Promise<LoadedModel> {
   }
 
   const result: LoadedModel = { ...loaded, loadMs: Date.now() - started, fellBack };
+  if (process.env.NODE_ENV !== 'production') {
+    console.log(`[Agent Model] Initialized ${role} model with backend: ${result.backend}`);
+  }
   emit({
     status: 'ready',
     backend: result.backend,
@@ -716,6 +747,8 @@ function failureText(failure: BrainFailure): string {
       return `Could not download the model. ${failure.message}`;
     case 'webgpu-unavailable':
       return `WebGPU unavailable, using ${failure.fellBackTo.toUpperCase()}.`;
+    case 'unsupported':
+      return failure.message;
     case 'load':
       return `The model failed to load. ${failure.message}`;
     case 'cancelled':

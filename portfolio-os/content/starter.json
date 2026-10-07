@@ -3,13 +3,13 @@
   "exampleContent": false,
   "profile": {
     "name": "Noman Ali",
-    "discipline": "Solutions Architecture & Distributed Systems",
-    "positioning": "Software Engineer with 5+ years of experience designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms.",
+    "discipline": "Software Engineer & Solutions Architect",
+    "positioning": "Software Engineer with 8+ years of software development experience, including 5+ years of professional experience designing and building high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms, with 2+ years of AI-assisted software development.",
     "location": "Karachi, Pakistan",
     "email": "nomansoomro51@gmail.com",
     "briefing": {
       "focus": "Designing and engineering high-throughput, low-latency distributed systems, polyglot microservices, and cloud-native platforms.",
-      "yearsActive": 5,
+      "yearsActive": 8,
       "domains": [
         "Distributed Systems Architecture",
         "Cloud & Container Platforms",

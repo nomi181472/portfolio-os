@@ -18,6 +18,7 @@ export default async function CopyPage() {
   const rawJson = JSON.stringify(bundle.data, null, 2);
   const starterJson = getStarterJson();
   const starterConfig = getStarterConfig();
+  const repoUrl = bundle.data.profile?.links?.find((l) => l.type === 'repository' && l.url.includes('github.com'))?.url || bundle.data.profile?.links?.find((l) => l.type === 'repository')?.url;
 
   return (
     <div className="page">
@@ -33,7 +34,7 @@ export default async function CopyPage() {
         </p>
       </header>
 
-      <CopyHub rawJson={rawJson} starterJson={starterJson} starterConfig={starterConfig} />
+      <CopyHub rawJson={rawJson} starterJson={starterJson} starterConfig={starterConfig} repoUrl={repoUrl} />
     </div>
   );
 }

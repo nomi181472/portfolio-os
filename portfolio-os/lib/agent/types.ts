@@ -98,6 +98,7 @@ export interface KnowledgeRecord {
   /** Kept separately so cards and evidence lists can show the authored terms. */
   technologies: string[];
   tags: string[];
+  aliases?: string[];
   organisation?: string;
   status?: string;
   /** Self-assessed depth. A claim by the owner, never treated as a receipt. */
@@ -151,6 +152,10 @@ export interface PortfolioKnowledge {
     links: KnowledgeLink[];
   };
   availability: AvailabilityKnowledge;
+  taxonomy?: {
+    families?: Record<string, string[]>;
+    aliases?: Record<string, string[]>;
+  };
   /** Always empty. The owner has not documented services; see PLAN.md §9. */
   services: never[];
   records: KnowledgeRecord[];

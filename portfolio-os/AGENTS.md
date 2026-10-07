@@ -1,28 +1,50 @@
 # Project Context & Persona Guidelines: Portfolio OS
 
-## Context
-This project is the official personal and professional portfolio for **Noman Ali** (`www.nomanali.online`).
-It is designed as an interactive Personal Operating System (Portfolio OS) demonstrating deep expertise in:
-- **Computer Science & Solutions Architecture**
-- **Distributed Systems & Polyglot Microservices (Go, C#, Python)**
-- **Cloud-Native Infrastructure & Kubernetes (EKS)**
-- **Computer Vision, Deep Learning, and Real-Time Systems**
+## Context & Core Vision
+Portfolio OS is a universal, data-driven, open-source personal operating system designed for **any software engineer, solutions architect, or technical professional**.
+
+Instead of hardcoding developer profile data, contact details, projects, or metrics directly into UI components or backend routines, **all portfolio information is strictly dynamic and data-driven**. The application ingests configuration and profile data from JSON files (`portfolio.json` / `content/portfolio.json`), feeds it into **SQLite** (`portfolio.db`) and **vector embeddings/search**, and serves it dynamically across OS desktop windows, search indices, and the AI assistant.
+
+---
+
+## Universal Architecture Principles
+
+1. **Zero Hardcoded Profile Data**:
+   - Never hardcode candidate names, URLs, email addresses, social media links, skills, companies, projects, or statistics in the codebase or UI components.
+   - All profile, project, work history, skill, and certification details must be retrieved dynamically from JSON configuration, SQLite tables, or vector stores.
+   - Any hardcoded references in documentation, tests, or seed scripts must strictly serve as **explicit examples/placeholders** (e.g., `user@example.com`, `https://example.com`, `Jane Doe`).
+
+2. **Single Source of Truth & Pipeline Flow**:
+   - **Source Data**: Structured JSON file (e.g., `portfolio.json` or `content/portfolio.json`).
+   - **Relational Storage**: Ingested and synchronized into SQLite (`portfolio.db`) for structured relational querying.
+   - **Vector Embeddings**: Processed into vector embeddings (semantic/vector store) to power AI portfolio chat, semantic search, and contextual retrieval.
+   - **Presentation Layer**: Components consume data exclusively via configuration providers, database queries, or API endpoints.
+
+3. **Pluggable & Extensible for Any Developer**:
+   - Any engineer can fork the repository, replace `portfolio.json` with their own profile, run the ingest script (e.g., `npm run ingest` / database seed), and have a fully personalized Portfolio OS.
+
+---
 
 ## Primary Audience & Goal
 1. **Recruiters, Hiring Managers, and Technical Leaders**:
    - Evaluating technical depth, architectural capability, systems engineering experience, and credentials.
-   - Matching qualifications for senior engineering, technical lead, and solutions architecture roles.
+   - Matching qualifications for software engineering, technical lead, and solutions architecture roles.
 2. **Clients & Engineering Partners**:
-   - Seeking consultation or services in scalable system design, legacy monolith decomposition, AI/CV pipelines, and distributed platforms.
+   - Exploring services in scalable system design, monolith decomposition, AI/ML pipelines, and cloud-native platforms.
 
-## Direct Contact & Next Actions
-Whenever recruiters or potential clients find matching qualifications, the primary paths for engagement are:
-- **Email**: `nomansoomro51@gmail.com`
-- **LinkedIn Direct Message**: [linkedin.com/in/noman-a-70604a175](https://www.linkedin.com/in/noman-a-70604a175)
-- **GitHub**: [github.com/nomi181472](https://github.com/nomi181472)
-- **Live Portfolio**: [www.nomanali.online](https://www.nomanali.online)
+---
 
-## Principles for Portfolio Assistant & Updates
-- Maintain strict alignment with verified portfolio evidence (`content/portfolio.json`).
-- Ensure clear, fast navigation for recruiters to pertinent case studies, products, projects, and certifications.
-- Always facilitate seamless contact options for hiring and contract opportunities.
+## Dynamic Contact & Engagement Handling
+Contact methods and social links must be dynamically derived from the active portfolio dataset:
+- **Email**: Extracted dynamically from `portfolio.contact.email` or SQLite database.
+- **LinkedIn / GitHub / Socials**: Extracted dynamically from `portfolio.contact.socials` or links map.
+- **Live Portfolio Domain**: Extracted dynamically from deployment environment variables or `portfolio.meta.site_url`.
+
+*(Example reference only: `contact@example.com` | `https://linkedin.com/in/example` | `https://github.com/example`)*
+
+---
+
+## Guidelines for AI Assistant & Contributors
+- **Strict Evidence Alignment**: Query SQLite and vector context before generating responses; never invent or assume credentials not present in the ingested dataset.
+- **Fast Navigation & Discoverability**: Guide visitors dynamically to case studies, interactive apps, live demos, and architecture breakdowns configured in the data store.
+- **Graceful Fallbacks**: Ensure robust default fallbacks when optional JSON fields or contact links are omitted by the user.

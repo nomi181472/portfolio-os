@@ -17,6 +17,7 @@
 
 import { normaliseTerm } from './text';
 import type { KnowledgeRecord, PortfolioKnowledge } from './types';
+import { createFastRuntimeEmbedder } from './models/fast-embedder';
 
 export interface ScoredRecord {
   key: string;
@@ -215,16 +216,19 @@ export async function retrieve(
     }
   }
 
+  const effectiveEmbedder =
+    options.embedder === null ? null : (options.embedder ?? createFastRuntimeEmbedder());
+
   let semantic = new Map<number, number>();
-  if (embedder?.ready) {
+  if (effectiveEmbedder?.ready) {
     try {
       // Keyed by record key on the way in, converted to record indexes here, because
       // `scoresFor` deals in keys (they are the cache identity) while scoring walks
       // an index into `all`.
       const raw = new Map<number, number>();
 
-      if (embedder.scoresFor) {
-        const byKey = await embedder.scoresFor(
+      if (effectiveEmbedder.scoresFor) {
+        const byKey = await effectiveEmbedder.scoresFor(
           question,
           pool.map((record) => ({ key: record.key, text: record.text })),
         );
@@ -238,7 +242,7 @@ export async function retrieve(
         const pairs = await Promise.all(
           pool.map(async (record, position) => ({
             position,
-            value: await embedder.similarity(question, record.text),
+            value: await effectiveEmbedder.similarity(question, record.text),
           })),
         );
         for (const pair of pairs) {
@@ -249,10 +253,6 @@ export async function retrieve(
 
       semantic = normalise(raw);
     } catch {
-      // A model that throws is a model that is not answering. The lexical
-      // ranking stands on its own, and reporting fewer results because the
-      // optional half failed would be a worse outcome than reporting slightly
-      // worse ones.
       semantic = new Map();
     }
   }

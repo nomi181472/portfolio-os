@@ -7,12 +7,13 @@ interface MobileTopBarProps {
   onOpenSearch: () => void;
   profile: { name: string; avatar?: string };
   onToggleDrawer: () => void;
+  repoUrl?: string;
 }
 
 /**
  * Top application bar for mobile views containing the brand, avatar, search, and drawer toggle.
  */
-export function MobileTopBar({ onOpenSearch, profile, onToggleDrawer }: MobileTopBarProps) {
+export function MobileTopBar({ onOpenSearch, profile, onToggleDrawer, repoUrl = 'https://github.com' }: MobileTopBarProps) {
   return (
     <header className={styles.topBar} role="banner">
       <Link href="/" className={styles.topBrand}>
@@ -40,12 +41,12 @@ export function MobileTopBar({ onOpenSearch, profile, onToggleDrawer }: MobileTo
       </Link>
       <div className={styles.topActions}>
         <a
-          href="https://github.com/nomi181472/portfolio-os"
+          href={repoUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.topBtn}
-          aria-label="GitHub Repository"
-          title="GitHub (nomi181472/portfolio-os)"
+          aria-label="Repository"
+          title={`Repository (${repoUrl})`}
         >
           <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
             <path

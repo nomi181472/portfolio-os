@@ -7,6 +7,7 @@
  * from here, which is the point.
  */
 import type { Metadata, Viewport } from 'next';
+import localPortfolio from '@/content/portfolio.json';
 import { getGraph } from '@/lib/source';
 import { portfolioConfig } from '@/config/portfolio.config';
 import { fontVariables } from '@/lib/fonts';
@@ -37,22 +38,17 @@ export const metadata: Metadata = {
   },
   description: portfolioConfig.site.description,
   keywords: [
-    'Noman Ali',
-    'Solutions Architect',
-    'Distributed Systems',
-    'Software Engineer',
-    'High Throughput Microservices',
-    'Cloud-Native Platforms',
-    'Kubernetes EKS',
-    'Go Golang',
-    'C# .NET Core',
-    'Python',
+    ...(localPortfolio.profile?.name ? [localPortfolio.profile.name] : []),
+    ...(localPortfolio.profile?.briefing?.domains ?? []),
+    ...localPortfolio.skills.filter((s) => s.featured).map((s) => s.name),
     'Portfolio OS',
-    'nomi181472',
   ],
-  authors: [{ name: 'Noman Ali', url: 'https://nomanali.online' }],
-  creator: 'Noman Ali',
-  publisher: 'Noman Ali',
+  authors: [{ 
+    name: localPortfolio.profile?.name || 'Portfolio Author', 
+    url: localPortfolio.profile?.links?.find((l) => l.type === 'website')?.url || siteUrl 
+  }],
+  creator: localPortfolio.profile?.name || 'Portfolio Author',
+  publisher: localPortfolio.profile?.name || 'Portfolio Author',
   applicationName: 'Portfolio OS',
   /*
    * Was `['index', 'follow']`, which overrode a page's own attempt to opt out —
@@ -107,6 +103,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
    */
   const defaultChoice: AppearanceChoice = configured === 'system' ? 'system' : fallback;
 
+  const repoUrl = profile.links?.find((l) => l.type === 'repository' && l.url.includes('github.com'))?.url || profile.links?.find((l) => l.type === 'repository')?.url;
+
   return (
     /*
      * `data-appearance` is rendered server-side so the palette a fork configures is
@@ -133,6 +131,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           profile={{ name: profile.name, avatar: profile.avatar }}
           startupName={bundle.data.startup?.name}
           appearance={defaultChoice}
+          repoUrl={repoUrl}
           footer={<Footer profile={profile} source={bundle.source} />}
         >
           {children}
