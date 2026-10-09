@@ -11,7 +11,7 @@
  */
 
 export type WorkerRequest =
-  | { type: 'LOAD_MODEL'; id: string; role: 'conversation' | 'fluent' | 'embedding' }
+  | { type: 'LOAD_MODEL'; id: string; role: 'conversation' | 'fluent' | 'smollm' | 'embedding' }
   | {
       type: 'GENERATE';
       id: string;
@@ -57,9 +57,11 @@ self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
       const modelId =
         req.role === 'fluent'
           ? 'onnx-community/Qwen2.5-1.5B-Instruct'
-          : req.role === 'embedding'
-            ? 'Xenova/all-MiniLM-L6-v2'
-            : 'onnx-community/Qwen2.5-0.5B-Instruct';
+          : req.role === 'smollm'
+            ? 'onnx-community/SmolLM2-360M-Instruct-ONNX'
+            : req.role === 'embedding'
+              ? 'Xenova/all-MiniLM-L6-v2'
+              : 'onnx-community/Qwen2.5-0.5B-Instruct';
 
       const task = req.role === 'embedding' ? 'feature-extraction' : 'text-generation';
       const dtype = 'int8';

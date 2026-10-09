@@ -350,6 +350,7 @@ const TASK_FOR_ROLE: Record<ModelRole, 'feature-extraction' | 'text-generation'>
   embedding: 'feature-extraction',
   conversation: 'text-generation',
   fluent: 'text-generation',
+  smollm: 'text-generation',
 };
 
 /**

@@ -728,7 +728,7 @@ export interface Conversation {
 
 export async function createConversation(
   retrieve: {
-    role: 'conversation' | 'fluent';
+    role: 'conversation' | 'fluent' | 'smollm';
     backend?: 'webgpu' | 'wasm';
     load: () => Promise<{ pipeline: unknown; backend: 'webgpu' | 'wasm' }>;
   },

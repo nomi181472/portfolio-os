@@ -3584,12 +3584,12 @@
         "startDate": "2025-07-01",
         "ongoing": true
       },
-      "summary": "Independent interactive visual lab for simulating multi-object trackers to discover their weaknesses using ground truth versus actual behavior.",
-      "description": "An independent project created to investigate and stress-test visual tracking architectures. In this project, I will be adding more tracker simulations to investigate and benchmark their weaknesses using ground truth versus actual behavior under stress.\n\nIt provides an interactive visual computer vision lab designed to discover why and how multi-object trackers fail. Features dual operating modes: a Synthetic Simulator with deterministic ground truth physics (linear velocity, crossing trajectories, occlusion, camera jitter, detection noise) and a Real Video YOLO Mode for running detectors and trackers on live footage. Implements side-by-side MOTA, MOTP, IDF1, precision/recall, and ID switch evaluations alongside automated natural-language weakness report cards across 16 tracker algorithms.\n\nGitHub: https://github.com/nomi181472/trackers",
+      "summary": "Interactive visual computer vision lab for stress-testing and benchmarking multi-object trackers under adversarial conditions.",
+      "description": "Interactive visual laboratory for benchmarking multi-object trackers against deterministic ground truth and real footage.",
       "concept": "Simulating multi-object trackers to analyze their weaknesses using ground truth versus actual behavior.",
-      "problem": "Multi-object trackers frequently fail under severe occlusion, sensor noise, crossing trajectories, and missed detections, but diagnosing failure root causes in production video feeds is difficult without comparing actual behavior against deterministic ground truth.",
-      "approach": "Built a dual-mode evaluation framework combining an interactive Next.js and TypeScript frontend with a high-performance Python/FastAPI backend utilizing REST APIs and async processing, orchestrated via Docker Compose. Generates parametric synthetic ground truth and integrates real-world YOLO inference with 16 tracker algorithms (ByteTrack, BoT-SORT, OC-SORT, DeepOCSORT, OpenCV classic trackers), computing real-time MOT metrics and weakness report cards.",
-      "results": "Enables reproducible side-by-side benchmark evaluation of 16 tracking algorithms, discovering weaknesses and surfacing identity switches, false trajectories, and localization drift under adversarial conditions.",
+      "problem": "Diagnosing why visual trackers fail under occlusion and sensor noise requires comparing against ground truth.",
+      "approach": "Interactive Next.js lab with FastAPI backend evaluating 16 tracking algorithms with real-time MOT metrics and failure report cards.",
+      "results": "Enables reproducible side-by-side benchmark evaluation of 16 tracking algorithms.",
       "technologies": [
         "Python",
         "FastAPI",
@@ -3620,7 +3620,19 @@
       ],
       "links": [
         {
-          "label": "GitHub: https://github.com/nomi181472/trackers",
+          "label": "Live Playground: pg-trackers.nomanali.online",
+          "url": "https://pg-trackers.nomanali.online/",
+          "type": "demo",
+          "visibility": "public"
+        },
+        {
+          "label": "Demos Directory: github.com/nomi181472/trackers/tree/main/demos",
+          "url": "https://github.com/nomi181472/trackers/tree/main/demos",
+          "type": "demo",
+          "visibility": "public"
+        },
+        {
+          "label": "GitHub Repository: github.com/nomi181472/trackers",
           "url": "https://github.com/nomi181472/trackers",
           "type": "repository",
           "visibility": "public"
@@ -3628,12 +3640,22 @@
       ],
       "media": [
         {
+          "type": "iframe",
+          "url": "https://pg-trackers.nomanali.online/",
+          "title": "Interactive Tracker Failure Simulator Lab",
+          "caption": "Live interactive playground: stress-test, simulate, and benchmark 16 multi-object trackers directly.",
+          "ratio": 1.77,
+          "visibility": "public",
+          "order": 1
+        },
+        {
           "type": "gif",
           "url": "/media/tracker-simulator-demo.gif",
           "title": "Side-by-Side Tracker Stress Evaluation",
           "caption": "Real-time demonstration comparing ByteTrack, BoT-SORT, Greedy IoU, and Centroid trackers under severe occlusions.",
           "alt": "Animated GIF demonstration of Tracker Failure Simulator side-by-side tracker evaluation",
-          "ratio": 0.95
+          "ratio": 0.95,
+          "order": 2
         },
         {
           "type": "image",
@@ -3641,7 +3663,8 @@
           "title": "Tracker Lab Dashboard & Natural-Language Report Card",
           "caption": "Comprehensive multi-tracker performance reports, event timelines, and automated failure explanations.",
           "alt": "Tracker simulator lab dashboard and evaluation results",
-          "ratio": 1.58
+          "ratio": 1.58,
+          "order": 3
         },
         {
           "type": "image",
@@ -3649,7 +3672,8 @@
           "title": "Scenario Generator & Failure Controls",
           "caption": "Interactive scenario generator: crossing trajectories, occlusion wall, camera shake, and detector noise.",
           "alt": "Synthetic failure scenario generator controls",
-          "ratio": 1.65
+          "ratio": 1.65,
+          "order": 4
         }
       ],
       "relatedSkills": [

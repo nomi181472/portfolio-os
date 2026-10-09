@@ -69,9 +69,10 @@ test('AgentWidget source verifies UI disable states and startModel boolean contr
     'inputRef must be refocused',
   );
 
-  // Verify AVAILABLE_MODELS synchronizes with all-MiniLM-L6-v2 and Qwen2.5 0.5B
+  // Verify AVAILABLE_MODELS synchronizes with all-MiniLM-L6-v2, Qwen2.5 0.5B, and SmolLM2 360M
   assert.match(widgetSource, /Xenova\/all-MiniLM-L6-v2/);
   assert.match(widgetSource, /onnx-community\/Qwen2\.5-0\.5B-Instruct/);
+  assert.match(widgetSource, /onnx-community\/SmolLM2-360M-Instruct-ONNX/);
   assert.ok(!widgetSource.includes('Qwen3.5-0.8B'), 'stale Qwen 0.8B must not be present in model list');
 });
 
@@ -90,6 +91,6 @@ test('AgentWidget maintains separate engines for local LLM vs direct/embeddings'
   assert.match(widgetSource, /conversationalEngineRef = useRef<Engine \| null>\(null\)/);
 
   // Must select activeEngine based on whether model is local LLM
-  assert.match(widgetSource, /const isLocalLLM = selectedModelChoice === 'conversation' \|\| selectedModelChoice === 'fluent'/);
+  assert.match(widgetSource, /const isLocalLLM = selectedModelChoice === 'conversation' \|\| selectedModelChoice === 'fluent' \|\| selectedModelChoice === 'smollm'/);
   assert.match(widgetSource, /activeEngine\.answer/);
 });

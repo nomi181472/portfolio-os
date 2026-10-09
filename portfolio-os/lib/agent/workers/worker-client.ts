@@ -26,7 +26,7 @@ import {
 import type { WorkerRequest, WorkerResponse } from './agent.worker';
 
 export interface WorkerConversationOptions {
-  role: 'conversation' | 'fluent';
+  role: 'conversation' | 'fluent' | 'smollm';
   onState?: (state: {
     status: 'downloading' | 'ready' | 'failed';
     bytesLoaded?: number;
@@ -47,9 +47,9 @@ export class AgentWorkerClient implements Conversation {
   >();
   private reqCounter = 0;
   private inferenceMs: number | null = null;
-  private currentRole: 'conversation' | 'fluent';
+  private currentRole: 'conversation' | 'fluent' | 'smollm';
 
-  constructor(role: 'conversation' | 'fluent' = 'conversation') {
+  constructor(role: 'conversation' | 'fluent' | 'smollm' = 'conversation') {
     this.currentRole = role;
   }
 

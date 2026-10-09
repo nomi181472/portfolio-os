@@ -103,6 +103,15 @@ const AVAILABLE_MODELS: ModelListItem[] = [
     description: 'Local conversational AI (Qwen2.5 0.5B Instruct) for natural language responses. Uses vector search for retrieval, then generates grounded answers. Runs 100% locally in browser via ONNX Runtime.',
   },
   {
+    id: 'onnx-community/SmolLM2-360M-Instruct-ONNX',
+    role: 'smollm',
+    name: 'SmolLM2 360M Instruct (Ultra-light)',
+    badge: 'Vector + LLM (360M)',
+    size: formatMb(modelForRole('smollm').artifact.bytes),
+    url: modelForRole('smollm').artifact.url,
+    description: 'SmolLM2 360M Instruct ultra-compact conversational model (~363 MB int8). High-speed client-side inference powered by ONNX Runtime.',
+  },
+  {
     id: 'none',
     role: 'none',
     name: 'Direct Search Engine (Keyword Only)',
@@ -290,6 +299,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     embedding: false,
     conversation: false,
     fluent: false,
+    smollm: false,
     none: true,
   });
   const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
@@ -368,7 +378,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         conversationalEngineRef.current = conversationalEngine;
 
         const savedChoice = (localStorage.getItem('portfolio-agent-selected-model') as ModelChoiceId | null) ?? 'none';
-        const isLocalLLM = savedChoice === 'conversation' || savedChoice === 'fluent';
+        const isLocalLLM = savedChoice === 'conversation' || savedChoice === 'fluent' || savedChoice === 'smollm';
         setState({
           status: 'ready',
           engine: isLocalLLM ? conversationalEngine : standardEngine,
@@ -382,7 +392,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   // Switch engine when user selects between local LLM and direct/embedding models
   useEffect(() => {
     if (state.status !== 'ready') return;
-    const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent';
+    const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm';
     const targetEngine = isLocalLLM ? conversationalEngineRef.current : standardEngineRef.current;
     if (targetEngine && state.engine !== targetEngine) {
       setState((prev) => (prev.status === 'ready' ? { ...prev, engine: targetEngine } : prev));
@@ -646,7 +656,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         return;
       }
 
-      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status === 'failed') {
+      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status === 'failed') {
         const id = nextId.current++;
         setDraft('');
         const normalised = normaliseQuestion(trimmed, state.engine.aliases);
@@ -700,7 +710,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         return;
       }
 
-      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status !== 'ready') {
+      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status !== 'ready') {
         const id = nextId.current++;
         setDraft('');
         const normalised = normaliseQuestion(trimmed, state.engine.aliases);
@@ -733,7 +743,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       const pendingMessage =
         selectedModelChoice === 'embedding'
           ? 'Computing embeddings & ranking vectors…'
-          : selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent'
+          : selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm'
             ? 'Analyzing context & synthesizing answer with local LLM…'
             : 'Searching portfolio records…';
 
@@ -747,8 +757,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // Mode-specific execution:
         // 1. Without model ('none'): Pass no embedder and no conversation (pure SQLite / FTS / deterministic retrieval).
         // 2. Embedding ('embedding'): Pass embedder only (vector search, semantic ranking, no LLM prose synthesis).
-        // 3. Conversational ('conversation' / 'fluent'): Pass both embedder (for vector search) and conversation (for local LLM natural speech).
-        const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent';
+        // 3. Conversational ('conversation' / 'fluent' / 'smollm'): Pass both embedder (for vector search) and conversation (for local LLM natural speech).
+        const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm';
         const activeEngine = isLocalLLM
           ? (conversationalEngineRef.current ?? state.engine)
           : (standardEngineRef.current ?? state.engine);
@@ -917,7 +927,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
    */
   // `brain.ts` already memoises loaded pipelines by role, so the timings are
   // re-read from the loader's own record rather than measured twice here.
-  const startChat = useCallback((role: 'conversation' | 'fluent' = 'conversation') => {
+  const startChat = useCallback((role: 'conversation' | 'fluent' | 'smollm' = 'conversation') => {
     if (isDownloading) return;
     setChat({ status: 'loading' });
 
@@ -1043,8 +1053,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           conversationRef.current = null;
           setChat({ status: 'idle' });
         }
-      } else if (item.role === 'conversation' || item.role === 'fluent') {
-        const chatRole = item.role as 'conversation' | 'fluent';
+      } else if (item.role === 'conversation' || item.role === 'fluent' || item.role === 'smollm') {
+        const chatRole = item.role as 'conversation' | 'fluent' | 'smollm';
         if (semantic.status !== 'ready') {
           startModel().then((ok) => {
             if (ok && chat.status !== 'ready') {
@@ -1070,8 +1080,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
     if (item.role === 'embedding') {
       startModel();
-    } else if (item.role === 'conversation' || item.role === 'fluent') {
-      const chatRole = item.role as 'conversation' | 'fluent';
+    } else if (item.role === 'conversation' || item.role === 'fluent' || item.role === 'smollm') {
+      const chatRole = item.role as 'conversation' | 'fluent' | 'smollm';
       if (semantic.status !== 'ready' && brain.status !== 'ready') {
         startModel().then((ok) => {
           if (ok) {
@@ -1116,13 +1126,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     const saved = localStorage.getItem('portfolio-agent-selected-model') as ModelChoiceId | null;
     void checkAllModelCaches().then((cachedMap) => {
       if (!active) return;
-      if (saved && ['embedding', 'conversation', 'fluent', 'none'].includes(saved)) {
+      if (saved && ['embedding', 'conversation', 'fluent', 'smollm', 'none'].includes(saved)) {
         if (saved === 'none' || cachedMap[saved]) {
           setSelectedModelChoice(saved);
           if (saved === 'embedding') {
             startModel();
-          } else if (saved === 'conversation' || saved === 'fluent') {
-            const chatRole = saved as 'conversation' | 'fluent';
+          } else if (saved === 'conversation' || saved === 'fluent' || saved === 'smollm') {
+            const chatRole = saved as 'conversation' | 'fluent' | 'smollm';
             startModel().then(() => {
               startChat(chatRole);
             });
@@ -1596,10 +1606,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               {(() => {
                 const isSelectedModelPreparing =
                   (selectedModelChoice === 'embedding' && semantic.status !== 'ready' && semantic.status !== 'failed') ||
-                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status !== 'ready' && chat.status !== 'failed');
+                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status !== 'ready' && chat.status !== 'failed');
                 const isSelectedModelUnsupported =
                   (selectedModelChoice === 'embedding' && semantic.status === 'failed') ||
-                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent') && chat.status === 'failed');
+                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status === 'failed');
                 const selectedModelName = AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name ?? 'Model';
 
                 return (

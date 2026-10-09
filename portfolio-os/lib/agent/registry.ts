@@ -41,7 +41,7 @@
 /** Which compute backend the weights will run on. Reported, never assumed. */
 export type ModelBackend = 'webgpu' | 'wasm';
 
-export type ModelRole = 'embedding' | 'conversation' | 'fluent';
+export type ModelRole = 'embedding' | 'conversation' | 'fluent' | 'smollm';
 
 export interface ModelArtifact {
   /**
@@ -159,6 +159,22 @@ export const CONVERSATION_MODEL: ModelDefinition = {
 };
 
 /**
+ * SmolLM2 360M Instruct — ultra-compact model (360M params) for fast client-side inference.
+ */
+export const SMOLLM_MODEL: ModelDefinition = {
+  id: 'onnx-community/SmolLM2-360M-Instruct-ONNX',
+  role: 'smollm',
+  label: 'SmolLM2 360M Instruct (Ultra-light)',
+  autoDownload: false,
+  artifact: {
+    url: 'https://huggingface.co/onnx-community/SmolLM2-360M-Instruct-ONNX/resolve/main/onnx/model_int8.onnx',
+    bytes: 363_115_149,
+    dtype: 'int8',
+  },
+  devices: ['wasm'],
+};
+
+/**
  * The optional 1.5B, for a reader who wants a better answer and is willing to wait
  * for it. Never auto-downloaded: 1165 MB is not a thing to push on someone who
  * asked a question.
@@ -187,6 +203,7 @@ export const FLUENT_MODEL: ModelDefinition = {
 export const MODELS: readonly ModelDefinition[] = [
   EMBEDDING_MODEL,
   CONVERSATION_MODEL,
+  SMOLLM_MODEL,
   FLUENT_MODEL,
 ];
 
