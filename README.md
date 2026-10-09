@@ -8,6 +8,8 @@
 
 ![Portfolio OS Demo](media/demo.gif)
 
+![Ask the Portfolio — built-in AI agent answering a question from your content](media/portfolio_os.gif)
+
 ---
 
 ## ✨ Why Portfolio OS?
