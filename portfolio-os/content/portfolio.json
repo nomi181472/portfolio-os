@@ -1578,7 +1578,7 @@
       "id": "sk-docker-swarm",
       "slug": "docker-swarm",
       "name": "Docker Swarm",
-      "category": "DevOps & Cloud",
+      "category": "DevOps & Cloud ",
       "handling": "9/10",
       "depth": "specialist",
       "firstUsed": "2020",
@@ -2146,9 +2146,9 @@
     {
       "id": "exp-qbs",
       "slug": "qbs-co-technical-lead",
-      "name": "Technical Lead & Solutions Architect at QBS Co.",
+      "name": "Technical Lead at QBS Co.",
       "organisation": "QBS Co.",
-      "role": "Technical Lead & Solutions Architect",
+      "role": "Technical Lead",
       "employmentType": "Full-time",
       "location": "Karachi, Pakistan",
       "period": {

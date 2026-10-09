@@ -76,6 +76,17 @@ You can edit it in two ways:
      ```bash
      npm run validate
      ```
+  3. Re-index search and vector embeddings:
+     ```bash
+     npm run index
+     ```
+
+> **Automatic Index Freshness & Git Pre-Commit Hook**:
+> - `npm run build` automatically checks the modification timestamp of `content/portfolio.json` against `portfolio.db` and `public/data/vectors.json`. If `content/portfolio.json` is modified, it runs re-indexing instead of serving stale results.
+> - To automatically re-index and stage updated index files whenever you commit changes to `portfolio.json`, install the pre-commit hook:
+>   ```bash
+>   npm run setup:hooks
+>   ```
 
 ### 3. Configure Site Metadata & Deploy
 
@@ -164,11 +175,13 @@ Portfolio OS comes with production-grade technical SEO out-of-the-box:
 
 ```bash
 npm run dev          # Start local development server on port 3000
+npm run index        # Rebuild SQLite FTS5 search index and vector embeddings
 npm run build        # Build and statically pre-render all routes for production
 npm start            # Run production server
 npm run validate     # Validate content/portfolio.json against strict Zod schema
 npm run typecheck    # Validate TypeScript type consistency across all files
 npm test             # Execute test suites (schema, graph, search, analytics)
+npm run setup:hooks  # Install git pre-commit hook to auto-index when portfolio.json changes
 ```
 
 ---

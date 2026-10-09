@@ -11,7 +11,7 @@
     "briefing": {
       "focus": "Designing and engineering high-throughput, low-latency distributed systems using polyglot microservices (Go, C#, Python) and cloud-native Kubernetes platforms, with a focus on reliability, performance, and scalability.",
       "domains": [
-        "Distributed Systems Architecture",
+        "Distributed Systems Architecture ",
         "Cloud & Container Platforms (Kubernetes / EKS)",
         "Computer Vision & Deep Learning Pipelines",
         "Enterprise Security & IAM (SAML 2.0 / OIDC)",

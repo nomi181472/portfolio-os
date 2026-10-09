@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "validate": "tsx scripts/validate.ts",
     "test": "NODE_OPTIONS='--conditions=react-server' tsx --test tests/*.test.ts",
-    "check:server": "node scripts/check-server-freshness.mjs"
+    "check:server": "node scripts/check-server-freshness.mjs",
+    "setup:hooks": "mkdir -p ../.git/hooks && cp scripts/pre-commit.sh ../.git/hooks/pre-commit && chmod +x ../.git/hooks/pre-commit"
   },
   "dependencies": {
     "@huggingface/transformers": "^3.8.1",
