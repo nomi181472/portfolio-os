@@ -189,7 +189,7 @@ npm run setup:hooks  # Install git pre-commit hook to auto-index when portfolio.
 ## 👤 Author & Maintainer
 
 **Noman Ali**  
-*Technical Lead & Solutions Architect*  
+*Technical Lead*  
 - Portfolio: [https://www.nomanali.online](https://www.nomanali.online)  
 - GitHub: [@nomi181472](https://github.com/nomi181472)  
 - LinkedIn: [linkedin.com/in/noman-a-70604a175](https://www.linkedin.com/in/noman-a-70604a175)  

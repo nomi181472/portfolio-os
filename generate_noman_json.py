@@ -3007,9 +3007,9 @@ Actively ongoing since September 2026. Experiments are added and reworked as the
   }
 }
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 target_paths = [
-    "/home/noman/projects/noman-portfolio/portfolio-os/content/portfolio.json",
-    "/home/noman/projects/noman-portfolio/portfolio.json"
+    os.path.join(BASE_DIR, "portfolio-os", "content", "portfolio.json")
 ]
 
 # ------------------------------------------------------------------------------

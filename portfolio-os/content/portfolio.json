@@ -1407,6 +1407,9 @@
       ],
       "relatedExperience": [
         "exp-ktrade"
+      ],
+      "relatedProducts": [
+        "prod-learn-to-invest"
       ]
     },
     {
@@ -1600,36 +1603,6 @@
         "Overlay Networks",
         "Container Clustering",
         "DevOps"
-      ]
-    },
-    {
-      "id": "sk-git",
-      "slug": "git-version-control-monorepo",
-      "name": "Git, GitHub & Monorepo Architecture",
-      "category": "DevOps & Cloud",
-      "handling": "9/10",
-      "depth": "specialist",
-      "firstUsed": "2019",
-      "context": "Handling: 9/10 | Type: Version Control System | Workflows: Git, GitHub, Monorepo Management",
-      "summary": "Handling: 9/10 — distributed version control, multi-project monorepo structures, branch policies, and GitOps automation.",
-      "description": "Specialist proficiency in Git, GitHub, and Monorepo Architecture (Handling: 9/10). Maintaining multi-service and monorepo architectures, subproject isolation, code review workflows, semantic versioning, and GitOps automation.",
-      "featured": false,
-      "tags": [
-        "Version Control System",
-        "Developer Tooling",
-        "Git",
-        "GitHub",
-        "Monorepo",
-        "GitOps"
-      ],
-      "technologies": [
-        "Git",
-        "GitHub",
-        "Monorepo Architecture",
-        "GitOps"
-      ],
-      "relatedProjects": [
-        "proj-zero-shots-trackers"
       ]
     },
     {
@@ -2559,7 +2532,8 @@
         "sk-xunit",
         "sk-testing-pytest",
         "sk-playwright",
-        "sk-polyglot-test"
+        "sk-polyglot-test",
+        "sk-pgvector"
       ],
       "featured": true
     },
@@ -2766,7 +2740,8 @@
         "sk-async-processing",
         "sk-xunit",
         "sk-testing-pytest",
-        "sk-playwright"
+        "sk-playwright",
+        "sk-pgvector"
       ],
       "relatedProjects": [
         "proj-microservices-template"
@@ -3193,7 +3168,8 @@
         "sk-redis",
         "sk-arch",
         "sk-async-processing",
-        "sk-xunit"
+        "sk-xunit",
+        "sk-aws-eventbridge"
       ],
       "relatedExperience": [
         "exp-ktrade"
@@ -3582,7 +3558,6 @@
         "sk-frontend-nextjs",
         "sk-video-streaming",
         "sk-docker-compose",
-        "sk-git",
         "sk-testing-pytest",
         "sk-pgvector",
         "sk-qdrant",
@@ -3688,7 +3663,8 @@
         "sk-leadership",
         "sk-microservices",
         "sk-testing-pytest",
-        "sk-playwright"
+        "sk-playwright",
+        "sk-video-streaming"
       ],
       "relatedProjects": [
         "proj-resume-hr",
@@ -3833,7 +3809,8 @@
         "sk-xunit",
         "sk-testing-pytest",
         "sk-playwright",
-        "sk-pytorch-cuda"
+        "sk-pytorch-cuda",
+        "sk-pgvector"
       ],
       "relatedProjects": [
         "proj-tracker-simulator"

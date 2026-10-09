@@ -3,7 +3,10 @@
 ## Context & Core Vision
 Portfolio OS is a universal, data-driven, open-source personal operating system designed for **any software engineer, solutions architect, or technical professional**.
 
-Instead of hardcoding developer profile data, contact details, projects, or metrics directly into UI components or backend routines, **all portfolio information is strictly dynamic and data-driven**. The application ingests configuration and profile data from JSON files (`portfolio.json` / `content/portfolio.json`), feeds it into **SQLite** (`portfolio.db`) and **vector embeddings/search**, and serves it dynamically across OS desktop windows, search indices, and the AI assistant.
+Instead of hardcoding developer profile data, contact details, projects, or metrics directly into UI components or backend routines, **all portfolio information is strictly dynamic and data-driven**. The application ingests configuration and profile data from the single source of truth inside the content folder (`content/portfolio.json`), feeds it into **SQLite** (`portfolio.db`) and **vector embeddings/search**, and serves it dynamically across OS desktop windows, search indices, and the AI assistant.
+
+> [!NOTE]
+> **Location Notice**: The primary and sole portfolio dataset file is located strictly inside `content/portfolio.json` (`portfolio-os/content/portfolio.json`). Do not maintain a duplicate root-level `portfolio.json`.
 
 ---
 
@@ -15,13 +18,13 @@ Instead of hardcoding developer profile data, contact details, projects, or metr
    - Any hardcoded references in documentation, tests, or seed scripts must strictly serve as **explicit examples/placeholders** (e.g., `user@example.com`, `https://example.com`, `Jane Doe`).
 
 2. **Single Source of Truth & Pipeline Flow**:
-   - **Source Data**: Structured JSON file (e.g., `portfolio.json` or `content/portfolio.json`).
+   - **Source Data**: Structured JSON file residing inside the content directory (`content/portfolio.json`).
    - **Relational Storage**: Ingested and synchronized into SQLite (`portfolio.db`) for structured relational querying.
    - **Vector Embeddings**: Processed into vector embeddings (semantic/vector store) to power AI portfolio chat, semantic search, and contextual retrieval.
    - **Presentation Layer**: Components consume data exclusively via configuration providers, database queries, or API endpoints.
 
 3. **Pluggable & Extensible for Any Developer**:
-   - Any engineer can fork the repository, replace `portfolio.json` with their own profile, run the ingest script (e.g., `npm run ingest` / database seed), and have a fully personalized Portfolio OS.
+   - Any engineer can fork the repository, update `content/portfolio.json` with their own profile, run the ingest script (e.g., `npm run index` / database seed), and have a fully personalized Portfolio OS.
 
 ---
 
