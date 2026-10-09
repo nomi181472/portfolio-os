@@ -1082,7 +1082,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       startModel();
     } else if (item.role === 'conversation' || item.role === 'fluent' || item.role === 'smollm') {
       const chatRole = item.role as 'conversation' | 'fluent' | 'smollm';
-      if (semantic.status !== 'ready' && brain.status !== 'ready') {
+      const needsEmbeddingDownload = !cachedModels['embedding'] || semantic.status !== 'ready';
+      if (needsEmbeddingDownload) {
         startModel().then((ok) => {
           if (ok) {
             startChat(chatRole);
@@ -1092,7 +1093,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         startChat(chatRole);
       }
     }
-  }, [isDownloading, semantic.status, brain.status, startModel, startChat]);
+  }, [isDownloading, cachedModels, semantic.status, startModel, startChat]);
 
   const handleRemoveModel = useCallback(async (e: React.MouseEvent, item: ModelListItem) => {
     e.stopPropagation();
@@ -1675,34 +1676,55 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             </div>
           </form>
 
-          {pendingDownloadModel && (
-            <div className={styles.modalBackdrop}>
-              <div className={styles.modalCard}>
-                <h3 className={styles.modalTitle}>Download {pendingDownloadModel.name}?</h3>
-                <p className={styles.modalBody}>
-                  This model ({pendingDownloadModel.size}) is not downloaded yet. It will run 100% locally in your browser and stay saved in your device storage so you don&apos;t need to download it again.
-                </p>
-                <div className={styles.modalActions}>
-                  <button
-                    type="button"
-                    className={styles.modalCancelBtn}
-                    onClick={() => setPendingDownloadModel(null)}
-                    disabled={isDownloading}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.modalConfirmBtn}
-                    onClick={() => handleConfirmDownload(pendingDownloadModel)}
-                    disabled={isDownloading}
-                  >
-                    Download ({pendingDownloadModel.size})
-                  </button>
+          {pendingDownloadModel && (() => {
+            const isConversational = pendingDownloadModel.role === 'conversation' || pendingDownloadModel.role === 'fluent' || pendingDownloadModel.role === 'smollm';
+            const alsoNeedsEmbedding = isConversational && !cachedModels['embedding'];
+            const embeddingBytes = modelForRole('embedding').artifact.bytes;
+            const modelBytes = pendingDownloadModel.role !== 'none' ? modelForRole(pendingDownloadModel.role).artifact.bytes : 0;
+            const totalDownloadSize = alsoNeedsEmbedding
+              ? formatMb(modelBytes + embeddingBytes)
+              : pendingDownloadModel.size;
+
+            return (
+              <div className={styles.modalBackdrop}>
+                <div className={styles.modalCard}>
+                  <h3 className={styles.modalTitle}>Download {pendingDownloadModel.name}?</h3>
+                  <p className={styles.modalBody}>
+                    {alsoNeedsEmbedding ? (
+                      <>
+                        This conversational AI runs 100% locally in your browser using RAG (Retrieval-Augmented Generation).
+                        It will download <strong>{pendingDownloadModel.name} ({pendingDownloadModel.size})</strong> and the required <strong>Semantic Search Embeddings model ({formatMb(embeddingBytes)})</strong> for grounded factual answers.
+                        <br /><br />
+                        Total download: <strong>{totalDownloadSize}</strong>. Weights stay saved in your device browser cache.
+                      </>
+                    ) : (
+                      <>
+                        This model ({pendingDownloadModel.size}) is not downloaded yet. It will run 100% locally in your browser and stay saved in your device storage so you don&apos;t need to download it again.
+                      </>
+                    )}
+                  </p>
+                  <div className={styles.modalActions}>
+                    <button
+                      type="button"
+                      className={styles.modalCancelBtn}
+                      onClick={() => setPendingDownloadModel(null)}
+                      disabled={isDownloading}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.modalConfirmBtn}
+                      onClick={() => handleConfirmDownload(pendingDownloadModel)}
+                      disabled={isDownloading}
+                    >
+                      Download ({totalDownloadSize})
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
         </section>
       ) : null}
     </div>
