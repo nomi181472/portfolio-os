@@ -45,6 +45,7 @@ export interface ConversationLayer {
     }[],
     history: readonly ConversationTurn[],
     facts?: Record<string, unknown>,
+    onToken?: (token: string) => void,
   ): Promise<{
     keys: readonly string[];
     dropped?: readonly { key: string; reason: string }[];
@@ -156,6 +157,7 @@ export interface Engine {
     options?: {
       embedder?: Embedder | null;
       conversation?: ConversationLayer | null;
+      onToken?: (token: string) => void;
     },
   ): Promise<AgentAnswer>;
 }

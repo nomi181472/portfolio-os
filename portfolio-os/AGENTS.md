@@ -51,3 +51,7 @@ Contact methods and social links must be dynamically derived from the active por
 - **Strict Evidence Alignment**: Query SQLite and vector context before generating responses; never invent or assume credentials not present in the ingested dataset.
 - **Fast Navigation & Discoverability**: Guide visitors dynamically to case studies, interactive apps, live demos, and architecture breakdowns configured in the data store.
 - **Graceful Fallbacks**: Ensure robust default fallbacks when optional JSON fields or contact links are omitted by the user.
+- **LLM Response Format & Real-time Streaming**:
+  - Conversational LLM models (e.g. Qwen, SmolLM) generate responses in **Markdown** with dynamic hyperlinks (`[Label](url)` and internal routes like `[Project Name](/projects/slug)`), strictly derived from verified FACTS.
+  - Streaming is applied **strictly to LLM-based neural models**. Deterministic keyword search and vector embedding retrievers do not use token streaming.
+

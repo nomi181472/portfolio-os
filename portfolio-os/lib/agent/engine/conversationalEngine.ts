@@ -112,7 +112,11 @@ export function buildConversationalEngineFromKnowledge(
 
   async function answer(
     question: string,
-    answerOptions: { embedder?: Embedder | null; conversation?: ConversationLayer | null } = {},
+    answerOptions: {
+      embedder?: Embedder | null;
+      conversation?: ConversationLayer | null;
+      onToken?: (token: string) => void;
+    } = {},
   ): Promise<AgentAnswer> {
     const trimmed = question.trim();
     const normalised = normaliseQuestion(trimmed, aliases);
@@ -189,6 +193,7 @@ export function buildConversationalEngineFromKnowledge(
           candidateRecords,
           history,
           facts,
+          answerOptions.onToken,
         );
 
         if (selection.text && selection.text.trim().length > 0) {

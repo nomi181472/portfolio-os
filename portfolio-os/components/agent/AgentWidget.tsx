@@ -33,6 +33,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 
 import {
   buildEngineFromKnowledge,
@@ -766,15 +767,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         const activeEmbedder = selectedModelChoice === 'none' ? null : embedderRef.current;
         const activeConversation = isLocalLLM ? conversationRef.current : null;
 
-        const answer = await activeEngine.answer(trimmed, {
-          embedder: activeEmbedder,
-          conversation: activeConversation,
-        });
-
-        // Only the generation half is timed, and only when a model ran.
-        setInferenceMs(activeConversation?.lastInferenceMs() ?? null);
-
-        // Determine which model answered the question
         const answeringModelName =
           activeConversation && chat.status === 'ready'
             ? AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'
@@ -782,14 +774,69 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               ? 'Qwen3 Embedding (0.6B INT8)'
               : 'Direct Search Engine';
 
-        // Qwen model-exclusive capabilities: Think mode & Web search
-        // Fast streaming effect: progressively reveal text character by character
-        await streamTurnAnswer({
-          id,
-          answer,
-          answeringModelName,
-          setTurns,
+        let accumulatedProse = '';
+
+        // Live token streaming strictly for local LLM models
+        const handleToken = isLocalLLM
+          ? (token: string) => {
+              accumulatedProse += token;
+              setTurns((current) =>
+                current.map((turn) =>
+                  turn.id === id
+                    ? {
+                        ...turn,
+                        modelName: answeringModelName,
+                        answer: turn.answer
+                          ? { ...turn.answer, text: accumulatedProse }
+                          : {
+                              question: trimmed,
+                              intent: 'general',
+                              routing: { intent: 'general', confidence: 1, signals: [], uncertain: false },
+                              normalised: normaliseQuestion(trimmed, state.engine.aliases),
+                              text: accumulatedProse,
+                              cards: [],
+                              navigation: [],
+                              empty: false,
+                              caveats: [],
+                            },
+                      }
+                    : turn,
+                ),
+              );
+            }
+          : undefined;
+
+        const answer = await activeEngine.answer(trimmed, {
+          embedder: activeEmbedder,
+          conversation: activeConversation,
+          onToken: handleToken,
         });
+
+        // Only the generation half is timed, and only when a model ran.
+        setInferenceMs(activeConversation?.lastInferenceMs() ?? null);
+
+        if (isLocalLLM) {
+          // Tokens were already streamed live; finalize the turn with resolved cards & metadata
+          setTurns((current) =>
+            current.map((turn) =>
+              turn.id === id
+                ? {
+                    ...turn,
+                    answer,
+                    modelName: answeringModelName,
+                  }
+                : turn,
+            ),
+          );
+        } else {
+          // For non-LLM models, display through character stream
+          await streamTurnAnswer({
+            id,
+            answer,
+            answeringModelName,
+            setTurns,
+          });
+        }
       } catch (err: unknown) {
         console.error('Agent ask error:', err);
         setTurns((current) =>
@@ -1801,7 +1848,30 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
             </div>
           ) : (
             <>
-              <p className={styles.answer}>{answer.text}</p>
+              <div className={styles.answer}>
+                <ReactMarkdown
+                  components={{
+                    a: ({ href, children, ...props }) => {
+                      if (!href) return <span {...props}>{children}</span>;
+                      const isExternal = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:');
+                      if (isExternal) {
+                        return (
+                          <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
+                            {children}
+                          </a>
+                        );
+                      }
+                      return (
+                        <Link href={href} {...props}>
+                          {children}
+                        </Link>
+                      );
+                    },
+                  }}
+                >
+                  {answer.text}
+                </ReactMarkdown>
+              </div>
 
               {answer.match ? <MatchBar answer={answer} /> : null}
               {answer.match ? <Breakdown match={answer.match} /> : null}

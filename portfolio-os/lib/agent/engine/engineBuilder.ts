@@ -122,7 +122,11 @@ export function buildEngineFromKnowledge(
 
   async function answer(
     question: string,
-    answerOptions: { embedder?: Embedder | null; conversation?: ConversationLayer | null } = {},
+    answerOptions: {
+      embedder?: Embedder | null;
+      conversation?: ConversationLayer | null;
+      onToken?: (token: string) => void;
+    } = {},
   ): Promise<AgentAnswer> {
     const trimmed = question.trim();
     const normalised = normaliseQuestion(trimmed, aliases);
