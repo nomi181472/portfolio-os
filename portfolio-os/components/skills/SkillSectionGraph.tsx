@@ -38,6 +38,7 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
   const [mobileMode, setMobileMode] = useState<'by-skill' | 'by-deliverable'>('by-skill');
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [selectedTargetId, setSelectedTargetId] = useState<string | null>(null);
+  const [showAllTargets, setShowAllTargets] = useState(false);
 
   // Filter skills that have at least one product/project target, plus list other standalone skills
   const connectedSkills = useMemo(() => skills.filter((s) => s.targets.length > 0), [skills]);
@@ -118,8 +119,11 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
       <div className={styles.header}>
         <div className={styles.metaInfo}>
           <span className={styles.pulseDot} />
-          <span>
+          <span className={styles.metaTextDesktop}>
             CONNECTIVITY GRAPH · {connectedSkills.length} SKILLS ↔ {uniqueTargets.length} DELIVERABLES
+          </span>
+          <span className={styles.metaTextMobile}>
+            GRAPH · {connectedSkills.length} SKILLS ↔ {uniqueTargets.length} DELIVERABLES
           </span>
         </div>
         <button
@@ -128,7 +132,12 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
           className={styles.toggleButton}
           aria-label="Toggle section graph"
         >
-          {collapsed ? 'Show Graph +' : 'Collapse Graph −'}
+          <span className={styles.toggleDesktop}>
+            {collapsed ? 'Show Graph +' : 'Collapse Graph −'}
+          </span>
+          <span className={styles.toggleMobile}>
+            {collapsed ? 'Show +' : 'Collapse −'}
+          </span>
         </button>
       </div>
 
@@ -228,7 +237,10 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                 className={`${styles.mobileSegmentBtn} ${
                   mobileMode === 'by-skill' ? styles.mobileSegmentBtnActive : ''
                 }`}
-                onClick={() => setMobileMode('by-skill')}
+                onClick={() => {
+                  setMobileMode('by-skill');
+                  setShowAllTargets(false);
+                }}
               >
                 By Skill ({connectedSkills.length})
               </button>
@@ -237,7 +249,10 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                 className={`${styles.mobileSegmentBtn} ${
                   mobileMode === 'by-deliverable' ? styles.mobileSegmentBtnActive : ''
                 }`}
-                onClick={() => setMobileMode('by-deliverable')}
+                onClick={() => {
+                  setMobileMode('by-deliverable');
+                  setShowAllTargets(false);
+                }}
               >
                 By Deliverable ({uniqueTargets.length})
               </button>
@@ -254,7 +269,10 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                         key={s.id}
                         type="button"
                         className={`${styles.mobileChip} ${isSelected ? styles.mobileChipActive : ''}`}
-                        onClick={() => setSelectedSkillId(s.id)}
+                        onClick={() => {
+                          setSelectedSkillId(s.id);
+                          setShowAllTargets(false);
+                        }}
                       >
                         <span className={styles.mobileChipDot} />
                         <span className={styles.mobileChipText}>{s.name}</span>
@@ -286,7 +304,7 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                       </div>
 
                       <div className={styles.mobileTargetList}>
-                        {activeMobileSkill.targets.map((target) => (
+                        {(showAllTargets ? activeMobileSkill.targets : activeMobileSkill.targets.slice(0, 5)).map((target) => (
                           <Link
                             key={target.id}
                             href={target.href}
@@ -308,6 +326,18 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                           </Link>
                         ))}
                       </div>
+
+                      {activeMobileSkill.targets.length > 5 ? (
+                        <button
+                          type="button"
+                          className={styles.mobileShowMoreBtn}
+                          onClick={() => setShowAllTargets(!showAllTargets)}
+                        >
+                          {showAllTargets
+                            ? 'Show fewer deliverables ↑'
+                            : `Show all ${activeMobileSkill.targets.length} deliverables (+${activeMobileSkill.targets.length - 5}) ↓`}
+                        </button>
+                      ) : null}
                     </div>
                   </div>
                 ) : null}
@@ -324,7 +354,10 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                         key={t.id}
                         type="button"
                         className={`${styles.mobileChip} ${isSelected ? styles.mobileChipActive : ''}`}
-                        onClick={() => setSelectedTargetId(t.id)}
+                        onClick={() => {
+                          setSelectedTargetId(t.id);
+                          setShowAllTargets(false);
+                        }}
                       >
                         <span className={styles.mobileChipDot} />
                         <span className={styles.mobileChipText}>{shortName}</span>
@@ -358,7 +391,7 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                       </div>
 
                       <div className={styles.mobileTargetList}>
-                        {deliverableSkills.map((skill) => (
+                        {(showAllTargets ? deliverableSkills : deliverableSkills.slice(0, 5)).map((skill) => (
                           <Link
                             key={skill.id}
                             href={skill.href}
@@ -372,6 +405,18 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                           </Link>
                         ))}
                       </div>
+
+                      {deliverableSkills.length > 5 ? (
+                        <button
+                          type="button"
+                          className={styles.mobileShowMoreBtn}
+                          onClick={() => setShowAllTargets(!showAllTargets)}
+                        >
+                          {showAllTargets
+                            ? 'Show fewer skills ↑'
+                            : `Show all ${deliverableSkills.length} skills (+${deliverableSkills.length - 5}) ↓`}
+                        </button>
+                      ) : null}
                     </div>
                   </div>
                 ) : null}

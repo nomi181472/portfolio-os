@@ -33,6 +33,11 @@
   letter-spacing: 0.04em;
 }
 
+.metaTextMobile,
+.toggleMobile {
+  display: none;
+}
+
 .pulseDot {
   width: 6px;
   height: 6px;
@@ -179,21 +184,45 @@
 }
 
 @media (max-width: 768px) {
+  .metaTextDesktop {
+    display: none;
+  }
+
+  .metaTextMobile {
+    display: inline;
+  }
+
+  .toggleDesktop {
+    display: none;
+  }
+
+  .toggleMobile {
+    display: inline;
+  }
+
   .header {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 8px 12px;
   }
 
   .metaInfo {
-    font-size: 10.5px;
+    font-size: 10px;
     letter-spacing: 0.02em;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     flex: 1 1 auto;
   }
 
   .toggleButton {
-    font-size: 10.5px;
-    padding: 4px 8px;
+    font-size: 10px;
+    padding: 3px 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .mobileViewWrapper {
@@ -230,13 +259,14 @@
     cursor: pointer;
     transition: all var(--duration-fast) var(--ease-snappy);
     text-align: center;
+    touch-action: manipulation;
   }
 
   .mobileSegmentBtnActive {
     background: var(--surface-raised);
-    border-color: var(--line-strong);
+    border-color: var(--rule-strong);
     color: var(--ink-bright);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
 
   /* Horizontal Scrollable Touch Chips */
@@ -244,9 +274,12 @@
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding: 2px 2px 8px 2px;
+    padding: 2px 4px 6px 2px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 24px), transparent 100%);
   }
 
   .mobileChipScroll::-webkit-scrollbar {
@@ -367,17 +400,18 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 5px 9px;
-    min-height: 32px;
+    padding: 6px 11px;
+    min-height: 36px;
     background: var(--fill);
     border: 1px solid var(--rule-strong);
     border-radius: 6px;
     font-family: var(--font-data);
-    font-size: 10.5px;
+    font-size: 11px;
     color: var(--ink);
     text-decoration: none;
     transition: all var(--duration-fast);
     flex-shrink: 0;
+    touch-action: manipulation;
   }
 
   .mobileActiveLink:active {
@@ -424,13 +458,14 @@
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    padding: 10px 12px;
+    padding: 8px 10px;
     min-height: 44px;
     background: var(--surface-raised);
     border: 1px solid var(--rule);
     border-radius: 8px;
     text-decoration: none;
     transition: all var(--duration-fast) var(--ease-snappy);
+    touch-action: manipulation;
   }
 
   .mobileTargetItem:active {
@@ -466,9 +501,9 @@
   }
 
   .mobileTargetBadgeProject {
-    background: transparent;
-    border: 1px solid var(--line-strong);
-    color: var(--ink-bright);
+    background: var(--fill);
+    border: 1px solid var(--rule-strong);
+    color: var(--ink-quiet);
   }
 
   .mobileTargetBadgeSkill {
@@ -479,11 +514,15 @@
 
   .mobileTargetName {
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: 12.5px;
+    line-height: 1.35;
     color: var(--ink-bright);
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-word;
   }
 
   .mobileTargetArrow {
@@ -497,5 +536,30 @@
   .mobileTargetItem:active .mobileTargetArrow {
     transform: translateX(3px);
     color: var(--ink-bright);
+  }
+
+  .mobileShowMoreBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    min-height: 38px;
+    background: var(--fill-faint);
+    border: 1px dashed var(--rule-strong);
+    border-radius: 8px;
+    font-family: var(--font-data);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-quiet);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-snappy);
+    margin-top: 4px;
+    touch-action: manipulation;
+  }
+
+  .mobileShowMoreBtn:active {
+    background: var(--fill);
+    color: var(--ink-bright);
+    border-style: solid;
   }
 }
