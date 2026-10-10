@@ -1,0 +1,471 @@
+/**
+ * app/direct/page.module.css
+ *
+ * Theme-token styles for the Mobile / Host Direct Portal.
+ * Supports multi-visitor chatroom switching and room isolation.
+ */
+
+.wrapper {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-snug);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-snug);
+}
+
+.loginCard {
+  max-width: 520px;
+  margin: 40px auto;
+  background: var(--surface-float);
+  border: 1px solid var(--rule-strong);
+  border-radius: 12px;
+  padding: var(--space);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--ink-secondary, #9ca3af);
+  margin: 0 0 var(--space-tight) 0;
+  line-height: 1.4;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-secondary, #9ca3af);
+}
+
+.input {
+  appearance: none;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 10px 14px;
+  font: inherit;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  outline: none;
+}
+
+.input:focus {
+  border-color: var(--signal, #2563eb);
+}
+
+.checkboxRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--ink);
+  margin: 4px 0;
+}
+
+.buttonPrimary {
+  appearance: none;
+  background: var(--fill, #2563eb);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.buttonPrimary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  appearance: none;
+  background: transparent;
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.buttonSecondary:hover {
+  background: var(--fill, rgba(255, 255, 255, 0.08));
+}
+
+.headerBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-float);
+  font-size: 0.875rem;
+}
+
+.statusIndicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dotLive {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  display: inline-block;
+}
+
+/* Dashboard Grid: Responsive 2-column on tablet/desktop, drilldown on mobile */
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: var(--space-tight);
+  min-height: calc(100vh - 130px);
+}
+
+@media (min-width: 1024px) {
+  .dashboardGrid {
+    grid-template-columns: 320px 1fr;
+    gap: var(--space);
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    padding: 8px;
+    gap: 8px;
+    min-height: 100dvh;
+  }
+
+  .headerBar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .dashboardGrid {
+    grid-template-columns: 1fr;
+    min-height: calc(100dvh - 120px);
+    height: calc(100dvh - 120px);
+  }
+
+  .showRoomsMobile .chatArea {
+    display: none !important;
+  }
+
+  .showRoomsMobile .roomsSidebar {
+    display: flex !important;
+    width: 100%;
+    height: 100%;
+  }
+
+  .showChatMobile .roomsSidebar {
+    display: none !important;
+  }
+
+  .showChatMobile .chatArea {
+    display: flex !important;
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* Sidebar: Visitor Rooms */
+.roomsSidebar {
+  background: var(--surface-float);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebarHead {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-secondary, #9ca3af);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.roomsList {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyRooms {
+  margin: auto;
+  padding: var(--space);
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--ink-secondary, #9ca3af);
+}
+
+.roomCard {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--rule-subtle, rgba(255, 255, 255, 0.06));
+  padding: 12px 16px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  color: inherit;
+  font: inherit;
+}
+
+.roomCard:hover {
+  background: color-mix(in oklch, var(--surface-float) 90%, var(--primary) 10%);
+}
+
+.roomCardActive {
+  background: color-mix(in oklch, var(--surface-float) 80%, var(--primary) 20%);
+  border-left: 3px solid var(--signal, #2563eb);
+}
+
+.roomCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.roomLabel {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.roomTime {
+  font-size: 0.75rem;
+  color: var(--ink-secondary, #9ca3af);
+}
+
+.roomCardSnippet {
+  font-size: 0.8125rem;
+  color: var(--ink-secondary, #9ca3af);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 250px;
+}
+
+.roomCardBadge {
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.p2pBadge {
+  color: #10b981;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Chat Main Area */
+.chatArea {
+  background: var(--surface-float);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chatAreaHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--rule);
+  background: color-mix(in oklch, var(--surface-float) 90%, var(--primary) 10%);
+}
+
+.chatHeadInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.mobileBackBtn {
+  display: none;
+  appearance: none;
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control, 6px);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  cursor: pointer;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.mobileBackBtn:hover {
+  background: var(--surface-hover);
+  border-color: var(--signal, #38bdf8);
+}
+
+.chatAreaTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.messagesLog {
+  flex: 1;
+  padding: var(--space);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+}
+
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  max-width: 82%;
+}
+
+.rowVisitor {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.rowHost {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.bubble {
+  padding: 8px 14px;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.bubbleVisitor {
+  background: color-mix(in oklch, var(--surface-float) 50%, var(--primary) 50%);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-bottom-left-radius: 2px;
+}
+
+.bubbleHost {
+  background: var(--signal, #2563eb);
+  color: #ffffff;
+  border-bottom-right-radius: 2px;
+}
+
+.audioBubble {
+  padding: 6px 8px;
+}
+
+.messageMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 0.6875rem;
+  color: var(--ink-secondary, #9ca3af);
+}
+
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  padding: var(--space-snug);
+  border-top: 1px solid var(--rule);
+  background: var(--surface-float);
+}
+
+@media (max-width: 768px) {
+  .mobileBackBtn {
+    display: inline-flex;
+  }
+
+  .chatAreaHead {
+    padding: 10px 12px;
+  }
+
+  .chatAreaTitle {
+    font-size: 0.9375rem;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .messageRow {
+    max-width: 90%;
+  }
+
+  .input {
+    font-size: 16px; /* prevent iOS auto-zoom */
+  }
+
+  .roomCard {
+    padding: 14px 16px;
+    min-height: 56px;
+  }
+}

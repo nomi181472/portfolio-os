@@ -29,6 +29,7 @@ const COMMANDS: Command[] = [
   { label: 'Go to Trajectory', hint: 'Where the work is heading', run: (r) => r.push('/future') },
   { label: 'Explore by question', hint: 'Start from what you want to know', run: (r) => r.push('/explore') },
   { label: 'Edit this portfolio', hint: 'Local draft editing, export to JSON', run: (r) => r.push('/edit') },
+  { label: 'Open Host Mode (/direct)', hint: 'Direct peer-to-peer host receiver console', run: (r) => r.push('/direct') },
 ];
 
 export function CommandMenu({ open, onClose }: { open: boolean; onClose: () => void }) {

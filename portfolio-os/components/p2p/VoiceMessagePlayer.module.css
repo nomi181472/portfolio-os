@@ -1,0 +1,112 @@
+.playerContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 4px 2px;
+  user-select: none;
+}
+
+.playButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ink, #ffffff);
+  color: var(--canvas, #000000);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.playButton:hover {
+  transform: scale(1.06);
+  background: #38bdf8;
+  color: #000000;
+}
+
+.playButton:active {
+  transform: scale(0.96);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.scrubberArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 6px;
+}
+
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 2.5px;
+  height: 24px;
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.bar {
+  flex: 1;
+  min-width: 2px;
+  max-width: 4px;
+  border-radius: 2px;
+  transition: background-color 0.1s ease;
+}
+
+.barFilled {
+  background-color: #38bdf8;
+}
+
+.barUnfilled {
+  background-color: var(--border-color, rgba(255, 255, 255, 0.2));
+}
+
+:global([data-theme="light"]) .barFilled {
+  background-color: #0284c7;
+}
+
+:global([data-theme="light"]) .barUnfilled {
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1;
+}
+
+.timeText {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: var(--ink-secondary, #9ca3af);
+  letter-spacing: 0.5px;
+}
+
+.speedBtn {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--ink-secondary, #9ca3af);
+  background: var(--surface-hover, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+  padding: 1px 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.speedBtn:hover {
+  color: var(--ink, #ffffff);
+  background: var(--surface-active, rgba(255, 255, 255, 0.15));
+}

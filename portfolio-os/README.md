@@ -24,12 +24,15 @@
 
 ## 🧭 Overview & Target Highlights
 
-Most developer portfolio templates are simple single-page landing sites. **Portfolio OS** is an engineering artifact: a connected **knowledge graph** that models real-world engineering depth across **16 structured collections** — with bidirectional linking, an in-browser zero-dependency visual editor, full-text fuzzy command palette search (`⌘/Ctrl + K`), and privacy-first analytics.
+Most developer portfolio templates are simple single-page landing sites. **Portfolio OS** is an engineering artifact: a connected **knowledge graph** that models real-world engineering depth across **16 structured collections** — with bidirectional linking, an in-browser zero-dependency visual editor, full-text fuzzy command palette search (`⌘/Ctrl + K`), privacy-first analytics, and serverless **peer-to-peer (P2P) direct messaging**.
+
+> [!NOTE]
+> **Universal Open-Source Framework**: Portfolio OS is designed for **any software engineer, solutions architect, or technical researcher**. The profile, projects, and metrics currently bundled inside `content/portfolio.json` serve as a complete **production-grade sample portfolio demonstration**. Simply fork the repo, replace `content/portfolio.json` with your data (or edit via `/edit`), run `npm run index`, and deploy your own personalized OS!
 
 - **Author / Architect:** [Noman Ali](https://www.nomanali.online/) (Software Engineer & Solutions Architect)
 - **Primary Live Deployment:** [https://www.nomanali.online](https://www.nomanali.online)
 - **Repository:** [https://github.com/nomi181472/portfolio-os](https://github.com/nomi181472/portfolio-os)
-- **Tech Stack:** Next.js 15 (App Router, Server Components), TypeScript, OKLCH Two-Color Token Engine, Zod, KaTeX, Schema.org JSON-LD.
+- **Tech Stack:** Next.js 15 (App Router, Server Components), TypeScript, WebRTC DataChannels, SQLite (FTS5), OKLCH Design Tokens, Zod, KaTeX, Schema.org JSON-LD.
 
 ---
 
@@ -39,6 +42,10 @@ Most developer portfolio templates are simple single-page landing sites. **Portf
 |---|---|---|
 | 🗂️ **16 Structured Collections** | Products, projects, research, publications, skills, experience, awards, certifications, education, leadership, and startup ventures | Individual crawlable canonical URLs for every single project, publication, and skill |
 | 🔗 **Bidirectional Knowledge Graph** | Cross-linked entities: skills link to products, products link to research. An interactive SVG schematic renders connections visually | Deep internal link architecture boosts Google search indexing and contextual entity ranking |
+| 📡 **P2P Direct Communication** | Browser-to-browser WebRTC `RTCDataChannel` chat connecting visitors directly to the host without third-party messaging servers | Real-time private communication with zero recurring SaaS server costs |
+| 🎙️ **Voice Notes & Waveforms** | Touch/click hold-to-record voice audio messaging with hands-free lock, discard gesture, and waveform playback (1x / 1.5x / 2x speed) | Interactive, high-fidelity audio engagement across mobile, tablet, and desktop |
+| ✓✓ **Delivery & Read Receipts** | WhatsApp-style live receipt ticks: Single tick (✓ sent), double tick (✓✓ delivered), blue double tick (✓✓ read) | Full state transparency across isolated visitor chatrooms |
+| 🔑 **Responsive Host Console** | Dedicated `/direct` dashboard supporting N concurrent visitor rooms with mobile drill-down navigation and tablet split-views | Dynamic SQLite authentication with zero hardcoded credentials |
 | ✏️ **Built-in Visual Editor** | Browser-based GUI with live preview, undo/redo history, JSON diff, and export (`⌘/Ctrl + E`) | Zero CMS or database required — pure static content agility |
 | 🔍 **Full-Text Command Menu** | Instant `⌘/Ctrl + K` fuzzy search over all entities, summaries, and technical tags | Instant client navigation without heavy page overhead |
 | 📊 **Zero-Cookie Analytics** | Self-hosted, privacy-first analytics dashboard with HyperLogLog unique visitors, scroll depth, and geographic breakdowns | Zero external tracking scripts — 100/100 Google Lighthouse performance score |
@@ -117,6 +124,38 @@ npx vercel
 
 ---
 
+## 📡 Peer-to-Peer (P2P) Direct Communication & Voice Messaging
+
+Portfolio OS includes a native **serverless peer-to-peer (P2P) direct communication system** connecting prospective clients, recruiters, and collaborators directly with the portfolio owner:
+
+### 1. Browser-to-Browser WebRTC DataChannels
+- **Zero Third-Party Chat SaaS**: Messages travel directly browser-to-browser via WebRTC `RTCDataChannel`.
+- **Fast Fallback Relay**: The lightweight `/api/p2p/signal` mailbox handles initial SDP/ICE negotiation and acts as a fast relay fallback during handshakes so no message is ever lost or delayed.
+
+### 2. 1-to-N Visitor Isolation & Multi-Room Host Console (`/direct`)
+- **Private Visitor Chatrooms**: Visitors enter their name upon launching direct chat, opening a private, isolated chatroom.
+- **Dedicated Host Dashboard (`/direct`)**: The owner logs in using their email and private passphrase (authenticated via cryptographic HMAC proof).
+- **Isolated Routing**: When the host replies, the message is routed **strictly and exclusively to that specific visitor's session**.
+- **Mobile & Tablet Responsive**:
+  - **Phones (< 768px)**: Master-detail drill-down navigation (Rooms list ➔ Fullscreen chat with back button).
+  - **Tablets & Desktop (≥ 768px)**: Split-pane sidebar with real-time visitor switcher and active room canvas.
+
+### 3. Voice Notes & Waveform Audio Scrubber
+- **Click & Hold to Record**: Touch/click and hold to record audio; release to automatically send.
+- **Hands-Free Lock & Discard**: Slide up or tap lock to record hands-free; slide left or tap discard to abort without sending.
+- **Waveform Player**: WhatsApp-style waveform scrubber with live play/pause, elapsed time, and 1x / 1.5x / 2x speed controls.
+
+### 4. Real-time Delivery & Read Receipts
+- **Single Tick (✓ `sent`)**: Message sent from the browser.
+- **Double Tick (✓✓ `delivered`)**: Message delivered to the recipient's active session.
+- **Blue Double Tick (✓✓ `read`)**: Recipient has the chatroom open and focused.
+
+### 5. Data-Driven & Zero Hardcoded Data
+- Channel ID and host metadata are dynamically derived at runtime from **SQLite** (`portfolio.db` via `getEntity('profile')`).
+- To become host, simply visit `/direct` on any desktop, tablet, or smartphone.
+
+---
+
 ## 🏗️ Architecture & Directory Layout
 
 ```text
@@ -129,6 +168,8 @@ portfolio-os/
 │   ├── page.tsx                # Surface / Depth 0 home view & schematic map
 │   ├── [category]/             # Category indices (/products, /research, /skills, etc.)
 │   ├── [category]/[slug]/      # Pre-rendered entity detail views
+│   ├── direct/                 # P2P Multi-visitor Host Dashboard
+│   ├── api/p2p/                # WebRTC signal exchange & SQLite channel discovery
 │   ├── sitemap.ts              # Automated XML sitemap generation with dynamic lastmod
 │   ├── robots.ts               # Automated robots.txt rules
 │   ├── manifest.ts             # Web App Manifest & PWA specifications
@@ -136,7 +177,10 @@ portfolio-os/
 │   ├── analytics/              # Self-hosted private analytics dashboard
 │   └── opengraph-image.tsx     # Dynamic server-side Open Graph social preview cards
 ├── components/                 # Reusable UI & layout modules
-├── lib/                        # Schema validation, graph traversal, and SEO engines
+│   ├── p2p/                    # DirectChatPanel, VoiceRecorder, VoiceMessagePlayer
+│   └── agent/                  # AI Assistant with embedded P2P mode
+├── lib/                        # Schema validation, graph traversal, SEO & P2P engines
+│   └── p2p/                    # WebRTC PeerClient, HostMultiPeerManager, crypto
 └── styles/
     ├── tokens.css              # Mathematical OKLCH design system
     └── globals.css             # Performance-tuned layout styling

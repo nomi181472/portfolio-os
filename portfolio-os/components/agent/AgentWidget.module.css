@@ -1286,3 +1286,64 @@
   background: var(--ink-bright);
   color: var(--surface-raised);
 }
+
+.modeTabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-tight);
+  padding: 0 var(--space-snug);
+  border-bottom: 1px solid var(--rule-subtle);
+  background: color-mix(in oklch, var(--surface-float) 90%, var(--primary) 10%);
+}
+
+.tabButtonsGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-hair);
+}
+
+.hostTabLink {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--ink-secondary, #9ca3af);
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1));
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.hostTabLink:hover {
+  color: #38bdf8;
+  border-color: #38bdf8;
+  background: var(--fill-faint, rgba(255, 255, 255, 0.05));
+}
+
+.modeTab {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--ink-secondary, #9ca3af);
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.modeTab:hover {
+  color: var(--ink);
+}
+
+.modeTabActive {
+  color: var(--ink-bright, var(--ink));
+  border-bottom-color: var(--signal, #2563eb);
+  font-weight: 600;
+}
+

@@ -23,6 +23,7 @@ function itemsFor(ids: string[], startupName?: string): RailItem[] {
   return ids.flatMap((id) => {
     if (id === 'copy') return [{ href: '/copy', label: 'Copy this OS', mark: 'copy' as MarkName }];
     if (id === 'future') return [{ href: '/future', label: 'Trajectory', mark: 'trajectory' as MarkName }];
+    if (id === 'direct') return [{ href: '/direct', label: 'Host Mode (/direct)', mark: 'channel' as MarkName }];
     if (id === 'startup') {
       if (!startupName) return [];
       return [{ href: '/startup', label: startupName, mark: 'incubator' as MarkName }];
@@ -75,7 +76,7 @@ export function Rail({
 
   const primary = itemsFor(portfolioConfig.navigation.primary, startupName);
   const secondary = itemsFor(
-    [...portfolioConfig.navigation.secondary, 'startup', 'future', 'copy'].filter(
+    [...portfolioConfig.navigation.secondary, 'startup', 'future', 'copy', 'direct'].filter(
       (id) => !portfolioConfig.navigation.primary.includes(id),
     ),
     startupName,
@@ -110,7 +111,7 @@ export function Rail({
         <span className={styles.itemLabel}>{profile.name}</span>
       </Link>
 
-      <button type="button" className={styles.item} onClick={onOpenSearch} aria-keyshortcuts="Meta+K Control+K">
+      <button type="button" className={styles.item} onClick={onOpenSearch} aria-keyshortcuts="Meta+K Control+K" title="Find anything (Ctrl+K)">
         <span className={styles.itemMark} aria-hidden="true">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25">
             <circle cx="10.5" cy="10.5" r="6" />
@@ -123,7 +124,13 @@ export function Rail({
       <ul className={styles.group}>
         {primary.map((item) => (
           <li key={item.href}>
-            <Link href={item.href} className={styles.item} data-current={isCurrent(item.href)} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+            <Link
+              href={item.href}
+              className={styles.item}
+              data-current={isCurrent(item.href)}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              title={item.label}
+            >
               <span className={styles.itemMark}><MetaphorMark name={item.mark} /></span>
               <span className={styles.itemLabel}>{item.label}</span>
             </Link>
@@ -134,7 +141,13 @@ export function Rail({
       <ul className={styles.group} data-tier="secondary">
         {secondary.map((item) => (
           <li key={item.href}>
-            <Link href={item.href} className={styles.item} data-current={isCurrent(item.href)} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+            <Link
+              href={item.href}
+              className={styles.item}
+              data-current={isCurrent(item.href)}
+              aria-current={isCurrent(item.href) ? 'page' : undefined}
+              title={item.label}
+            >
               <span className={styles.itemMark}><MetaphorMark name={item.mark} /></span>
               <span className={styles.itemLabel}>{item.label}</span>
             </Link>

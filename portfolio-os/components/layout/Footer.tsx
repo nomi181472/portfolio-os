@@ -58,6 +58,9 @@ export function Footer({ profile, source }: { profile: Profile; source: DataSour
               <Link href="/analytics" className="link" style={{ borderBottom: 0 }}>Analytics</Link>
             </p>
           ) : null}
+          <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>
+            <Link href="/direct" className="link" style={{ borderBottom: 0 }}>Host Mode (/direct)</Link>
+          </p>
           <p className="meta" style={{ marginTop: 'var(--space-hair)' }}>{profile.discipline ? `${profile.name} — ${profile.discipline}` : profile.name}</p>
         </div>
       </div>

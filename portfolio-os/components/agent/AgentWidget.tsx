@@ -70,6 +70,8 @@ import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } 
 import { getGreetingMessage } from '@/components/agent/parts/greetings';
 import { checkAllModelCachesHelper } from '@/components/agent/parts/modelHelpers';
 import { streamTurnAnswer } from '@/components/agent/parts/streaming';
+import { DirectChatPanel } from '@/components/p2p/DirectChatPanel';
+
 
 export type ModelChoiceId = ModelRole | 'none';
 
@@ -131,7 +133,7 @@ import {
   type EmbedderState,
   type FeatureExtractionPipeline,
 } from '@/lib/agent/models/embeddings';
-import { getVectorPersistenceRepository } from '@/lib/repositories';
+import { getVectorPersistenceRepository } from '@/lib/repositories/container';
 import type { KnowledgePayload, PortfolioKnowledge } from '@/lib/agent/types';
 import styles from './AgentWidget.module.css';
 
@@ -254,6 +256,7 @@ interface AgentWidgetProps {
 }
 
 export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
+  const [activeMode, setActiveMode] = useState<'assistant' | 'direct'>('assistant');
   const [state, setState] = useState<EngineState>({ status: 'idle' });
   const [draft, setDraft] = useState('');
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -1333,6 +1336,40 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             </div>
           </header>
 
+          <div className={styles.modeTabs}>
+            <div className={styles.tabButtonsGroup}>
+              <button
+                type="button"
+                className={`${styles.modeTab} ${activeMode === 'assistant' ? styles.modeTabActive : ''}`}
+                onClick={() => setActiveMode('assistant')}
+              >
+                🤖 AI Assistant
+              </button>
+              <button
+                type="button"
+                className={`${styles.modeTab} ${activeMode === 'direct' ? styles.modeTabActive : ''}`}
+                onClick={() => setActiveMode('direct')}
+              >
+                🟢 Direct (P2P)
+              </button>
+            </div>
+            <Link
+              href="/direct"
+              className={styles.hostTabLink}
+              title="Are you the portfolio owner? Open Host Mode (/direct)"
+              target="_blank"
+            >
+              🔑 Host (/direct)
+            </Link>
+          </div>
+
+          {activeMode === 'direct' ? (
+            <DirectChatPanel
+              onSwitchToAssistant={() => setActiveMode('assistant')}
+              ownerName={knowledgeRef.current?.profile.name}
+            />
+          ) : (
+            <>
           {webgpuFallbackNotice ? (
             <div className={styles.fallbackWarning}>
               <span className={styles.fallbackWarningText}>⚡ {webgpuFallbackNotice}</span>
@@ -1812,6 +1849,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               </div>
             );
           })()}
+            </>
+          )}
         </section>
       ) : null}
     </div>

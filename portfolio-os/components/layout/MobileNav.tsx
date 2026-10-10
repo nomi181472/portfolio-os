@@ -56,6 +56,7 @@ export function MobileNav({ onOpenSearch, profile, startupName, appearance = 'sy
 
   const toolSections = [
     { href: '/explore', label: 'Browse by question', desc: 'Start from what you want to know', mark: 'network' as MarkName },
+    { href: '/direct', label: 'Host Mode (/direct)', desc: 'Direct P2P host receiver console', mark: 'channel' as MarkName },
     { href: '/edit', label: 'Edit this portfolio', desc: 'Draft in your browser, then export', mark: 'instrument' as MarkName },
     { href: '/copy', label: 'Copy this site', desc: 'Fork it and make it your own', mark: 'copy' as MarkName },
     { href: '/colophon', label: 'Colophon', desc: 'How this site is built', mark: 'seal' as MarkName },

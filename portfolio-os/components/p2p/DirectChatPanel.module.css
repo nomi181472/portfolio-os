@@ -1,0 +1,375 @@
+/**
+ * components/p2p/DirectChatPanel.module.css
+ *
+ * Theme-token-compliant styles for the WebRTC Direct P2P Chat surface.
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 380px;
+  background: var(--surface-float);
+  color: var(--ink);
+}
+
+.presenceBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-tight) var(--space-snug);
+  border-bottom: 1px solid var(--rule-subtle);
+  background: color-mix(in oklch, var(--surface-float) 80%, var(--primary) 20%);
+  font-size: 0.8125rem;
+}
+
+.presenceStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-tight);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.dotOnline {
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.dotAway {
+  background: #f59e0b;
+}
+
+.dotOffline {
+  background: #6b7280;
+}
+
+.dotConnecting {
+  background: #3b82f6;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+.pingButton {
+  appearance: none;
+  border: 1px solid var(--rule-strong);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.pingButton:hover:not(:disabled) {
+  background: var(--signal-faint, rgba(255, 255, 255, 0.08));
+}
+
+.pingButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.securityBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px var(--space-snug);
+  font-size: 0.75rem;
+  color: var(--ink-secondary, #9ca3af);
+  border-bottom: 1px solid var(--rule-subtle);
+  background: color-mix(in oklch, var(--surface-float) 95%, black 5%);
+}
+
+.lockIcon {
+  width: 12px;
+  height: 12px;
+  color: #10b981;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-snug);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+}
+
+.emptyState {
+  margin: auto;
+  text-align: center;
+  padding: var(--space);
+  color: var(--ink-secondary, #9ca3af);
+  font-size: 0.875rem;
+  max-width: 300px;
+}
+
+.emptyStateTitle {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--ink);
+}
+
+.messageRow {
+  display: flex;
+  flex-direction: column;
+  max-width: 82%;
+}
+
+.messageVisitor {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.messageHost {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.messageBubble {
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.bubbleVisitor {
+  background: color-mix(in oklch, var(--signal, #2563eb) 85%, black 15%);
+  color: #ffffff;
+  border-bottom-right-radius: 2px;
+}
+
+.bubbleHost {
+  background: color-mix(in oklch, var(--surface-float) 60%, var(--primary) 40%);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-bottom-left-radius: 2px;
+}
+
+.audioBubble {
+  padding: 6px 8px;
+}
+
+.messageMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 0.6875rem;
+  color: var(--ink-secondary, #9ca3af);
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.inputBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  padding: var(--space-snug);
+  border-top: 1px solid var(--rule);
+  background: var(--surface-float);
+}
+
+.textInput {
+  flex: 1;
+  appearance: none;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: var(--space-tight) var(--space-snug);
+  font: inherit;
+  font-size: 0.875rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.textInput::placeholder {
+  color: var(--ink-faint, #9ca3af);
+}
+
+.textInput:focus {
+  border-color: var(--signal, #2563eb);
+}
+
+.sendButton {
+  appearance: none;
+  background: var(--fill, color-mix(in oklch, var(--surface-float) 80%, var(--primary) 20%));
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+  padding: var(--space-tight) var(--space);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sendButton:hover:not(:disabled) {
+  background: var(--ink);
+  color: var(--surface);
+}
+
+.sendButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Visitor Name Introduction View */
+.introCard {
+  margin: auto;
+  max-width: 320px;
+  width: 100%;
+  padding: var(--space);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+  text-align: center;
+}
+
+.introIcon {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.introTitle {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+}
+
+.introSubtitle {
+  font-size: 0.8125rem;
+  color: var(--ink-secondary, #9ca3af);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.introForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-tight);
+  margin-top: 8px;
+}
+
+.nameBadge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px var(--space-snug);
+  background: color-mix(in oklch, var(--surface-float) 92%, var(--primary) 8%);
+  border-bottom: 1px solid var(--rule-subtle);
+  font-size: 0.75rem;
+  color: var(--ink-secondary, #9ca3af);
+}
+
+.changeNameBtn {
+  appearance: none;
+  background: transparent;
+  border: none;
+  color: var(--signal, #2563eb);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6875rem;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.presenceActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.hostLink {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #38bdf8;
+  background: var(--surface-hover, rgba(255, 255, 255, 0.06));
+  border: 1px solid var(--rule, rgba(255, 255, 255, 0.15));
+  border-radius: 999px;
+  padding: 2px 8px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.hostLink:hover {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.hostIntroNote {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--rule, rgba(255, 255, 255, 0.15));
+  font-size: 0.75rem;
+  color: var(--ink-secondary, #9ca3af);
+  text-align: center;
+}
+
+.hostIntroLink {
+  color: #38bdf8;
+  font-weight: 600;
+  text-decoration: none;
+  margin-left: 4px;
+}
+
+.hostIntroLink:hover {
+  text-decoration: underline;
+}
+
+/* Mobile & Tablet Optimizations */
+@media (max-width: 640px) {
+  .presenceBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .presenceActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .textInput {
+    font-size: 16px; /* Prevents auto-zoom on mobile Safari */
+  }
+
+  .messageRow {
+    max-width: 90%;
+  }
+
+  .introCard {
+    padding: var(--space-snug);
+  }
+}
+
+
