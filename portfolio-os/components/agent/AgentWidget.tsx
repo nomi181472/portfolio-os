@@ -775,34 +775,44 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               : 'Direct Search Engine';
 
         let accumulatedProse = '';
+        let pendingFrame: number | null = null;
 
-        // Live token streaming strictly for local LLM models
+        const updateTurnWithProse = (prose: string) => {
+          setTurns((current) =>
+            current.map((turn) =>
+              turn.id === id
+                ? {
+                    ...turn,
+                    modelName: answeringModelName,
+                    answer: turn.answer
+                      ? { ...turn.answer, text: prose }
+                      : {
+                          question: trimmed,
+                          intent: 'general',
+                          routing: { intent: 'general', confidence: 1, signals: [], uncertain: false },
+                          normalised: normaliseQuestion(trimmed, state.engine.aliases),
+                          text: prose,
+                          cards: [],
+                          navigation: [],
+                          empty: false,
+                          caveats: [],
+                        },
+                  }
+                : turn,
+            ),
+          );
+        };
+
+        // Live token streaming strictly for local LLM models with rAF batching
         const handleToken = isLocalLLM
           ? (token: string) => {
               accumulatedProse += token;
-              setTurns((current) =>
-                current.map((turn) =>
-                  turn.id === id
-                    ? {
-                        ...turn,
-                        modelName: answeringModelName,
-                        answer: turn.answer
-                          ? { ...turn.answer, text: accumulatedProse }
-                          : {
-                              question: trimmed,
-                              intent: 'general',
-                              routing: { intent: 'general', confidence: 1, signals: [], uncertain: false },
-                              normalised: normaliseQuestion(trimmed, state.engine.aliases),
-                              text: accumulatedProse,
-                              cards: [],
-                              navigation: [],
-                              empty: false,
-                              caveats: [],
-                            },
-                      }
-                    : turn,
-                ),
-              );
+              if (pendingFrame === null) {
+                pendingFrame = requestAnimationFrame(() => {
+                  pendingFrame = null;
+                  updateTurnWithProse(accumulatedProse);
+                });
+              }
             }
           : undefined;
 
@@ -811,6 +821,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           conversation: activeConversation,
           onToken: handleToken,
         });
+
+        if (pendingFrame !== null) {
+          cancelAnimationFrame(pendingFrame);
+          pendingFrame = null;
+        }
 
         // Only the generation half is timed, and only when a model ran.
         setInferenceMs(activeConversation?.lastInferenceMs() ?? null);
