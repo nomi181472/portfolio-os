@@ -68,6 +68,7 @@ export default function DirectHostPage() {
     emailMasked: string;
   } | null>(null);
   const [mismatchError, setMismatchError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const [sessions, setSessions] = useState<VisitorSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -92,7 +93,30 @@ export default function DirectHostPage() {
     if (creds && creds.email && creds.secretKey) {
       setEmail(creds.email);
       setSecretKey(creds.secretKey);
-      void startHostSession(creds.email, creds.secretKey);
+      void (async () => {
+        const cid = await deriveChannelId(creds.email);
+        try {
+          const verifyRes = await fetch('/api/p2p/signal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'verify-host',
+              channelId: cid,
+              email: creds.email,
+              secretKey: creds.secretKey,
+            }),
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok) {
+            void startHostSession(creds.email, creds.secretKey);
+          } else {
+            clearHostCredentials();
+            setMismatchError(verifyData.error || 'Saved credentials are no longer valid. Please log in again.');
+          }
+        } catch {
+          void startHostSession(creds.email, creds.secretKey);
+        }
+      })();
     }
   }, []);
 
@@ -154,38 +178,48 @@ export default function DirectHostPage() {
     const cleanSecret = secretKey.trim();
     if (!cleanEmail || !cleanSecret) return;
 
-    if (expectedChannel?.channelId) {
-      const derived = await deriveChannelId(cleanEmail);
-      if (derived !== expectedChannel.channelId) {
-        setMismatchError(
-          `The entered email does not match the active portfolio email (${expectedChannel.emailMasked}). Visitors are connecting to channel ID ${expectedChannel.channelId.slice(0, 8)}…, so you will not receive their messages unless you use your registered portfolio email.`
-        );
+    setSubmitting(true);
+    try {
+      const cid = expectedChannel?.channelId || (await deriveChannelId(cleanEmail));
+
+      // 1. Verify channel derivation against registered portfolio email
+      if (expectedChannel?.channelId) {
+        const derived = await deriveChannelId(cleanEmail);
+        if (derived !== expectedChannel.channelId) {
+          setMismatchError(
+            `Invalid email: does not match the registered portfolio email (${expectedChannel.emailMasked}).`
+          );
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      // 2. Strictly verify credentials against server environment variables
+      const verifyRes = await fetch('/api/p2p/signal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'verify-host',
+          channelId: cid,
+          email: cleanEmail,
+          secretKey: cleanSecret,
+        }),
+      });
+
+      const verifyData = await verifyRes.json();
+      if (!verifyRes.ok) {
+        setMismatchError(verifyData.error || 'Invalid email or secret key. Please check your credentials.');
+        setSubmitting(false);
         return;
       }
 
-      // Verify host secret key against server if P2P_HOST_SECRET is configured
-      try {
-        const verifyRes = await fetch('/api/p2p/signal', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'verify-host',
-            channelId: expectedChannel.channelId,
-            secretKey: cleanSecret,
-          }),
-        });
-        const verifyData = await verifyRes.json();
-        if (!verifyRes.ok) {
-          setMismatchError(verifyData.error || 'Incorrect secret key or passphrase');
-          return;
-        }
-      } catch {
-        // Network resilience: continue if network check fails
-      }
+      storeHostCredentials(cleanEmail, cleanSecret, remember);
+      await startHostSession(cleanEmail, cleanSecret);
+    } catch {
+      setMismatchError('Failed to verify credentials. Please check your network connection and try again.');
+    } finally {
+      setSubmitting(false);
     }
-
-    storeHostCredentials(cleanEmail, cleanSecret, remember);
-    await startHostSession(cleanEmail, cleanSecret);
   };
 
   const handleLogout = () => {
@@ -330,8 +364,8 @@ export default function DirectHostPage() {
               <span>Remember credentials on this device</span>
             </label>
 
-            <button type="submit" className={styles.buttonPrimary}>
-              Activate Direct Line (Host Mode)
+            <button type="submit" className={styles.buttonPrimary} disabled={submitting}>
+              {submitting ? 'Verifying Credentials…' : 'Activate Direct Line (Host Mode)'}
             </button>
           </form>
 

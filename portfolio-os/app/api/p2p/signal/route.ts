@@ -52,17 +52,27 @@ export async function POST(req: Request) {
 
     pruneExpiredSignals(channelId);
 
-    // 0. Verify host credentials if P2P_HOST_SECRET is configured
+    // 0. Verify host credentials against P2P_HOST_SECRET and P2P_HOST_EMAIL
     if (action === 'verify-host') {
-      const configuredSecret = process.env.P2P_HOST_SECRET;
-      if (!configuredSecret) {
-        return NextResponse.json({ ok: true, protected: false });
+      const configuredSecret = process.env.P2P_HOST_SECRET?.trim();
+      const configuredEmail = process.env.P2P_HOST_EMAIL?.trim();
+      const { email, secretKey } = body;
+
+      // 1. Verify email against P2P_HOST_EMAIL if set
+      if (configuredEmail) {
+        if (!email || typeof email !== 'string' || email.trim().toLowerCase() !== configuredEmail.toLowerCase()) {
+          return NextResponse.json({ error: 'Invalid email address.' }, { status: 401 });
+        }
       }
-      const { secretKey } = body;
-      if (secretKey && typeof secretKey === 'string' && secretKey.trim() === configuredSecret.trim()) {
-        return NextResponse.json({ ok: true, protected: true });
+
+      // 2. Verify secret key against P2P_HOST_SECRET if set
+      if (configuredSecret) {
+        if (!secretKey || typeof secretKey !== 'string' || secretKey.trim() !== configuredSecret) {
+          return NextResponse.json({ error: 'Invalid secret key or passphrase.' }, { status: 401 });
+        }
       }
-      return NextResponse.json({ error: 'Incorrect secret key or passphrase' }, { status: 401 });
+
+      return NextResponse.json({ ok: true, protected: !!configuredSecret });
     }
 
     // 1. Presence check or heartbeat
