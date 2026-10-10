@@ -17,12 +17,23 @@ import type {
   RepositoryHealth,
 } from './types';
 
+function resolveDbPath(): string {
+  const candidates = [
+    resolve(process.cwd(), 'portfolio.db'),
+    resolve(process.cwd(), 'portfolio-os/portfolio.db'),
+  ];
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return candidates[0]!;
+}
+
 export class SqlitePortfolioRepository implements IPortfolioRepository {
   private db: Database.Database | null = null;
   private readonly dbPath: string;
 
   constructor(dbPath?: string) {
-    this.dbPath = dbPath ?? resolve(process.cwd(), 'portfolio.db');
+    this.dbPath = dbPath ?? resolveDbPath();
   }
 
   private open(): Database.Database {

@@ -22,9 +22,18 @@ import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import Database from 'better-sqlite3';
 
-/* ---------------------------------------------------------------- paths */
+function resolveDbPath(): string {
+  const candidates = [
+    resolve(process.cwd(), 'portfolio.db'),
+    resolve(process.cwd(), 'portfolio-os/portfolio.db'),
+  ];
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return candidates[0]!;
+}
 
-const DB_PATH = resolve(process.cwd(), 'portfolio.db');
+const DB_PATH = resolveDbPath();
 
 /* ------------------------------------------------------------ singleton */
 
