@@ -1395,9 +1395,34 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               </p>
             ) : null}
 
-            {turns.map((turn) => (
-              <Turn key={turn.id} turn={turn} cardPlan={cardPlans.get(turn.id)} />
-            ))}
+            {(() => {
+              const knowledge = knowledgeRef.current;
+              const validRoutes = new Set<string>();
+              if (knowledge) {
+                for (const t of knowledge.navigation) {
+                  validRoutes.add(t.href);
+                }
+                for (const rec of knowledge.records) {
+                  if (rec.href) validRoutes.add(rec.href);
+                }
+              }
+              // Common base static routes
+              validRoutes.add('/');
+              validRoutes.add('/explore');
+              validRoutes.add('/startup');
+              validRoutes.add('/future');
+              validRoutes.add('/colophon');
+              validRoutes.add('/copy');
+
+              return turns.map((turn) => (
+                <Turn
+                  key={turn.id}
+                  turn={turn}
+                  cardPlan={cardPlans.get(turn.id)}
+                  validRoutes={validRoutes}
+                />
+              ));
+            })()}
           </div>
 
           {/*
@@ -1786,7 +1811,15 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
  * read from context because a turn is a record of what was asked, and the destinations
  * it offers depend on where the reader is standing now — not on when they asked.
  */
-function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan> }) {
+function Turn({
+  turn,
+  cardPlan,
+  validRoutes,
+}: {
+  turn: Turn;
+  cardPlan?: Map<string, CardPlan>;
+  validRoutes?: Set<string>;
+}) {
   const { answer } = turn;
   const cardsPointHere =
     cardPlan !== undefined &&
@@ -1853,7 +1886,10 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
                   components={{
                     a: ({ href, children, ...props }) => {
                       if (!href) return <span {...props}>{children}</span>;
-                      const isExternal = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('mailto:');
+                      const isExternal =
+                        href.startsWith('http://') ||
+                        href.startsWith('https://') ||
+                        href.startsWith('mailto:');
                       if (isExternal) {
                         return (
                           <a href={href} target="_blank" rel="noopener noreferrer" {...props}>
@@ -1861,6 +1897,15 @@ function Turn({ turn, cardPlan }: { turn: Turn; cardPlan?: Map<string, CardPlan>
                           </a>
                         );
                       }
+
+                      // Check internal route against verified routes
+                      const cleanHref = href.split('#')[0] || '/';
+                      const isValidRoute = !validRoutes || validRoutes.size === 0 || validRoutes.has(cleanHref) || validRoutes.has(href);
+                      if (!isValidRoute) {
+                        // Render as plain text if link is unverified
+                        return <span {...props}>{children}</span>;
+                      }
+
                       return (
                         <Link href={href} {...props}>
                           {children}
