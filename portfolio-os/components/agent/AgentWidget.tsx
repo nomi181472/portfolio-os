@@ -771,7 +771,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           activeConversation && chat.status === 'ready'
             ? AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name || 'Conversational LLM'
             : activeEmbedder && semantic.status === 'ready'
-              ? 'Qwen3 Embedding (0.6B INT8)'
+              ? 'Semantic Search (all-MiniLM-L6-v2)'
               : 'Direct Search Engine';
 
         let accumulatedProse = '';
@@ -849,7 +849,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                     conversationRef.current && chat.status === 'ready'
                       ? 'Conversational LLM (Vector + LLM)'
                       : embedderRef.current && semantic.status === 'ready'
-                        ? 'Qwen3 Embedding (Vector Search)'
+                        ? 'Semantic Search (all-MiniLM-L6-v2)'
                         : 'Direct SQLite/FTS5 Search',
                 }
               : turn,
@@ -1390,7 +1390,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               </p>
             ) : semantic.status === 'ready' ? (
               <p className={styles.brainTimings}>
-                Qwen3 Embedding (Vector Search) · {semantic.chunks} passages indexed
+                Semantic Search (all-MiniLM-L6-v2) · {semantic.chunks} passages indexed
                 {inferenceMs !== null ? ` · last question in ${formatSeconds(inferenceMs)}` : ''}
               </p>
             ) : null}
@@ -1439,7 +1439,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
             {semantic.status === 'ready' ? (
               <p className={styles.brainNote}>
-                🧠 <strong>Qwen3 Vector Search Active:</strong> Searching concepts & meaning across {semantic.chunks} passages in local memory.
+                🧠 <strong>Semantic Search Active (all-MiniLM-L6-v2):</strong> Searching concepts & meaning across {semantic.chunks} passages in local memory.
               </p>
             ) : null}
 
