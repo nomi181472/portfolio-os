@@ -128,31 +128,108 @@ npx vercel
 
 Portfolio OS includes a native **serverless peer-to-peer (P2P) direct communication system** connecting prospective clients, recruiters, and collaborators directly with the portfolio owner:
 
-### 1. Browser-to-Browser WebRTC DataChannels
-- **Zero Third-Party Chat SaaS**: Messages travel directly browser-to-browser via WebRTC `RTCDataChannel`.
-- **Fast Fallback Relay**: The lightweight `/api/p2p/signal` mailbox handles initial SDP/ICE negotiation and acts as a fast relay fallback during handshakes so no message is ever lost or delayed.
+### 1. Zero-Backend Architecture: How It Works Without a Central Server
 
-### 2. 1-to-N Visitor Isolation & Multi-Room Host Console (`/direct`)
-- **Private Visitor Chatrooms**: Visitors enter their name upon launching direct chat, opening a private, isolated chatroom.
-- **Dedicated Host Dashboard (`/direct`)**: The owner logs in using their email and private passphrase (authenticated via cryptographic HMAC proof).
-- **Isolated Routing**: When the host replies, the message is routed **strictly and exclusively to that specific visitor's session**.
-- **Mobile & Tablet Responsive**:
-  - **Phones (< 768px)**: Master-detail drill-down navigation (Rooms list ➔ Fullscreen chat with back button).
-  - **Tablets & Desktop (≥ 768px)**: Split-pane sidebar with real-time visitor switcher and active room canvas.
+Traditional chat applications require costly backend infrastructure: persistent WebSocket servers, Pub/Sub brokers (Redis), and centralized messaging databases (PostgreSQL, Supabase, Firebase).
 
-### 3. Voice Notes & Waveform Audio Scrubber
-- **Click & Hold to Record**: Touch/click and hold to record audio; release to automatically send.
-- **Hands-Free Lock & Discard**: Slide up or tap lock to record hands-free; slide left or tap discard to abort without sending.
-- **Waveform Player**: WhatsApp-style waveform scrubber with live play/pause, elapsed time, and 1x / 1.5x / 2x speed controls.
+Portfolio OS achieves **100% Backendless Communication** using native browser **WebRTC DataChannels (`RTCDataChannel`)**:
 
-### 4. Real-time Delivery & Read Receipts
-- **Single Tick (✓ `sent`)**: Message sent from the browser.
-- **Double Tick (✓✓ `delivered`)**: Message delivered to the recipient's active session.
-- **Blue Double Tick (✓✓ `read`)**: Recipient has the chatroom open and focused.
+1. **Zero Database / Zero Message Storage**: Messages, read receipts, and voice audio are never written to any database or disk. All communication flows in-memory directly between the visitor and host browsers via encrypted DTLS/SCTP tunnels.
+2. **Stateless Ephemeral Signaling Mailbox**: The Next.js API route (`/api/p2p/signal`) functions exclusively as an ephemeral exchange mailbox for WebRTC session negotiation (SDP Offer/Answer and ICE candidates). Payloads live in an in-memory sliding buffer with a 60-second TTL and zero persistence.
+3. **Instant Direct Data Conduit**: The moment WebRTC ICE negotiation succeeds, the server is completely bypassed. All subsequent messages, typing states, and binary voice notes flow directly browser-to-browser.
 
-### 5. Data-Driven & Zero Hardcoded Data
-- Channel ID and host metadata are dynamically derived at runtime from **SQLite** (`portfolio.db` via `getEntity('profile')`).
-- To become host, simply visit `/direct` on any desktop, tablet, or smartphone.
+---
+
+### 2. 1-to-N Host and N-Visitors Architecture Topology
+
+The host dashboard at `/direct` is an event-driven multiplexer (`HostMultiPeerManager`) capable of maintaining simultaneous, isolated WebRTC sessions with **N concurrent visitors** ($V_1, V_2, \dots, V_n$):
+
+```mermaid
+flowchart TD
+    subgraph HostConsole ["Host Dashboard (/direct)"]
+        H["Portfolio Owner Browser"]
+        HMPM["HostMultiPeerManager (1-to-N Hub)"]
+        H --- HMPM
+    end
+
+    subgraph SignalingLayer ["Stateless Ephemeral Signaling (Zero Chat Storage)"]
+        SIG["Next.js Route: /api/p2p/signal - Ephemeral SDP & ICE Relay"]
+    end
+
+    subgraph Visitors ["N Concurrent Visitors (Isolated WebRTC Sessions)"]
+        V1["Visitor 1 (Browser)"]
+        V2["Visitor 2 (Browser)"]
+        VN["Visitor N (Browser)"]
+    end
+
+    %% Signaling phase (initial handshake only)
+    V1 -.->|"1. SDP Offer & ICE"| SIG
+    V2 -.->|"1. SDP Offer & ICE"| SIG
+    VN -.->|"1. SDP Offer & ICE"| SIG
+    SIG -.->|"2. Handshake Exchange"| HMPM
+
+    %% Direct Peer-to-Peer Data Channels
+    HMPM ==="Direct WebRTC RTCDataChannel (Encrypted P2P)"=== V1
+    HMPM ==="Direct WebRTC RTCDataChannel (Encrypted P2P)"=== V2
+    HMPM ==="Direct WebRTC RTCDataChannel (Encrypted P2P)"=== VN
+
+    classDef host fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef visitor fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#f8fafc;
+    classDef signal fill:#312e81,stroke:#818cf8,stroke-width:1px,stroke-dasharray: 5 5,color:#f8fafc;
+    class H,HMPM host;
+    class V1,V2,VN visitor;
+    class SIG signal;
+```
+
+#### Key Multi-Visitor Properties:
+- **Strict Session Isolation**: Every visitor is assigned an ephemeral session identifier (`visitorId`). Host responses are addressed cryptographically and routed strictly to that specific visitor's `RTCDataChannel`.
+- **Zero Cross-Talk**: Visitors cannot see or discover other active visitors; each visitor only ever connects to the host.
+- **Dynamic Multi-Room Switcher**: On `/direct`, the owner sees individual visitor cards with unread badges, live presence indicators, and activity timestamps.
+
+---
+
+### 3. Backendless Signaling Handshake & Direct Data Flow
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor V as Visitor Browser
+    participant S as Ephemeral Mailbox (/api/p2p/signal)
+    actor H as Host Browser (/direct)
+
+    Note over V,H: Phase 1: Ephemeral WebRTC Handshake (No Chat Data)
+    V->>S: POST /api/p2p/signal (action: send-signal, SDP Offer + ICE Candidates)
+    H->>S: POST /api/p2p/signal (action: poll-signals, Retrieve Visitor Offer)
+    H->>S: POST /api/p2p/signal (action: send-signal, SDP Answer + Host ICE)
+    V->>S: POST /api/p2p/signal (action: poll-signals, Retrieve Host Answer)
+
+    Note over V,H: Phase 2: Direct Peer-to-Peer Conduit Established
+    Note over S: Server Signal Mailbox Completely Bypassed! Zero Server Bandwidth.
+
+    rect rgb(30, 41, 59)
+    Note over V,H: Phase 3: 100% Direct P2P DataChannel Communication
+    V->>H: Direct P2P: Text Message (instant single tick ✓)
+    H-->>V: Direct P2P: Delivery Receipt (double tick ✓✓ delivered)
+    H->>V: Direct P2P: Host Response
+    V-->>H: Direct P2P: Read Receipt (blue double tick ✓✓ read)
+    V->>H: Direct P2P: Opus Voice Note Audio Stream
+    end
+```
+
+---
+
+### 4. Interactive Voice Notes & Real-time Receipts
+- **Touch / Click Hold-to-Record**: Press and hold to record voice messages; slide up or tap lock for hands-free recording; slide left or tap discard to abort.
+- **Waveform Audio Scrubber**: Interactive audio waveform player with scrub bar, elapsed timer, and 1x / 1.5x / 2x speed toggles.
+- **Live Receipts**: Full state visibility across browsers:
+  - Single tick (✓ `sent`): Transmitted by the client browser.
+  - Double tick (✓✓ `delivered`): Received by the counterparty's browser.
+  - Blue double tick (✓✓ `read`): Counterparty has focused and viewed the chatroom.
+
+### 5. Dynamic Data-Driven Configuration (Zero Hardcoding)
+- **Channel ID Derivation**: The deterministic channel ID is dynamically derived from SQLite (`portfolio.db` -> `getEntity('profile')` email) or `content/portfolio.json` using SHA-256 (`deriveChannelId`).
+- **Owner Authentication**: Protected by owner secret passphrase HMAC signature verification (`generateHostProof`).
+- **Access Anywhere**: Open `/direct` on any mobile phone, tablet, or desktop to monitor presence and chat live.
 
 ---
 
