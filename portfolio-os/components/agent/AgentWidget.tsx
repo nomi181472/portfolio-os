@@ -71,6 +71,8 @@ import { getGreetingMessage } from '@/components/agent/parts/greetings';
 import { checkAllModelCachesHelper } from '@/components/agent/parts/modelHelpers';
 import { streamTurnAnswer } from '@/components/agent/parts/streaming';
 import { DirectChatPanel } from '@/components/p2p/DirectChatPanel';
+import { BotIcon } from '@/components/agent/parts/BotIcon';
+import { useAppearance } from '@/components/theme/AppearanceProvider';
 
 
 export type ModelChoiceId = ModelRole | 'none';
@@ -256,6 +258,7 @@ interface AgentWidgetProps {
 }
 
 export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
+  const { appearance } = useAppearance();
   const [activeMode, setActiveMode] = useState<'assistant' | 'direct'>('assistant');
   const [state, setState] = useState<EngineState>({ status: 'idle' });
   const [draft, setDraft] = useState('');
@@ -1230,7 +1233,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   const summary = describeBrain(brain);
 
   return (
-    <div className={`${styles.widget}${open ? ` ${styles.widgetOpen}` : ''}${isEnlarged ? ` ${styles.widgetEnlarged}` : ''}`}>
+    <div
+      className={`${styles.widget}${open ? ` ${styles.widgetOpen}` : ''}${isEnlarged ? ` ${styles.widgetEnlarged}` : ''}`}
+      data-appearance={appearance}
+    >
       {!open ? (
         <button
           type="button"
@@ -1240,7 +1246,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           aria-label="Ask the portfolio"
           ref={launcherRef}
         >
-          <img src="/bot.svg" alt="" className={styles.launcherIcon} width={36} height={36} />
+          <BotIcon className={styles.launcherIcon} appearance={appearance} />
           <span className={styles.launcherText}>Ask the portfolio</span>
         </button>
       ) : null}
@@ -1248,6 +1254,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       {open ? (
         <section
           className={`${styles.panel}${isEnlarged ? ` ${styles.panelEnlarged}` : ''}`}
+          data-appearance={appearance}
           aria-label="Ask the portfolio"
           ref={panelRef}
           onKeyDown={(event) => {

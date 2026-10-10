@@ -16,19 +16,20 @@
   width: 38px;
   height: 38px;
   border-radius: 50%;
-  border: none;
-  background: var(--ink, #ffffff);
-  color: var(--canvas, #000000);
+  border: 1px solid var(--rule-strong);
+  background: var(--fill-strong);
+  color: var(--ink-bright);
   cursor: pointer;
   flex-shrink: 0;
-  transition: transform 0.15s ease, background-color 0.15s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+  box-shadow: var(--lift-subtle);
 }
 
 .playButton:hover {
   transform: scale(1.06);
-  background: #38bdf8;
-  color: #000000;
+  background: var(--ink-bright);
+  color: var(--surface-raised);
+  border-color: var(--line-strong);
 }
 
 .playButton:active {
@@ -65,19 +66,11 @@
 }
 
 .barFilled {
-  background-color: #38bdf8;
+  background-color: var(--signal);
 }
 
 .barUnfilled {
-  background-color: var(--border-color, rgba(255, 255, 255, 0.2));
-}
-
-:global([data-theme="light"]) .barFilled {
-  background-color: #0284c7;
-}
-
-:global([data-theme="light"]) .barUnfilled {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: var(--rule-strong);
 }
 
 .metaRow {
@@ -88,19 +81,19 @@
 }
 
 .timeText {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-data);
   font-size: 0.72rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
   letter-spacing: 0.5px;
 }
 
 .speedBtn {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-data);
   font-size: 0.7rem;
   font-weight: 600;
-  color: var(--ink-secondary, #9ca3af);
-  background: var(--surface-hover, rgba(255, 255, 255, 0.08));
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  color: var(--ink-quiet);
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
   border-radius: 10px;
   padding: 1px 6px;
   cursor: pointer;
@@ -108,6 +101,7 @@
 }
 
 .speedBtn:hover {
-  color: var(--ink, #ffffff);
-  background: var(--surface-active, rgba(255, 255, 255, 0.15));
+  color: var(--ink-bright);
+  background: var(--fill-strong);
+  border-color: var(--rule-strong);
 }

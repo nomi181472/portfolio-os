@@ -18,25 +18,26 @@
 .loginCard {
   max-width: 520px;
   margin: 40px auto;
-  background: var(--surface-float);
+  background: var(--surface-raised);
   border: 1px solid var(--rule-strong);
   border-radius: 12px;
   padding: var(--space);
   display: flex;
   flex-direction: column;
   gap: var(--space-tight);
+  box-shadow: var(--lift-subtle);
 }
 
 .title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-bright);
   margin: 0;
 }
 
 .subtitle {
   font-size: 0.875rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
   margin: 0 0 var(--space-tight) 0;
   line-height: 1.4;
 }
@@ -58,7 +59,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
 }
 
 .input {
@@ -71,10 +72,11 @@
   font-size: 0.9375rem;
   color: var(--ink);
   outline: none;
+  transition: border-color 0.15s ease;
 }
 
 .input:focus {
-  border-color: var(--signal, #2563eb);
+  border-color: var(--line-strong);
 }
 
 .checkboxRow {
@@ -88,7 +90,7 @@
 
 .buttonPrimary {
   appearance: none;
-  background: var(--fill, #2563eb);
+  background: var(--fill);
   color: var(--ink);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-control);
@@ -101,8 +103,8 @@
 }
 
 .buttonPrimary:hover:not(:disabled) {
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--fill-strong);
+  color: var(--ink-bright);
 }
 
 .buttonPrimary:disabled {
@@ -112,7 +114,7 @@
 
 .buttonSecondary {
   appearance: none;
-  background: transparent;
+  background: var(--fill-faint);
   color: var(--ink);
   border: 1px solid var(--rule);
   border-radius: var(--radius-control);
@@ -124,7 +126,8 @@
 }
 
 .buttonSecondary:hover {
-  background: var(--fill, rgba(255, 255, 255, 0.08));
+  background: var(--fill);
+  color: var(--ink-bright);
 }
 
 .headerBar {
@@ -138,70 +141,78 @@
   font-size: 0.875rem;
 }
 
-.statusIndicator {
+.hostStatus {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  font-weight: 600;
 }
 
-.dotLive {
-  width: 10px;
-  height: 10px;
+.liveDot {
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
   background: #10b981;
   box-shadow: 0 0 10px #10b981;
-  display: inline-block;
 }
 
-/* Dashboard Grid: Responsive 2-column on tablet/desktop, drilldown on mobile */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+}
+
+.hostSecret {
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.logoutBtn {
+  appearance: none;
+  background: none;
+  border: none;
+  color: var(--ink-faint);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.logoutBtn:hover {
+  color: var(--ink-bright);
+}
+
+/* Master-Detail Multi-Visitor Layout */
 .dashboardGrid {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: var(--space-tight);
-  min-height: calc(100vh - 130px);
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-snug);
+  flex: 1;
+  min-height: calc(100vh - 120px);
 }
 
-@media (min-width: 1024px) {
-  .dashboardGrid {
-    grid-template-columns: 320px 1fr;
-    gap: var(--space);
-  }
-}
-
+/* Mobile Drill-Down Layout */
 @media (max-width: 768px) {
-  .wrapper {
-    padding: 8px;
-    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
-    gap: 8px;
-    min-height: 100dvh;
-  }
-
-  .loginCard {
-    margin: 16px auto;
-    padding: 1rem;
-    max-width: 100%;
-  }
-
-  .headerBar {
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 12px;
-  }
-
   .dashboardGrid {
     grid-template-columns: 1fr;
-    min-height: calc(100dvh - 120px);
-    height: calc(100dvh - 120px);
+    display: block;
+    position: relative;
   }
 
-  .showRoomsMobile .chatArea {
-    display: none !important;
-  }
-
-  .showRoomsMobile .roomsSidebar {
-    display: flex !important;
+  .roomsSidebar {
+    display: flex;
     width: 100%;
-    height: 100%;
+    min-height: calc(100vh - 120px);
+  }
+
+  .chatArea {
+    display: none;
+  }
+
+  .mobileBackBtn {
+    display: inline-flex !important;
   }
 
   .showChatMobile .roomsSidebar {
@@ -217,7 +228,7 @@
 
 /* Sidebar: Visitor Rooms */
 .roomsSidebar {
-  background: var(--surface-float);
+  background: var(--surface-raised);
   border: 1px solid var(--rule);
   border-radius: 12px;
   display: flex;
@@ -230,7 +241,7 @@
   border-bottom: 1px solid var(--rule);
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -248,14 +259,14 @@
   padding: var(--space);
   text-align: center;
   font-size: 0.875rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
 }
 
 .roomCard {
   appearance: none;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--rule-subtle, rgba(255, 255, 255, 0.06));
+  border-bottom: 1px solid var(--rule);
   padding: 12px 16px;
   text-align: left;
   display: flex;
@@ -268,12 +279,12 @@
 }
 
 .roomCard:hover {
-  background: color-mix(in oklch, var(--surface-float) 90%, var(--primary) 10%);
+  background: var(--fill-faint);
 }
 
 .roomCardActive {
-  background: color-mix(in oklch, var(--surface-float) 80%, var(--primary) 20%);
-  border-left: 3px solid var(--signal, #2563eb);
+  background: var(--fill);
+  border-left: 3px solid var(--signal);
 }
 
 .roomCardHead {
@@ -285,7 +296,7 @@
 .roomLabel {
   font-weight: 600;
   font-size: 0.9375rem;
-  color: var(--ink);
+  color: var(--ink-bright);
   display: flex;
   align-items: center;
   gap: 6px;
@@ -293,12 +304,12 @@
 
 .roomTime {
   font-size: 0.75rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
 }
 
 .roomCardSnippet {
   font-size: 0.8125rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -306,8 +317,8 @@
 }
 
 .roomCardBadge {
-  background: #2563eb;
-  color: #ffffff;
+  background: var(--signal);
+  color: var(--surface-sunk);
   font-size: 0.6875rem;
   font-weight: 700;
   padding: 2px 6px;
@@ -323,7 +334,7 @@
 
 /* Chat Main Area */
 .chatArea {
-  background: var(--surface-float);
+  background: var(--surface-raised);
   border: 1px solid var(--rule);
   border-radius: 12px;
   display: flex;
@@ -337,7 +348,7 @@
   justify-content: space-between;
   padding: 12px 16px;
   border-bottom: 1px solid var(--rule);
-  background: color-mix(in oklch, var(--surface-float) 90%, var(--primary) 10%);
+  background: var(--surface);
 }
 
 .chatHeadInfo {
@@ -350,8 +361,8 @@
 .mobileBackBtn {
   display: none;
   appearance: none;
-  background: var(--surface);
-  border: 1px solid var(--rule-strong);
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
   border-radius: var(--radius-control, 6px);
   color: var(--ink);
   font: inherit;
@@ -366,14 +377,15 @@
 }
 
 .mobileBackBtn:hover {
-  background: var(--surface-hover);
-  border-color: var(--signal, #38bdf8);
+  background: var(--fill);
+  color: var(--ink-bright);
+  border-color: var(--rule-strong);
 }
 
 .chatAreaTitle {
   font-size: 1rem;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-bright);
   margin: 0;
   display: flex;
   align-items: center;
@@ -414,16 +426,19 @@
 }
 
 .bubbleVisitor {
-  background: color-mix(in oklch, var(--surface-float) 50%, var(--primary) 50%);
+  background: var(--fill-faint);
   color: var(--ink);
-  border: 1px solid var(--rule-strong);
+  border: 1px solid var(--rule);
   border-bottom-left-radius: 2px;
+  box-shadow: var(--lift-subtle);
 }
 
 .bubbleHost {
-  background: var(--signal, #2563eb);
-  color: #ffffff;
+  background: var(--fill-strong);
+  color: var(--ink-bright);
+  border: 1px solid var(--rule-strong);
   border-bottom-right-radius: 2px;
+  box-shadow: var(--lift-subtle);
 }
 
 .audioBubble {
@@ -436,7 +451,7 @@
   gap: 6px;
   margin-top: 2px;
   font-size: 0.6875rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
 }
 
 .inputRow {
@@ -445,48 +460,16 @@
   gap: var(--space-tight);
   padding: var(--space-snug);
   border-top: 1px solid var(--rule);
-  background: var(--surface-float);
+  background: var(--surface);
 }
 
-.inputRow .input {
-  flex: 1;
-  min-width: 0;
-}
+@media (max-width: 640px) {
+  .dashboardGrid {
+    min-height: calc(100vh - 100px);
+  }
 
-.inputRow .buttonPrimary {
-  flex-shrink: 0;
-}
-
-@media (max-width: 768px) {
   .inputRow {
     padding: 8px 10px;
     gap: 6px;
-  }
-
-  .mobileBackBtn {
-    display: inline-flex;
-  }
-
-  .chatAreaHead {
-    padding: 10px 12px;
-  }
-
-  .chatAreaTitle {
-    font-size: 0.9375rem;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .messageRow {
-    max-width: 90%;
-  }
-
-  .input {
-    font-size: 16px; /* prevent iOS auto-zoom */
-  }
-
-  .roomCard {
-    padding: 14px 16px;
-    min-height: 56px;
   }
 }

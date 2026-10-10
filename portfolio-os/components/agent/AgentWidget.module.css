@@ -80,6 +80,7 @@
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-card);
   background: var(--surface-raised);
+  color: var(--ink);
   box-shadow: 0 24px 64px rgb(0 0 0 / 0.42);
   overflow: hidden;
   transition: width 200ms ease, height 200ms ease;
@@ -585,14 +586,16 @@
 }
 
 .answer a {
-  color: var(--accent);
+  color: var(--signal);
   text-decoration: underline;
   text-underline-offset: 2px;
+  text-decoration-color: var(--rule-strong);
   transition: opacity 0.15s ease;
 }
 
 .answer a:hover {
   opacity: 0.8;
+  text-decoration-color: var(--signal);
 }
 
 .answer ul,
@@ -606,19 +609,29 @@
 }
 
 .answer code {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-data);
   font-size: 0.8em;
-  background: var(--surface-secondary, rgba(0, 0, 0, 0.05));
-  padding: 0.1em 0.3em;
-  border-radius: 3px;
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
+  color: var(--ink-bright);
+  padding: 0.1em 0.35em;
+  border-radius: var(--radius-sm);
 }
 
 .answer pre {
   margin: 0.5rem 0;
-  padding: 0.5rem;
-  background: var(--surface-secondary, rgba(0, 0, 0, 0.05));
-  border-radius: 4px;
+  padding: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
   overflow-x: auto;
+  color: var(--ink);
+}
+
+.answer pre code {
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .answer table {
@@ -636,7 +649,8 @@
 }
 
 .answer th {
-  background: var(--surface-secondary, rgba(0, 0, 0, 0.03));
+  background: var(--fill-faint);
+  color: var(--ink-bright);
 }
 
 .turnModelFooter {
@@ -1293,8 +1307,8 @@
   justify-content: space-between;
   gap: var(--space-tight);
   padding: 0 var(--space-snug);
-  border-bottom: 1px solid var(--rule-subtle);
-  background: color-mix(in oklch, var(--surface-float) 90%, var(--primary) 10%);
+  border-bottom: 1px solid var(--rule);
+  background: var(--fill-faint);
 }
 
 .tabButtonsGroup {
@@ -1308,19 +1322,20 @@
   align-items: center;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
   padding: 3px 8px;
   border-radius: 999px;
-  border: 1px solid var(--rule, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--rule);
+  background: var(--fill-faint);
   text-decoration: none;
   white-space: nowrap;
   transition: all 0.15s ease;
 }
 
 .hostTabLink:hover {
-  color: #38bdf8;
-  border-color: #38bdf8;
-  background: var(--fill-faint, rgba(255, 255, 255, 0.05));
+  color: var(--ink-bright);
+  border-color: var(--rule-strong);
+  background: var(--fill-strong);
 }
 
 .modeTab {
@@ -1328,7 +1343,7 @@
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
   font: inherit;
   font-size: 0.8125rem;
   font-weight: 500;
@@ -1342,8 +1357,8 @@
 }
 
 .modeTabActive {
-  color: var(--ink-bright, var(--ink));
-  border-bottom-color: var(--signal, #2563eb);
+  color: var(--ink-bright);
+  border-bottom-color: var(--signal);
   font-weight: 600;
 }
 

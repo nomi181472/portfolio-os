@@ -21,6 +21,7 @@ import type { VisitorSession } from '@/lib/p2p/types';
 import { ReceiptTicks } from '@/components/p2p/ReceiptTicks';
 import { VoiceRecorderButton } from '@/components/p2p/VoiceRecorderButton';
 import { VoiceMessagePlayer } from '@/components/p2p/VoiceMessagePlayer';
+import { useAppearance } from '@/components/theme/AppearanceProvider';
 import styles from './page.module.css';
 
 /**
@@ -57,6 +58,7 @@ function playChime() {
 }
 
 export default function DirectHostPage() {
+  const { appearance } = useAppearance();
   const [email, setEmail] = useState('');
   const [secretKey, setSecretKey] = useState('');
   const [remember, setRemember] = useState(true);
@@ -280,7 +282,7 @@ export default function DirectHostPage() {
   const activeSession = sessions.find((s) => s.id === activeSessionId) || null;
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} data-appearance={appearance}>
       {!authenticated ? (
         <div className={styles.loginCard}>
           <h1 className={styles.title}>Direct Line Host Login</h1>
@@ -296,16 +298,16 @@ export default function DirectHostPage() {
                   marginBottom: '16px',
                   padding: '10px 14px',
                   borderRadius: '8px',
-                  background: 'var(--surface-sunken, rgba(255,255,255,0.04))',
-                  border: '1px solid var(--line, rgba(255,255,255,0.08))',
+                  background: 'var(--fill-faint)',
+                  border: '1px solid var(--rule)',
                   fontSize: '0.8125rem',
                   lineHeight: 1.5,
                 }}
               >
-                <div style={{ fontWeight: 600, color: 'var(--ink)' }}>
+                <div style={{ fontWeight: 600, color: 'var(--ink-bright)' }}>
                   Target Portfolio: {expectedChannel.ownerName}
                 </div>
-                <div style={{ color: 'var(--ink-secondary)', fontSize: '0.75rem', marginTop: '2px' }}>
+                <div style={{ color: 'var(--ink-quiet)', fontSize: '0.75rem', marginTop: '2px' }}>
                   Registered Channel Email: <code>{expectedChannel.emailMasked}</code>
                 </div>
               </div>
@@ -370,7 +372,7 @@ export default function DirectHostPage() {
           </form>
 
           <div style={{ marginTop: '12px', fontSize: '0.8125rem' }}>
-            <Link href="/" style={{ color: 'var(--ink-secondary, #9ca3af)' }}>
+            <Link href="/" style={{ color: 'var(--ink-quiet)' }}>
               ← Return to Portfolio OS
             </Link>
           </div>
@@ -525,7 +527,7 @@ export default function DirectHostPage() {
                               : '⚡ Ephemeral Relay (Connecting P2P…)'}
                           </span>
                         </h2>
-                        <span style={{ fontSize: '0.75rem', color: 'var(--ink-secondary, #9ca3af)' }}>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--ink-faint)' }}>
                           Private Channel (Visible ONLY to this visitor)
                         </span>
                       </div>
@@ -538,10 +540,10 @@ export default function DirectHostPage() {
                         style={{
                           margin: 'auto',
                           textAlign: 'center',
-                          color: 'var(--ink-secondary, #9ca3af)',
+                          color: 'var(--ink-quiet)',
                         }}
                       >
-                        <p style={{ fontWeight: 600, color: 'var(--ink)' }}>
+                        <p style={{ fontWeight: 600, color: 'var(--ink-bright)' }}>
                           Private Chatroom Opened
                         </p>
                         <p style={{ fontSize: '0.875rem' }}>
@@ -615,10 +617,10 @@ export default function DirectHostPage() {
                     margin: 'auto',
                     textAlign: 'center',
                     padding: 'var(--space)',
-                    color: 'var(--ink-secondary, #9ca3af)',
+                    color: 'var(--ink-quiet)',
                   }}
                 >
-                  <p style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--ink)' }}>
+                  <p style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--ink-bright)' }}>
                     No Active Chatroom Selected
                   </p>
                   <p style={{ fontSize: '0.875rem', maxWidth: 360, margin: '8px auto' }}>
