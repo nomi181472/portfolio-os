@@ -169,9 +169,9 @@ flowchart TD
     SIG -.->|"2. Handshake Exchange"| HMPM
 
     %% Direct Peer-to-Peer Data Channels
-    HMPM ==="Direct WebRTC RTCDataChannel (Encrypted P2P)"=== V1
-    HMPM ==="Direct WebRTC RTCDataChannel (Encrypted P2P)"=== V2
-    HMPM ==="Direct WebRTC RTCDataChannel (Encrypted P2P)"=== VN
+    HMPM <-->|"Direct WebRTC RTCDataChannel (Encrypted P2P)"| V1
+    HMPM <-->|"Direct WebRTC RTCDataChannel (Encrypted P2P)"| V2
+    HMPM <-->|"Direct WebRTC RTCDataChannel (Encrypted P2P)"| VN
 
     classDef host fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
     classDef visitor fill:#0f172a,stroke:#34d399,stroke-width:2px,color:#f8fafc;
@@ -206,14 +206,12 @@ sequenceDiagram
     Note over V,H: Phase 2: Direct Peer-to-Peer Conduit Established
     Note over S: Server Signal Mailbox Completely Bypassed! Zero Server Bandwidth.
 
-    rect rgb(30, 41, 59)
     Note over V,H: Phase 3: 100% Direct P2P DataChannel Communication
-    V->>H: Direct P2P: Text Message (instant single tick ✓)
-    H-->>V: Direct P2P: Delivery Receipt (double tick ✓✓ delivered)
+    V->>H: Direct P2P: Text Message (instant single tick)
+    H-->>V: Direct P2P: Delivery Receipt (double tick delivered)
     H->>V: Direct P2P: Host Response
-    V-->>H: Direct P2P: Read Receipt (blue double tick ✓✓ read)
+    V-->>H: Direct P2P: Read Receipt (blue double tick read)
     V->>H: Direct P2P: Opus Voice Note Audio Stream
-    end
 ```
 
 ---
