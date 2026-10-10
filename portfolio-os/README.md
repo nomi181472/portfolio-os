@@ -231,7 +231,101 @@ sequenceDiagram
 
 ---
 
+## 🤖 In-Browser Domain-Driven Local AI Engine ($0 API Cost)
+
+Portfolio OS includes a native, client-side conversational AI assistant that runs 100% locally in the visitor's browser without external LLM API dependencies or server token costs:
+
+### In-Browser Domain-Driven Local AI RAG Pipeline
+
+```mermaid
+flowchart LR
+    Q["Recruiter Question\n'Tell me about Noman's distributed systems'"]
+
+    subgraph RETRIEVAL ["1. Hybrid In-Memory Retrieval"]
+        BM25["SQLite FTS5 / BM25 Lexical Search"]
+        EMBED["Local E5 / MiniLM Vector Embeddings"]
+        FACTS["Verified Knowledge Graph Facts\n• Projects\n• Experience Span\n• System Metrics"]
+        Q --> BM25 & EMBED
+        BM25 & EMBED --> FACTS
+    end
+
+    subgraph INFERENCE ["2. Client-Side Neural Inference (Browser WebGPU)"]
+        ONNX["ONNX Runtime Web"]
+        LLM["Qwen2.5-0.5B Instruct\n/ SmolLM2-360M"]
+        FACTS --> ONNX --> LLM
+    end
+
+    subgraph OUTPUT ["3. Grounded Dynamic Output"]
+        RESP["Markdown Response\n(Strictly Grounded, Zero Hallucinations)"]
+        ACTION["Interactive Clickable Action Cards\n& Internal Routes (/projects/slug)"]
+        LLM --> RESP & ACTION
+    end
+
+    classDef user fill:#1e293b,stroke:#38bdf8,stroke-width:2px,color:#f8fafc;
+    classDef ret fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#f8fafc;
+    classDef inf fill:#064e3b,stroke:#34d399,stroke-width:2px,color:#f8fafc;
+    classDef out fill:#451a03,stroke:#f59e0b,stroke-width:2px,color:#f8fafc;
+
+    class Q user;
+    class BM25,EMBED,FACTS ret;
+    class ONNX,LLM inf;
+    class RESP,ACTION out;
+```
+
+#### Core AI Capabilities:
+1. **Zero Server / Token Costs ($0 API Bills)**: Inference runs directly in the client's browser using ONNX Runtime Web and WebGPU/WASM execution backends (`Qwen2.5-0.5B Instruct`, `SmolLM2-360M Instruct`, and `all-MiniLM-L6-v2` 384D embeddings).
+2. **Strict Evidence Alignment (Zero Hallucinations)**: The assistant retrieves ground-truth facts from the dynamic SQLite database and vector store before formulating responses. It only reports credentials, dates, metrics, and architecture details that physically exist in `content/portfolio.json`.
+3. **100% Domain-Driven & Universal**: When any other developer forks Portfolio OS and updates `content/portfolio.json`, the assistant automatically re-indexes and speaks for that developer without any prompt re-engineering or model fine-tuning.
+4. **Interactive Action Cards & Deep Links**: Responses stream markdown alongside clickable navigation cards and internal route buttons that guide visitors directly to verified case studies and code artifacts.
+
+---
+
 ## 🏗️ Architecture & Directory Layout
+
+### System Pipeline Architecture (Unicode Schematic)
+
+```text
+╭─────────────────────────────────────────────────────────────────────────────╮
+│  ◈ LAYER 01 : SINGLE SOURCE OF TRUTH                                        │
+│  ┌────────────────────────┐            ┌────────────────────────────────┐   │
+│  │ content/portfolio.json │ ◄────────► │ In-Browser Visual Editor (⌘+E) │   │
+│  │ (Zero Hardcoded Data)  │  Live Sync │ (Instant JSON Diff & Preview)  │   │
+│  └────────────────────────┘            └────────────────────────────────┘   │
+╰──────────────────────────────────────┬──────────────────────────────────────╯
+                                       │
+                                       │  ⚡ [ npm run index: Graph & Embeddings ]
+                                       ▼
+╭─────────────────────────────────────────────────────────────────────────────╮
+│  ◈ LAYER 02 : RELATIONAL STORAGE & SEMANTIC VECTOR INDEX                    │
+│  ┌───────────────────────────────────┐ ┌──────────────────────────────────┐ │
+│  │  SQLite Engine (portfolio.db)     │ │  Vector Store (vectors.json)     │ │
+│  │  • FTS5 Tokenized Full-Text Search│ │  • 384D / 64D Dense Embeddings   │ │
+│  │  • 16 Interconnected Collections  │ │  • Bidirectional Graph Topology  │ │
+│  └───────────────────────────────────┘ └──────────────────────────────────┘ │
+╰───────────────────┬───────────────────────────────────────┬─────────────────╯
+                    │                                       │
+                    ▼                                       ▼
+╭─────────────────────────────────────────────────────────────────────────────╮
+│  ◈ LAYER 03 : PORTFOLIO OS RUNTIME (Next.js 15 App Router)                  │
+│  • Draggable Multi-Window Desktop Shell  • ⌘+K Instant Fuzzy Command Menu   │
+│  • OKLCH Mathematical Color Palettes     • Zero-Cookie Privacy Telemetry    │
+╰───────────────────┬───────────────────────────────────────┬─────────────────╯
+                    │                                       │
+                    ├─── Dual Independent Client Engines ───┤
+                    │                                       │
+                    ▼                                       ▼
+╭──────────────────────────────────────╮ ╭────────────────────────────────────╮
+│  ◈ 100% LOCAL IN-BROWSER AI ENGINE   │ │  ◈ SERVERLESS P2P WEBRTC CONDUIT   │
+│  [ ONNX Runtime Web • WebGPU / WASM ]│ │  [ DTLS-SCTP E2E Encrypted Tunnel ]│
+├──────────────────────────────────────┤ ├────────────────────────────────────┤
+│  • Qwen 2.5-0.5B / SmolLM2-360M      │ │  • Zero Central Messaging Servers  │
+│  • Grounded RAG (Zero Hallucination) │ │  • Push-to-Talk Voice Notes (Opus) │
+│  • Clickable UI Cards & Deep Routes  │ │  • Live Read Receipts (✓, ✓✓ Blue) │
+│  • $0.00 Server Token Cost Forever   │ │  • PWA Standalone App for Host     │
+╰──────────────────────────────────────╯ ╰────────────────────────────────────╯
+```
+
+### Directory Structure
 
 ```text
 portfolio-os/
