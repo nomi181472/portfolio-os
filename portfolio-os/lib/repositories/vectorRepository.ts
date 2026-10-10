@@ -28,12 +28,23 @@ function cosineSimilarity(a: number[], b: number[]): number {
   return denom === 0 ? 0 : dot / denom;
 }
 
+function resolveVectorsPath(): string {
+  const candidates = [
+    resolve(process.cwd(), 'public/data/vectors.json'),
+    resolve(process.cwd(), 'portfolio-os/public/data/vectors.json'),
+  ];
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return candidates[0]!;
+}
+
 export class JsonVectorRepository implements IVectorRepository {
   private cachedVectors: VectorChunk[] | null = null;
   private readonly vectorsPath: string;
 
   constructor(vectorsPath?: string) {
-    this.vectorsPath = vectorsPath ?? resolve(process.cwd(), 'public/data/vectors.json');
+    this.vectorsPath = vectorsPath ?? resolveVectorsPath();
   }
 
   async getVectors(): Promise<VectorChunk[]> {

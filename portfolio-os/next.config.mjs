@@ -18,7 +18,7 @@ const nextConfig = {
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },
   outputFileTracingIncludes: {
-    '/api/**/*': ['./portfolio.db'],
+    '/api/**/*': ['./portfolio.db', './public/data/vectors.json'],
   },
   experimental: { optimizePackageImports: ['react-markdown'] },
   async redirects() {
