@@ -432,6 +432,9 @@ async function main(): Promise<void> {
   // Populate FTS5 index
   db.exec(`INSERT INTO chunks_fts(rowid, title, content) SELECT rowid, title, content FROM chunks`);
 
+  // Checkpoint WAL and set journal_mode to DELETE for read-only serverless runtimes (e.g. Vercel)
+  db.pragma('wal_checkpoint(TRUNCATE)');
+  db.pragma('journal_mode = DELETE');
   db.close();
 
   console.log('✅ portfolio.db generated successfully.');

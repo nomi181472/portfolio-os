@@ -1347,3 +1347,127 @@
   font-weight: 600;
 }
 
+/* ==========================================================================
+   Mobile & Responsive Adaptations (<= 56rem / 896px)
+   ========================================================================== */
+
+@media (max-width: 56rem) {
+  /* Closed launcher positioned safely above MobileBottomBar */
+  .widget {
+    inset-block-end: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+    inset-inline-end: 1rem;
+    z-index: 45;
+  }
+
+  .launcher {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.8125rem;
+    gap: 0.4rem;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+  }
+
+  .launcherIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  /* When open, widget becomes a native full-screen / bottom-sheet viewport */
+  .widgetOpen {
+    inset: 0 !important;
+    inset-block-end: 0 !important;
+    inset-inline-end: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    align-items: stretch !important;
+    z-index: 60 !important;
+    background: var(--scrim);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .widgetOpen .panel {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .enlarge {
+    display: none !important;
+  }
+
+  .head {
+    padding: var(--space-tight) var(--space-snug);
+    padding-top: max(var(--space-tight), env(safe-area-inset-top, 0px));
+  }
+
+  .modeTabs {
+    padding: 0 var(--space-snug);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .modeTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .modeTab {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .hostTabLink {
+    font-size: 0.6875rem;
+    padding: 2px 7px;
+    flex-shrink: 0;
+  }
+
+  .composer {
+    padding: var(--space-tight) var(--space-snug);
+    padding-bottom: max(var(--space-tight), env(safe-area-inset-bottom, 0px));
+  }
+
+  .composerControlsRow {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .modelPickerTrigger {
+    max-width: min(220px, 58vw);
+    font-size: 0.75rem;
+  }
+
+  .modelPickerName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tokenCounter {
+    font-size: 0.6875rem;
+    white-space: nowrap;
+    margin-inline-start: auto;
+  }
+
+  .inputRow {
+    gap: 6px;
+  }
+
+  .input {
+    min-width: 0;
+    font-size: 16px; /* Prevents iOS Safari auto-zoom */
+    padding: 6px 10px;
+  }
+
+  .send {
+    flex-shrink: 0;
+    padding: 6px 12px;
+  }
+}
+

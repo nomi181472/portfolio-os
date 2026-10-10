@@ -34,12 +34,14 @@ interface InternalVisitorSession {
 
 export interface HostManagerOptions {
   channelId: string;
+  secretKey?: string;
   onSessionsChange: (sessions: VisitorSession[]) => void;
   onNewMessage: (visitorId: string, msg: P2PMessage) => void;
 }
 
 export class HostMultiPeerManager {
   public channelId: string;
+  private secretKey?: string;
   private sessions = new Map<string, InternalVisitorSession>();
   private activeVisitorId: string | null = null;
 
@@ -55,6 +57,7 @@ export class HostMultiPeerManager {
 
   constructor(options: HostManagerOptions) {
     this.channelId = options.channelId;
+    this.secretKey = options.secretKey;
     this.onSessionsChangeCallback = options.onSessionsChange;
     this.onNewMessageCallback = options.onNewMessage;
   }
@@ -156,6 +159,7 @@ export class HostMultiPeerManager {
           body: JSON.stringify({
             action: 'host-heartbeat',
             channelId: this.channelId,
+            secretKey: this.secretKey,
           }),
         });
       } catch {}

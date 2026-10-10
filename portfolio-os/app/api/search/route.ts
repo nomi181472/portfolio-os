@@ -58,27 +58,27 @@ export async function GET(request: NextRequest) {
     const query = request.nextUrl.searchParams.get('q') ?? '';
     const format = request.nextUrl.searchParams.get('format') ?? '';
 
-    // If query is present, use SQLite FTS5 search
+    // If query is present, attempt SQLite FTS5 search, falling back to in-memory index
     if (query.trim()) {
-      const portfolioRepo = getPortfolioRepository();
-      const ftsHits = await portfolioRepo.search(query.trim(), 10);
-      
-      // If format=spec or requested by search retriever:
-      if (format === 'spec' || request.headers.get('accept')?.includes('application/json')) {
-        const results = ftsHits.map((hit) => ({
-          entityId: hit.entityId,
-          title: hit.title,
-          content: hit.content,
-          canonicalUrl: hit.canonicalUrl,
-          score: Math.max(0, parseFloat((1 / (1 + Math.abs(hit.rank))).toFixed(3))),
-        }));
-
-        // Return spec response structure if format=spec
+      try {
+        const portfolioRepo = getPortfolioRepository();
+        const ftsHits = await portfolioRepo.search(query.trim(), 10);
+        
         if (format === 'spec') {
+          const results = ftsHits.map((hit) => ({
+            entityId: hit.entityId,
+            title: hit.title,
+            content: hit.content,
+            canonicalUrl: hit.canonicalUrl,
+            score: Math.max(0, parseFloat((1 / (1 + Math.abs(hit.rank))).toFixed(3))),
+          }));
+
           return NextResponse.json({ results }, {
             headers: { 'Cache-Control': 'private, max-age=0, must-revalidate' },
           });
         }
+      } catch {
+        // SQLite index unavailable; fall back to fast in-memory search index
       }
 
       // Default scored search records (compatible with both deep-links and CommandMenu)

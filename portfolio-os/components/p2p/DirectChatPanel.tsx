@@ -19,11 +19,13 @@ import styles from './DirectChatPanel.module.css';
 interface DirectChatPanelProps {
   onSwitchToAssistant?: () => void;
   ownerName?: string;
+  onClose?: () => void;
 }
 
 export function DirectChatPanel({
   onSwitchToAssistant,
   ownerName: initialOwnerName,
+  onClose,
 }: DirectChatPanelProps) {
   const [channelId, setChannelId] = useState<string | null>(null);
   const [ownerName, setOwnerName] = useState<string>(initialOwnerName || 'Host');
@@ -125,7 +127,7 @@ export function DirectChatPanel({
       client.disconnect();
       clientRef.current = null;
     };
-  }, [channelId, visitorId, visitorName]);
+  }, [channelId, visitorId]);
 
   // Mark received host messages as read when visitor returns to tab
   useEffect(() => {
@@ -229,7 +231,7 @@ export function DirectChatPanel({
             href="/direct"
             className={styles.hostLink}
             title="Are you the portfolio owner? Click to enter Host Receiver Portal"
-            target="_blank"
+            onClick={onClose}
           >
             🔑 Host (/direct)
           </Link>

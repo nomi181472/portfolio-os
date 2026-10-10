@@ -171,8 +171,15 @@
 @media (max-width: 768px) {
   .wrapper {
     padding: 8px;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
     gap: 8px;
     min-height: 100dvh;
+  }
+
+  .loginCard {
+    margin: 16px auto;
+    padding: 1rem;
+    max-width: 100%;
   }
 
   .headerBar {
@@ -441,7 +448,21 @@
   background: var(--surface-float);
 }
 
+.inputRow .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.inputRow .buttonPrimary {
+  flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
+  .inputRow {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
   .mobileBackBtn {
     display: inline-flex;
   }

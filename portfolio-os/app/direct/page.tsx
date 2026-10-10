@@ -62,6 +62,13 @@ export default function DirectHostPage() {
   const [remember, setRemember] = useState(true);
   const [authenticated, setAuthenticated] = useState(false);
   const [channelId, setChannelId] = useState<string | null>(null);
+  const [expectedChannel, setExpectedChannel] = useState<{
+    channelId: string;
+    ownerName: string;
+    emailMasked: string;
+  } | null>(null);
+  const [mismatchError, setMismatchError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const [sessions, setSessions] = useState<VisitorSession[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
@@ -71,13 +78,45 @@ export default function DirectHostPage() {
   const managerRef = useRef<HostMultiPeerManager | null>(null);
   const logRef = useRef<HTMLDivElement | null>(null);
 
-  // 1. Check for stored credentials on mount
+  // 1. Fetch public channel discovery info & check for stored credentials on mount
   useEffect(() => {
+    fetch('/api/p2p/channel')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.channelId) {
+          setExpectedChannel(data);
+        }
+      })
+      .catch((err) => console.warn('[DirectHostPage] Failed to fetch channel info', err));
+
     const creds = getStoredHostCredentials();
     if (creds && creds.email && creds.secretKey) {
       setEmail(creds.email);
       setSecretKey(creds.secretKey);
-      void startHostSession(creds.email);
+      void (async () => {
+        const cid = await deriveChannelId(creds.email);
+        try {
+          const verifyRes = await fetch('/api/p2p/signal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'verify-host',
+              channelId: cid,
+              email: creds.email,
+              secretKey: creds.secretKey,
+            }),
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyRes.ok) {
+            void startHostSession(creds.email, creds.secretKey);
+          } else {
+            clearHostCredentials();
+            setMismatchError(verifyData.error || 'Saved credentials are no longer valid. Please log in again.');
+          }
+        } catch {
+          void startHostSession(creds.email, creds.secretKey);
+        }
+      })();
     }
   }, []);
 
@@ -94,7 +133,7 @@ export default function DirectHostPage() {
   }, []);
 
   // 2. Start Host Session
-  const startHostSession = async (userEmail: string) => {
+  const startHostSession = async (userEmail: string, key?: string) => {
     if (!userEmail.trim()) return;
 
     const cid = await deriveChannelId(userEmail);
@@ -107,6 +146,7 @@ export default function DirectHostPage() {
 
     const manager = new HostMultiPeerManager({
       channelId: cid,
+      secretKey: key || secretKey,
       onSessionsChange: (updatedSessions) => {
         setSessions(updatedSessions);
         // Automatically select first room if none is currently selected
@@ -133,10 +173,53 @@ export default function DirectHostPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || !secretKey.trim()) return;
+    setMismatchError(null);
+    const cleanEmail = email.trim();
+    const cleanSecret = secretKey.trim();
+    if (!cleanEmail || !cleanSecret) return;
 
-    storeHostCredentials(email, secretKey, remember);
-    await startHostSession(email);
+    setSubmitting(true);
+    try {
+      const cid = expectedChannel?.channelId || (await deriveChannelId(cleanEmail));
+
+      // 1. Verify channel derivation against registered portfolio email
+      if (expectedChannel?.channelId) {
+        const derived = await deriveChannelId(cleanEmail);
+        if (derived !== expectedChannel.channelId) {
+          setMismatchError(
+            `Invalid email: does not match the registered portfolio email (${expectedChannel.emailMasked}).`
+          );
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      // 2. Strictly verify credentials against server environment variables
+      const verifyRes = await fetch('/api/p2p/signal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'verify-host',
+          channelId: cid,
+          email: cleanEmail,
+          secretKey: cleanSecret,
+        }),
+      });
+
+      const verifyData = await verifyRes.json();
+      if (!verifyRes.ok) {
+        setMismatchError(verifyData.error || 'Invalid email or secret key. Please check your credentials.');
+        setSubmitting(false);
+        return;
+      }
+
+      storeHostCredentials(cleanEmail, cleanSecret, remember);
+      await startHostSession(cleanEmail, cleanSecret);
+    } catch {
+      setMismatchError('Failed to verify credentials. Please check your network connection and try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
@@ -207,14 +290,55 @@ export default function DirectHostPage() {
           </p>
 
           <form className={styles.form} onSubmit={handleLogin}>
+            {expectedChannel ? (
+              <div
+                style={{
+                  marginBottom: '16px',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  background: 'var(--surface-sunken, rgba(255,255,255,0.04))',
+                  border: '1px solid var(--line, rgba(255,255,255,0.08))',
+                  fontSize: '0.8125rem',
+                  lineHeight: 1.5,
+                }}
+              >
+                <div style={{ fontWeight: 600, color: 'var(--ink)' }}>
+                  Target Portfolio: {expectedChannel.ownerName}
+                </div>
+                <div style={{ color: 'var(--ink-secondary)', fontSize: '0.75rem', marginTop: '2px' }}>
+                  Registered Channel Email: <code>{expectedChannel.emailMasked}</code>
+                </div>
+              </div>
+            ) : null}
+
+            {mismatchError ? (
+              <div
+                style={{
+                  marginBottom: '16px',
+                  padding: '10px 14px',
+                  borderRadius: '8px',
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  color: '#ef4444',
+                  fontSize: '0.8125rem',
+                  lineHeight: 1.4,
+                }}
+              >
+                {mismatchError}
+              </div>
+            ) : null}
+
             <div className={styles.fieldGroup}>
               <label className={styles.label}>Email Address</label>
               <input
                 type="email"
                 className={styles.input}
-                placeholder="user@example.com"
+                placeholder={expectedChannel?.emailMasked || 'user@example.com'}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (mismatchError) setMismatchError(null);
+                }}
                 required
               />
             </div>
@@ -240,8 +364,8 @@ export default function DirectHostPage() {
               <span>Remember credentials on this device</span>
             </label>
 
-            <button type="submit" className={styles.buttonPrimary}>
-              Activate Direct Line (Host Mode)
+            <button type="submit" className={styles.buttonPrimary} disabled={submitting}>
+              {submitting ? 'Verifying Credentials…' : 'Activate Direct Line (Host Mode)'}
             </button>
           </form>
 
@@ -470,7 +594,7 @@ export default function DirectHostPage() {
                     <input
                       type="text"
                       className={styles.input}
-                      style={{ flex: 1 }}
+                      style={{ flex: 1, minWidth: 0 }}
                       placeholder={`Reply strictly to ${activeSession.label}…`}
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}

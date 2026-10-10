@@ -2,8 +2,9 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 220px;
+  min-width: min(180px, 100%);
   max-width: 280px;
+  width: 100%;
   padding: 4px 2px;
   user-select: none;
 }

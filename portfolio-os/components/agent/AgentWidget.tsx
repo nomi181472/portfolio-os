@@ -1230,7 +1230,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   const summary = describeBrain(brain);
 
   return (
-    <div className={`${styles.widget}${isEnlarged ? ` ${styles.widgetEnlarged}` : ''}`}>
+    <div className={`${styles.widget}${open ? ` ${styles.widgetOpen}` : ''}${isEnlarged ? ` ${styles.widgetEnlarged}` : ''}`}>
       {!open ? (
         <button
           type="button"
@@ -1357,7 +1357,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               href="/direct"
               className={styles.hostTabLink}
               title="Are you the portfolio owner? Open Host Mode (/direct)"
-              target="_blank"
+              onClick={closeAndRelease}
             >
               🔑 Host (/direct)
             </Link>
@@ -1367,6 +1367,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
             <DirectChatPanel
               onSwitchToAssistant={() => setActiveMode('assistant')}
               ownerName={knowledgeRef.current?.profile.name}
+              onClose={closeAndRelease}
             />
           ) : (
             <>
