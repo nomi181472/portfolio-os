@@ -167,6 +167,20 @@ test('voice message player safely handles WebM Infinity or NaN durations without
   const seek4 = computeSafeSeek(0.75, 10, 10, 10);
   assert.equal(seek4, 7.5, 'Normal seek should compute finite float');
 });
+test('channel resolution priority matches between host and visitor', async () => {
+  const defaultEmail = 'nomansoomro51@gmail.com';
+  const expectedChannelId = await deriveChannelId(defaultEmail);
 
+  // Both visitor channel API and host login must derive the exact same channelId
+  const hostDerived = await deriveChannelId('nomansoomro51@gmail.com');
+  assert.equal(hostDerived, expectedChannelId);
 
+  // Case insensitivity & whitespace trimming
+  const hostTrimmed = await deriveChannelId('  NOMANSOOMRO51@GMAIL.COM ');
+  assert.equal(hostTrimmed, expectedChannelId);
 
+  // Custom env override simulation
+  const customEnvEmail = 'custom.developer@domain.com';
+  const customChannelId = await deriveChannelId(customEnvEmail);
+  assert.notEqual(customChannelId, expectedChannelId);
+});

@@ -17,6 +17,9 @@ const nextConfig = {
     // Forked users point media anywhere. Allow https by default; tighten if you self-host.
     remotePatterns: [{ protocol: 'https', hostname: '**' }],
   },
+  outputFileTracingIncludes: {
+    '/api/**/*': ['./portfolio.db'],
+  },
   experimental: { optimizePackageImports: ['react-markdown'] },
   async redirects() {
     return [

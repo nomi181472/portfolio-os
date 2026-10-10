@@ -161,6 +161,8 @@
   justify-content: center;
   gap: 2px;
   height: 100%;
+  min-width: 0;
+  padding: 0 2px;
   background: none;
   border: none;
   color: var(--ink-faint);
@@ -222,11 +224,28 @@
   place-items: center;
   width: 20px;
   height: 20px;
+  flex-shrink: 0;
 }
 
 .tabLabel {
   font-size: 9.5px;
   letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-align: center;
+}
+
+@media (max-width: 340px) {
+  .tabLabel {
+    font-size: 8.5px;
+    letter-spacing: 0;
+  }
+  .tabIcon {
+    width: 16px;
+    height: 16px;
+  }
 }
 
 .handleContainer {

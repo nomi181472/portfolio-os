@@ -19,6 +19,7 @@
  * rather than derived: once loaded its chunk stays, so the second press is instant.
  */
 import { useCallback, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { AppearanceChoice } from '@/lib/theme';
 import { portfolioConfig } from '@/config/portfolio.config';
@@ -59,6 +60,9 @@ interface ShellProps {
 }
 
 export function Shell({ children, footer, profile, startupName, appearance, repoUrl }: ShellProps) {
+  const pathname = usePathname();
+  const isDirectPage = pathname === '/direct' || pathname.startsWith('/direct');
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchMounted, setSearchMounted] = useState(false);
   const [agentOpen, setAgentOpen] = useState(false);
@@ -69,6 +73,11 @@ export function Shell({ children, footer, profile, startupName, appearance, repo
   }, []);
 
   const openAgent = useCallback(() => setAgentOpen(true), []);
+
+  // Close agent widget automatically on route change
+  useEffect(() => {
+    setAgentOpen(false);
+  }, [pathname]);
 
   useEffect(() => {
     if (!portfolioConfig.features.search) return;
@@ -90,12 +99,12 @@ export function Shell({ children, footer, profile, startupName, appearance, repo
       <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} appearance={appearance} repoUrl={repoUrl} />
       <div className="shell__main">
         <main id="main">{children}</main>
-        {footer}
+        {!isDirectPage && footer}
       </div>
       {portfolioConfig.features.search && searchMounted ? (
         <CommandMenu open={searchOpen} onClose={() => setSearchOpen(false)} />
       ) : null}
-      {portfolioConfig.features.agent ? (
+      {portfolioConfig.features.agent && !isDirectPage ? (
         <AgentWidget
           open={agentOpen}
           onOpen={openAgent}

@@ -192,6 +192,7 @@
 
 .textInput {
   flex: 1;
+  min-width: 0;
   appearance: none;
   background: var(--surface);
   border: 1px solid var(--rule);
@@ -213,6 +214,7 @@
 }
 
 .sendButton {
+  flex-shrink: 0;
   appearance: none;
   background: var(--fill, color-mix(in oklch, var(--surface-float) 80%, var(--primary) 20%));
   color: var(--ink);
@@ -357,6 +359,16 @@
   .presenceActions {
     width: 100%;
     justify-content: space-between;
+  }
+
+  .inputBar {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .sendButton {
+    padding: 6px 12px;
+    font-size: 0.8125rem;
   }
 
   .textInput {
