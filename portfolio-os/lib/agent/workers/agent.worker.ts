@@ -136,7 +136,7 @@ self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
         do_sample: true,
         temperature: 0.7,
         top_p: 0.9,
-        max_new_tokens: req.maxNewTokens || 256,
+        max_new_tokens: req.maxNewTokens || 512,
         repetition_penalty: 1.1,
         ...(streamer ? { streamer } : {}),
       });

@@ -164,7 +164,7 @@ export class AgentWorkerClient implements Conversation {
         question,
         instruction,
         history: history as any,
-        maxNewTokens: 256,
+        maxNewTokens: 512,
       } as WorkerRequest);
     });
 

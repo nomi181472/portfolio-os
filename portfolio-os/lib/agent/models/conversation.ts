@@ -611,14 +611,14 @@ export interface GenerateResult {
  *
  * `do_sample: false` is the important one. Greedy decoding is deterministic, which
  * means the same question gives the same selection.
- * Max new tokens is set to 256 to allow Qwen models to generate complete, fluent,
- * and professional prose along with the keys and actions array.
+ * Max new tokens is set to 512 to allow LLM models to generate complete, fluent,
+ * and professional markdown prose along with tables, bullet lists, and links.
  */
 const GENERATION_OPTIONS = {
   do_sample: true,
   temperature: 0.7,
   top_p: 0.9,
-  max_new_tokens: 256,
+  max_new_tokens: 512,
   repetition_penalty: 1.1,
 } as const;
 
