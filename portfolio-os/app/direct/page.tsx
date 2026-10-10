@@ -92,7 +92,7 @@ export default function DirectHostPage() {
     if (creds && creds.email && creds.secretKey) {
       setEmail(creds.email);
       setSecretKey(creds.secretKey);
-      void startHostSession(creds.email);
+      void startHostSession(creds.email, creds.secretKey);
     }
   }, []);
 
@@ -109,7 +109,7 @@ export default function DirectHostPage() {
   }, []);
 
   // 2. Start Host Session
-  const startHostSession = async (userEmail: string) => {
+  const startHostSession = async (userEmail: string, key?: string) => {
     if (!userEmail.trim()) return;
 
     const cid = await deriveChannelId(userEmail);
@@ -122,6 +122,7 @@ export default function DirectHostPage() {
 
     const manager = new HostMultiPeerManager({
       channelId: cid,
+      secretKey: key || secretKey,
       onSessionsChange: (updatedSessions) => {
         setSessions(updatedSessions);
         // Automatically select first room if none is currently selected
@@ -150,7 +151,8 @@ export default function DirectHostPage() {
     e.preventDefault();
     setMismatchError(null);
     const cleanEmail = email.trim();
-    if (!cleanEmail || !secretKey.trim()) return;
+    const cleanSecret = secretKey.trim();
+    if (!cleanEmail || !cleanSecret) return;
 
     if (expectedChannel?.channelId) {
       const derived = await deriveChannelId(cleanEmail);
@@ -160,10 +162,30 @@ export default function DirectHostPage() {
         );
         return;
       }
+
+      // Verify host secret key against server if P2P_HOST_SECRET is configured
+      try {
+        const verifyRes = await fetch('/api/p2p/signal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'verify-host',
+            channelId: expectedChannel.channelId,
+            secretKey: cleanSecret,
+          }),
+        });
+        const verifyData = await verifyRes.json();
+        if (!verifyRes.ok) {
+          setMismatchError(verifyData.error || 'Incorrect secret key or passphrase');
+          return;
+        }
+      } catch {
+        // Network resilience: continue if network check fails
+      }
     }
 
-    storeHostCredentials(cleanEmail, secretKey, remember);
-    await startHostSession(cleanEmail);
+    storeHostCredentials(cleanEmail, cleanSecret, remember);
+    await startHostSession(cleanEmail, cleanSecret);
   };
 
   const handleLogout = () => {

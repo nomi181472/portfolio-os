@@ -52,8 +52,28 @@ export async function POST(req: Request) {
 
     pruneExpiredSignals(channelId);
 
+    // 0. Verify host credentials if P2P_HOST_SECRET is configured
+    if (action === 'verify-host') {
+      const configuredSecret = process.env.P2P_HOST_SECRET;
+      if (!configuredSecret) {
+        return NextResponse.json({ ok: true, protected: false });
+      }
+      const { secretKey } = body;
+      if (secretKey && typeof secretKey === 'string' && secretKey.trim() === configuredSecret.trim()) {
+        return NextResponse.json({ ok: true, protected: true });
+      }
+      return NextResponse.json({ error: 'Incorrect secret key or passphrase' }, { status: 401 });
+    }
+
     // 1. Presence check or heartbeat
     if (action === 'host-heartbeat') {
+      const configuredSecret = process.env.P2P_HOST_SECRET;
+      if (configuredSecret) {
+        const { secretKey } = body;
+        if (!secretKey || typeof secretKey !== 'string' || secretKey.trim() !== configuredSecret.trim()) {
+          return NextResponse.json({ error: 'Unauthorized heartbeat' }, { status: 401 });
+        }
+      }
       hostHeartbeats.set(channelId, Date.now());
       return NextResponse.json({ ok: true, status: 'online' });
     }
