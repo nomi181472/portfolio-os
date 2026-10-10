@@ -63,13 +63,17 @@ test('JsonVectorRepository loads and performs cosine search over vectors', async
 
   const vectors = await repo.getVectors();
   assert.ok(vectors.length > 50);
-  assert.equal(vectors[0].vector.length, 384);
+  const firstVector = vectors[0];
+  assert.ok(firstVector, 'first vector should exist');
+  assert.equal(firstVector.vector.length, 384);
 
   // Search using the first vector itself (should return itself with similarity ~1.0)
-  const hits = await repo.searchByVector(vectors[0].vector, 3);
+  const hits = await repo.searchByVector(firstVector.vector, 3);
   assert.ok(hits.length > 0);
-  assert.equal(hits[0].id, vectors[0].id);
-  assert.ok(hits[0].similarity > 0.99);
+  const firstHit = hits[0];
+  assert.ok(firstHit, 'first hit should exist');
+  assert.equal(firstHit.id, firstVector.id);
+  assert.ok(firstHit.similarity > 0.99);
 });
 
 test('Dependency Injection: Custom IPortfolioRepository mock swaps cleanly into container', () => {
@@ -144,7 +148,9 @@ test('Dependency Injection: Custom IPortfolioRepository mock swaps cleanly into 
     assert.equal(entity?.name, 'Mock Project');
 
     const searchHits = activeRepo.search('DI test');
-    assert.equal(searchHits[0].title, 'Hit for DI test');
+    const firstSearchHit = searchHits[0];
+    assert.ok(firstSearchHit, 'first search hit should exist');
+    assert.equal(firstSearchHit.title, 'Hit for DI test');
   } finally {
     // Restore
     container.setPortfolioRepository(originalRepo);

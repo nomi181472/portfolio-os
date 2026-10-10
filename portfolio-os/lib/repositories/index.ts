@@ -6,4 +6,5 @@
 
 export * from './types';
 export * from './vectorPersistenceRepository';
+export * from './vectorRepository';
 export * from './container';
