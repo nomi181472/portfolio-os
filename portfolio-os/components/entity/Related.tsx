@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import { CATEGORIES } from '@/lib/categories';
 import type { RelationEdge, ResolvedEntity } from '@/types/portfolio';
+import styles from './PrevNext.module.css';
 
 /**
  * Relationships are the navigation (§35). Edges are grouped by what they
@@ -45,33 +46,55 @@ export function Related({ edges, title = 'Connected work' }: { edges: RelationEd
 /** Never leave a reader at a dead end (§12). */
 export function PrevNext({ previous, next }: { previous?: ResolvedEntity; next?: ResolvedEntity }) {
   if (!previous && !next) return null;
+
+  const categoryPrev = previous ? CATEGORIES[previous.kind] : undefined;
+  const categoryNext = next ? CATEGORIES[next.kind] : undefined;
+
   return (
-    <nav
-      aria-label="Adjacent entries"
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 14rem), 1fr))',
-        gap: 'var(--space)',
-        paddingTop: 'var(--space-loose)',
-        borderTop: '1px solid var(--rule)',
-      }}
-    >
-      <div>
-        {previous ? (
-          <Link href={previous.href} scroll={true} style={{ display: 'block', minHeight: '44px' }}>
-            <span className="meta">Previous</span>
-            <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)', wordBreak: 'break-word' }}>{previous.data.name}</span>
-          </Link>
-        ) : null}
-      </div>
-      <div style={{ textAlign: next ? 'right' : 'left' }}>
-        {next ? (
-          <Link href={next.href} scroll={true} style={{ display: 'block', minHeight: '44px' }}>
-            <span className="meta">Next</span>
-            <span className="title" style={{ display: 'block', fontSize: 'var(--text-lead)', wordBreak: 'break-word' }}>{next.data.name}</span>
-          </Link>
-        ) : null}
-      </div>
+    <nav aria-label="Adjacent entries" className={styles.nav}>
+      {previous ? (
+        <Link
+          href={previous.href}
+          scroll={true}
+          className={styles.prevNextCard}
+          data-direction="prev"
+        >
+          <div className={styles.prevNextMeta}>
+            <span className={styles.arrowIcon}>
+              <MetaphorMark name="arrow-back" size={16} />
+            </span>
+            <span className={styles.metaLabel}>
+              Previous{categoryPrev ? ` · ${categoryPrev.singular}` : ''}
+            </span>
+          </div>
+          <div className={styles.prevNextTitleWrap}>
+            <span className={styles.prevNextTitle}>{previous.data.name}</span>
+          </div>
+        </Link>
+      ) : (
+        <div className={styles.spacer} aria-hidden="true" />
+      )}
+
+      {next ? (
+        <Link
+          href={next.href}
+          scroll={true}
+          className={styles.prevNextCard}
+          data-direction="next"
+        >
+          <div className={styles.prevNextMeta} style={{ justifyContent: 'flex-end' }}>
+            <span className={styles.metaLabel}>
+              Next{categoryNext ? ` · ${categoryNext.singular}` : ''}
+            </span>
+            <span className={styles.arrowIcon}>
+              <MetaphorMark name="arrow-next" size={16} />
+            </span>
+          </div>
+          <div className={styles.prevNextTitleWrap} style={{ textAlign: 'right' }}>
+            <span className={styles.prevNextTitle}>{next.data.name}</span>
+          </div>
+        </Link>
+      ) : null}
     </nav>
   );
 }

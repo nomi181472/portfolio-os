@@ -147,7 +147,7 @@ export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
           </div>
         </div>
 
-        {/* Mobile Route Track (< 640px): Vertical Transit Layout (Guarantees zero overlap) */}
+        {/* Mobile Route Track (< 640px): Vertical Transit Circuit (Guarantees zero overlap) */}
         <div className={styles.mobileTrack}>
           {chronologicalEntities.map((entity, index) => {
             const data = entity.data as Experience;
@@ -159,99 +159,110 @@ export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
             const duration = formatDuration(period);
 
             return (
-              <div key={data.id} className={styles.mobileStationItem}>
-                <div className={styles.mobileStationGutter}>
-                  <div className={`${styles.nodeDot} ${isOngoing ? styles.nodeDotActive : ''}`}>
-                    {isOngoing ? <span className={styles.nodeDotPulse} /> : null}
-                  </div>
-                  {!isLast ? (
-                    <div className={styles.mobileConnectorLine}>
-                      {duration ? (
-                        <span className={styles.mobileStrideBadge}>{duration} stride</span>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-
+              <div key={data.id} className={styles.mobileStationBlock}>
+                {/* Station Interactive Row */}
                 <button
                   type="button"
                   className={styles.mobileStationButton}
                   onClick={() => scrollToStation(data.id)}
                   title={`Focus ${org}`}
                 >
-                  <div className={styles.mobileStationHeader}>
-                    <span className={styles.mobileStationName}>{org}</span>
-                    <span className={styles.mobileStationYears}>{years}</span>
+                  <div className={styles.mobileGutterCol}>
+                    <div className={`${styles.nodeDot} ${isOngoing ? styles.nodeDotActive : ''}`}>
+                      {isOngoing ? <span className={styles.nodeDotPulse} /> : null}
+                    </div>
                   </div>
-                  <div className={styles.mobileStationRoleLine}>
-                    {data.role ? (
-                      <span className={styles.mobileStationRole}>{data.role}</span>
-                    ) : null}
-                    <span className={styles.mobileStationStatusTag}>
-                      {isOngoing ? 'Active Terminal' : `Stop 0${index + 1}`}
-                    </span>
+
+                  <div className={styles.mobileStationBody}>
+                    <div className={styles.mobileStationHeader}>
+                      <span className={styles.mobileStationName}>{org}</span>
+                      {years ? <span className={styles.mobileStationYears}>{years}</span> : null}
+                    </div>
+                    <div className={styles.mobileStationRoleLine}>
+                      {data.role ? (
+                        <span className={styles.mobileStationRole}>{data.role}</span>
+                      ) : null}
+                      <span className={styles.mobileStationStatusTag}>
+                        {isOngoing ? 'Active Terminal' : `Stop 0${index + 1}`}
+                      </span>
+                    </div>
                   </div>
                 </button>
+
+                {/* Vertical Transit Connector between stations */}
+                {!isLast ? (
+                  <div className={styles.mobileConnectorRow} aria-hidden="true">
+                    <div className={styles.mobileGutterCol}>
+                      <div className={styles.mobileConnectorLine} />
+                    </div>
+                    <div className={styles.mobileConnectorBody}>
+                      {duration ? (
+                        <span className={styles.mobileStrideBadge}>
+                          <span className={styles.strideIcon}>↕</span>
+                          {duration} tenure
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
               </div>
             );
           })}
         </div>
 
-        {/* Desktop Route Track (>= 640px): Dedicated Rail Row + Labels Grid (Zero overlap) */}
+        {/* Desktop Route Track (>= 640px): Seamless Transit Rail + Aligned Nodes */}
         <div className={styles.desktopTrack}>
-          {/* Rail Track Row */}
           <div className={styles.desktopTrackRail}>
             {chronologicalEntities.map((entity, index) => {
               const data = entity.data as Experience;
               const period = data.period;
               const isOngoing = Boolean(period?.ongoing);
               const isLast = index === chronologicalEntities.length - 1;
+              const org = data.organisation || data.name;
+              const years = formatStationYears(period);
               const duration = formatDuration(period);
 
               return (
-                <div key={data.id} className={styles.desktopNodeGroup}>
-                  <div className={`${styles.nodeDot} ${isOngoing ? styles.nodeDotActive : ''}`}>
-                    {isOngoing ? <span className={styles.nodeDotPulse} /> : null}
-                  </div>
-                  {!isLast ? (
-                    <div className={styles.desktopConnectorLine}>
-                      {duration ? (
-                        <span className={styles.desktopStridePill}>{duration} stride</span>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Labels Grid Row */}
-          <div
-            className={styles.desktopLabelsGrid}
-            style={{
-              gridTemplateColumns: `repeat(${chronologicalEntities.length}, minmax(0, 1fr))`,
-            }}
-          >
-            {chronologicalEntities.map((entity) => {
-              const data = entity.data as Experience;
-              const period = data.period;
-              const org = data.organisation || data.name;
-              const years = formatStationYears(period);
-
-              return (
-                <button
+                <div
                   key={data.id}
-                  type="button"
-                  className={styles.desktopStationButton}
-                  onClick={() => scrollToStation(data.id)}
-                  title={`Focus ${org}`}
+                  className={`${styles.desktopStationSegment} ${isLast ? styles.desktopStationSegmentLast : ''}`}
                 >
-                  <span className={styles.desktopStationName}>{org}</span>
-                  <span className={styles.desktopStationYears}>{years}</span>
-                  {data.role ? (
-                    <span className={styles.desktopStationRole}>{data.role}</span>
-                  ) : null}
-                </button>
+                  {/* Top Track Row with Dot and Rail Line */}
+                  <div className={styles.desktopSegmentTrack}>
+                    <div className={`${styles.nodeDot} ${isOngoing ? styles.nodeDotActive : ''}`}>
+                      {isOngoing ? <span className={styles.nodeDotPulse} /> : null}
+                    </div>
+                    {!isLast ? (
+                      <div className={styles.desktopRailLineWrap}>
+                        <div className={styles.desktopRailLine} />
+                        {duration ? (
+                          <span className={styles.desktopStridePill}>{duration} stride</span>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
+
+                  {/* Station Interactive Content aligned directly below its dot */}
+                  <button
+                    type="button"
+                    className={styles.desktopStationButton}
+                    onClick={() => scrollToStation(data.id)}
+                    title={`Focus ${org}`}
+                  >
+                    <div className={styles.desktopStationHeader}>
+                      <span className={styles.desktopStationName}>{org}</span>
+                      {years ? <span className={styles.desktopStationYears}>{years}</span> : null}
+                    </div>
+                    <div className={styles.desktopStationMeta}>
+                      {data.role ? (
+                        <span className={styles.desktopStationRole}>{data.role}</span>
+                      ) : null}
+                      <span className={styles.desktopStationTag}>
+                        {isOngoing ? 'Active Terminal' : `Stop 0${index + 1}`}
+                      </span>
+                    </div>
+                  </button>
+                </div>
               );
             })}
           </div>

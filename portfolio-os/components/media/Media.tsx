@@ -14,6 +14,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import NextImage from 'next/image';
+import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
 import type { Media, OverlayBox } from '@/types/portfolio';
 import styles from './Media.module.css';
 
@@ -506,7 +507,7 @@ function LightboxModal({
             title="Previous document"
             aria-label="Previous document"
           >
-            ‹
+            <MetaphorMark name="arrow-back" size={20} />
           </button>
         ) : null}
 
@@ -535,7 +536,7 @@ function LightboxModal({
             title="Next document"
             aria-label="Next document"
           >
-            ›
+            <MetaphorMark name="arrow-next" size={20} />
           </button>
         ) : null}
       </div>
@@ -781,28 +782,65 @@ export function MediaGallery({ items, limit }: { items: Media[]; limit?: number 
       {/* Tabbed media switcher when multiple items exist */}
       {visible.length > 1 ? (
         <div className={styles.tabContainer}>
-          <div className={styles.tabList} role="tablist">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={activeTab === 'all'}
-              className={`${styles.tabBtn} ${activeTab === 'all' ? styles.tabBtnActive : ''}`}
-              onClick={() => setActiveTab('all')}
-            >
-              <span>All Documents ({visible.length})</span>
-            </button>
-            {visible.map((item, idx) => (
+          <div className={styles.tabHeaderWrap}>
+            <div className={styles.tabList} role="tablist">
               <button
-                key={item.url || idx}
                 type="button"
                 role="tab"
-                aria-selected={activeTab === idx}
-                className={`${styles.tabBtn} ${activeTab === idx ? styles.tabBtnActive : ''}`}
-                onClick={() => setActiveTab(idx)}
+                aria-selected={activeTab === 'all'}
+                className={`${styles.tabBtn} ${activeTab === 'all' ? styles.tabBtnActive : ''}`}
+                onClick={() => setActiveTab('all')}
               >
-                <span>{item.title ? (item.title.length > 28 ? `${item.title.slice(0, 26)}…` : item.title) : `Document ${idx + 1}`}</span>
+                <span>All Documents ({visible.length})</span>
               </button>
-            ))}
+              {visible.map((item, idx) => (
+                <button
+                  key={item.url || idx}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === idx}
+                  className={`${styles.tabBtn} ${activeTab === idx ? styles.tabBtnActive : ''}`}
+                  onClick={() => setActiveTab(idx)}
+                >
+                  <span>{item.title ? (item.title.length > 28 ? `${item.title.slice(0, 26)}…` : item.title) : `Document ${idx + 1}`}</span>
+                </button>
+              ))}
+            </div>
+
+            <div className={styles.tabSteppers} role="group" aria-label="Document navigation">
+              <button
+                type="button"
+                className={styles.tabStepBtn}
+                onClick={() => {
+                  const total = visible.length;
+                  if (typeof activeTab === 'number') {
+                    setActiveTab((activeTab - 1 + total) % total);
+                  } else {
+                    setActiveTab(total - 1);
+                  }
+                }}
+                title="Previous document"
+                aria-label="Previous document"
+              >
+                <MetaphorMark name="arrow-back" size={14} />
+              </button>
+              <button
+                type="button"
+                className={styles.tabStepBtn}
+                onClick={() => {
+                  const total = visible.length;
+                  if (typeof activeTab === 'number') {
+                    setActiveTab((activeTab + 1) % total);
+                  } else {
+                    setActiveTab(0);
+                  }
+                }}
+                title="Next document"
+                aria-label="Next document"
+              >
+                <MetaphorMark name="arrow-next" size={14} />
+              </button>
+            </div>
           </div>
         </div>
       ) : null}

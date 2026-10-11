@@ -22,8 +22,8 @@ const hostHeartbeats = new Map<string, number>();
 
 // Sliding window TTL
 const SIGNAL_TTL_MS = 60_000; // 60 seconds
-const HOST_ONLINE_TTL_MS = 45_000; // 45 seconds
-const HOST_AWAY_TTL_MS = 180_000; // 3 minutes
+const HOST_ONLINE_TTL_MS = 75_000; // 75 seconds (accommodates mobile background timer jitter)
+const HOST_AWAY_TTL_MS = 240_000; // 4 minutes
 
 /**
  * Prunes expired signals from memory to prevent memory accumulation.

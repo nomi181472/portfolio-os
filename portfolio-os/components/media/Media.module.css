@@ -177,6 +177,13 @@
   margin-bottom: var(--space-snug);
 }
 
+.tabHeaderWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-tight);
+}
+
 .tabList {
   display: flex;
   align-items: center;
@@ -185,10 +192,38 @@
   padding-bottom: 4px;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
+  flex: 1;
 }
 
 .tabList::-webkit-scrollbar {
   display: none;
+}
+
+.tabSteppers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tabStepBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-raised);
+  color: var(--ink-quiet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabStepBtn:hover {
+  color: var(--ink-bright);
+  border-color: var(--signal);
+  background: var(--fill-strong);
 }
 
 .tabBtn {
