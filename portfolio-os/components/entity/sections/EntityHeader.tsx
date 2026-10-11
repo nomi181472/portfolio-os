@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { StatusBadge, SourceBadge, OrganisationBadge } from '../Badges';
+import { StatusBadge, SourceBadge, OrganisationBadge, DepthBadge } from '../Badges';
+import { SkillLensGauge } from '@/components/skills/SkillLensGauge';
 import { PeriodPulse } from '../PeriodPulse';
 import { formatPeriod, formatDuration, formatDate, humanise } from '@/lib/format';
 import { CATEGORIES } from '@/lib/categories';
@@ -43,6 +44,9 @@ export function EntityHeader({ entity }: { entity: ResolvedEntity }) {
           </div>
         ) : null}
         <h1 className="heading" style={{ margin: 0 }}>{entity.data.name}</h1>
+        {entity.kind === 'skills' && 'depth' in data && data.depth ? (
+          <DepthBadge depth={String(data.depth)} />
+        ) : null}
       </div>
       {('organisation' in data && data.organisation) ||
       ('institution' in data && data.institution) ||
@@ -94,107 +98,7 @@ export function EntityHeader({ entity }: { entity: ResolvedEntity }) {
         {'state' in data && data.state ? <span className="badge" data-state={String(data.state)}>{humanise(String(data.state))}</span> : null}
         <SourceBadge source={data.source as never} />
         {periodLine ? <PeriodPulse text={periodLine} className="meta" repeat /> : null}
-        {'design' in data && data.design && 'support' in data && data.support ? (
-          <span
-            className="badge"
-            style={{
-              fontFamily: 'var(--font-data)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              fontWeight: 500,
-              display: 'inline-flex',
-              gap: 6,
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-            }}
-          >
-            <span>Design: {String(data.design)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>Support: {String(data.support)}</span>
-          </span>
-        ) : 'agentic' in data && data.agentic && 'aiAssisted' in data && data.aiAssisted && 'independent' in data && data.independent ? (
-          <span
-            className="badge"
-            style={{
-              fontFamily: 'var(--font-data)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              fontWeight: 500,
-              display: 'inline-flex',
-              gap: 6,
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-            }}
-          >
-            <span>Agentic Development: {String(data.agentic)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>AI-Assisted Development: {String(data.aiAssisted)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>Independent Development: {String(data.independent)}</span>
-          </span>
-        ) : 'reading' in data && data.reading && 'writing' in data && data.writing ? (
-          <span
-            className="badge"
-            style={{
-              fontFamily: 'var(--font-data)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              fontWeight: 500,
-              display: 'inline-flex',
-              gap: 6,
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-            }}
-          >
-            <span>Reading: {String(data.reading)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>Writing: {String(data.writing)}</span>
-          </span>
-        ) : 'handling' in data && data.handling ? (
-          <span
-            className="badge"
-            style={{
-              fontFamily: 'var(--font-data)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              fontWeight: 500,
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-            }}
-          >
-            Handling: {String(data.handling)}
-          </span>
-        ) : 'proficiency' in data && data.proficiency ? (
-          <span
-            className="badge"
-            style={{
-              fontFamily: 'var(--font-data)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              fontWeight: 500,
-            }}
-          >
-            Proficiency: {String(data.proficiency)}
-          </span>
-        ) : 'level' in data && data.level ? (
-          <span
-            className="badge"
-            style={{
-              fontFamily: 'var(--font-data)',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              fontWeight: 500,
-            }}
-          >
-            Level: {String(data.level)}
-          </span>
-        ) : null}
+        {entity.kind === 'skills' ? <SkillLensGauge data={data} /> : null}
         <CopyEntityButton entityData={data} name={entity.data.name} />
       </div>
 

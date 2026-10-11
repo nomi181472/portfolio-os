@@ -22,12 +22,21 @@ interface ExperienceRouteViewProps {
   entities: ResolvedEntity[];
 }
 
+function formatStationYears(period?: Period): string {
+  if (!period) return '';
+  const startYear = period.startDate ? period.startDate.slice(0, 4) : '';
+  if (period.ongoing) return `${startYear} — Present`;
+  const endYear = period.endDate ? period.endDate.slice(0, 4) : '';
+  if (startYear && endYear && startYear !== endYear) return `${startYear} — ${endYear}`;
+  return startYear || endYear || '';
+}
+
 export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
   const [highlightedId, setHighlightedId] = useState<string | null>(null);
   const [expandedLogbooks, setExpandedLogbooks] = useState<Record<string, boolean>>({});
   const [expandedDeliverables, setExpandedDeliverables] = useState<Record<string, boolean>>({});
 
-  // Sort chronological for the top schematic route (earliest to latest)
+  // Sort chronological for the route overview (earliest origin to latest terminal)
   const chronologicalEntities = useMemo(() => {
     return [...entities].sort((a, b) => {
       const startA = (a.data as Experience).period?.startDate ?? '';
@@ -55,12 +64,24 @@ export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
       }
     }
 
+    const first = (chronologicalEntities[0]?.data as Experience)?.period?.startDate;
+    let spanLabel = '';
+    if (first) {
+      const startYear = Number(first.slice(0, 4));
+      const currentYear = new Date().getFullYear();
+      const diff = currentYear - startYear;
+      if (diff > 0) {
+        spanLabel = `~${diff}+ yr Route`;
+      }
+    }
+
     return {
       stationCount: entities.length,
       totalDeliverables,
       systemsCount: systemsSet.size,
+      spanLabel,
     };
-  }, [entities]);
+  }, [entities, chronologicalEntities]);
 
   const toggleLogbook = (id: string) => {
     setExpandedLogbooks((prev) => ({
@@ -84,7 +105,7 @@ export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
     }
     setTimeout(() => {
       setHighlightedId(null);
-    }, 2500);
+    }, 2800);
   };
 
   if (entities.length === 0) {
@@ -118,45 +139,122 @@ export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
                 {routeTelemetry.systemsCount} Systems
               </span>
             ) : null}
+            {routeTelemetry.spanLabel ? (
+              <span className={styles.statPill}>
+                {routeTelemetry.spanLabel}
+              </span>
+            ) : null}
           </div>
         </div>
 
-        <div className={styles.trackContainer}>
+        {/* Mobile Route Track (< 640px): Vertical Transit Layout (Guarantees zero overlap) */}
+        <div className={styles.mobileTrack}>
           {chronologicalEntities.map((entity, index) => {
             const data = entity.data as Experience;
             const period = data.period;
             const isOngoing = Boolean(period?.ongoing);
             const isLast = index === chronologicalEntities.length - 1;
             const org = data.organisation || data.name;
+            const years = formatStationYears(period);
             const duration = formatDuration(period);
 
             return (
-              <div key={data.id} className={styles.trackNodeGroup}>
+              <div key={data.id} className={styles.mobileStationItem}>
+                <div className={styles.mobileStationGutter}>
+                  <div className={`${styles.nodeDot} ${isOngoing ? styles.nodeDotActive : ''}`}>
+                    {isOngoing ? <span className={styles.nodeDotPulse} /> : null}
+                  </div>
+                  {!isLast ? (
+                    <div className={styles.mobileConnectorLine}>
+                      {duration ? (
+                        <span className={styles.mobileStrideBadge}>{duration} stride</span>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+
                 <button
                   type="button"
-                  className={styles.trackStationButton}
+                  className={styles.mobileStationButton}
                   onClick={() => scrollToStation(data.id)}
                   title={`Focus ${org}`}
                 >
-                  <div className={styles.nodeMarkerRow}>
-                    <div className={`${styles.nodeDot} ${isOngoing ? styles.nodeDotActive : ''}`}>
-                      {isOngoing ? <span className={styles.nodeDotPulse} /> : null}
-                    </div>
+                  <div className={styles.mobileStationHeader}>
+                    <span className={styles.mobileStationName}>{org}</span>
+                    <span className={styles.mobileStationYears}>{years}</span>
                   </div>
-                  <span className={styles.nodeStationLabel}>{org}</span>
-                  <span className={styles.nodeStationMeta}>
-                    {data.role || (isOngoing ? 'Active Terminal' : 'Station')}
-                  </span>
+                  <div className={styles.mobileStationRoleLine}>
+                    {data.role ? (
+                      <span className={styles.mobileStationRole}>{data.role}</span>
+                    ) : null}
+                    <span className={styles.mobileStationStatusTag}>
+                      {isOngoing ? 'Active Terminal' : `Stop 0${index + 1}`}
+                    </span>
+                  </div>
                 </button>
-
-                {!isLast ? (
-                  <div className={styles.nodeConnectorLine}>
-                    {duration ? <span className={styles.connectorDuration}>{duration}</span> : null}
-                  </div>
-                ) : null}
               </div>
             );
           })}
+        </div>
+
+        {/* Desktop Route Track (>= 640px): Dedicated Rail Row + Labels Grid (Zero overlap) */}
+        <div className={styles.desktopTrack}>
+          {/* Rail Track Row */}
+          <div className={styles.desktopTrackRail}>
+            {chronologicalEntities.map((entity, index) => {
+              const data = entity.data as Experience;
+              const period = data.period;
+              const isOngoing = Boolean(period?.ongoing);
+              const isLast = index === chronologicalEntities.length - 1;
+              const duration = formatDuration(period);
+
+              return (
+                <div key={data.id} className={styles.desktopNodeGroup}>
+                  <div className={`${styles.nodeDot} ${isOngoing ? styles.nodeDotActive : ''}`}>
+                    {isOngoing ? <span className={styles.nodeDotPulse} /> : null}
+                  </div>
+                  {!isLast ? (
+                    <div className={styles.desktopConnectorLine}>
+                      {duration ? (
+                        <span className={styles.desktopStridePill}>{duration} stride</span>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Labels Grid Row */}
+          <div
+            className={styles.desktopLabelsGrid}
+            style={{
+              gridTemplateColumns: `repeat(${chronologicalEntities.length}, minmax(0, 1fr))`,
+            }}
+          >
+            {chronologicalEntities.map((entity) => {
+              const data = entity.data as Experience;
+              const period = data.period;
+              const org = data.organisation || data.name;
+              const years = formatStationYears(period);
+
+              return (
+                <button
+                  key={data.id}
+                  type="button"
+                  className={styles.desktopStationButton}
+                  onClick={() => scrollToStation(data.id)}
+                  title={`Focus ${org}`}
+                >
+                  <span className={styles.desktopStationName}>{org}</span>
+                  <span className={styles.desktopStationYears}>{years}</span>
+                  {data.role ? (
+                    <span className={styles.desktopStationRole}>{data.role}</span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 
@@ -222,8 +320,11 @@ export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
                   </h2>
                   <div className={styles.stationRoleBadges}>
                     {role ? <span className={styles.badgeRole}>{role}</span> : null}
-                    {employmentType ? <span className={styles.badgeContext}>{employmentType}</span> : null}
-                    {location ? <span className={styles.badgeContext}>{location}</span> : null}
+                    {employmentType || location ? (
+                      <span className={styles.badgeContext}>
+                        {[employmentType, location].filter(Boolean).join(' · ')}
+                      </span>
+                    ) : null}
                   </div>
                 </div>
 
@@ -260,19 +361,31 @@ export function ExperienceRouteView({ entities }: ExperienceRouteViewProps) {
               {/* Station Telemetry HUD Grid */}
               <div className={styles.telemetryGrid}>
                 <div className={styles.telemetryTile}>
-                  <span className={styles.telemetryNumber}>{deliverables.length}</span>
+                  <div className={styles.telemetryValueRow}>
+                    <MetaphorMark name="artifact" size={14} />
+                    <span className={styles.telemetryNumber}>{deliverables.length}</span>
+                  </div>
                   <span className={styles.telemetryLabel}>Deliverables</span>
                 </div>
                 <div className={styles.telemetryTile}>
-                  <span className={styles.telemetryNumber}>{systems.length}</span>
+                  <div className={styles.telemetryValueRow}>
+                    <MetaphorMark name="route" size={14} />
+                    <span className={styles.telemetryNumber}>{systems.length}</span>
+                  </div>
                   <span className={styles.telemetryLabel}>Systems</span>
                 </div>
                 <div className={styles.telemetryTile}>
-                  <span className={styles.telemetryNumber}>{technologies.length}</span>
+                  <div className={styles.telemetryValueRow}>
+                    <MetaphorMark name="instrument" size={14} />
+                    <span className={styles.telemetryNumber}>{technologies.length}</span>
+                  </div>
                   <span className={styles.telemetryLabel}>Technologies</span>
                 </div>
                 <div className={styles.telemetryTile}>
-                  <span className={styles.telemetryNumber}>{achievements.length}</span>
+                  <div className={styles.telemetryValueRow}>
+                    <MetaphorMark name="milestone" size={14} />
+                    <span className={styles.telemetryNumber}>{achievements.length}</span>
+                  </div>
                   <span className={styles.telemetryLabel}>Key Milestones</span>
                 </div>
               </div>

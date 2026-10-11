@@ -95,3 +95,44 @@ export function OrganisationBadge({ organisation }: { organisation?: string }) {
     </span>
   );
 }
+
+/**
+ * DepthBadge expresses the qualitative mastery tier of a skill
+ * according to the Portfolio OS instrument metaphor (§24).
+ */
+export function DepthBadge({ depth }: { depth?: string }) {
+  if (!depth) return null;
+  const normalized = depth.toLowerCase();
+  const tiers: Record<string, { label: string; icon: string }> = {
+    specialist: { label: 'Specialist', icon: '◆' },
+    deep: { label: 'Deep', icon: '◈' },
+    proficient: { label: 'Proficient', icon: '◇' },
+    working: { label: 'Working', icon: '○' },
+  };
+  const tier = tiers[normalized] ?? { label: depth, icon: '◆' };
+
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 4,
+        fontFamily: 'var(--font-data)',
+        fontSize: 'var(--text-fine)',
+        fontWeight: 600,
+        letterSpacing: '0.04em',
+        textTransform: 'uppercase',
+        padding: '2px 7px',
+        borderRadius: '4px',
+        background: 'rgba(197, 159, 96, 0.12)',
+        border: '1px solid rgba(197, 159, 96, 0.35)',
+        color: 'var(--signal)',
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <span style={{ fontSize: '9px', lineHeight: 1 }}>{tier.icon}</span>
+      {tier.label}
+    </span>
+  );
+}
+

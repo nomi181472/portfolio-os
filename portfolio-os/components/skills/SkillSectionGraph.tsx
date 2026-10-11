@@ -295,6 +295,54 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                       </Link>
                     </div>
 
+                    {/* Living Laser Stream Ribbon */}
+                    {activeMobileSkill.targets.length > 0 ? (
+                      <div className={styles.mobileLaserWrapper} aria-hidden="true">
+                        <svg className={styles.mobileLaserCanvas} viewBox="0 0 320 48" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id="mobileLaserGradSkill" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="var(--signal)" stopOpacity="1" />
+                              <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.85" />
+                            </linearGradient>
+                            <filter id="mobileLaserGlow" x="-20%" y="-20%" width="140%" height="140%">
+                              <feGaussianBlur stdDeviation="2" result="blur" />
+                              <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                              </feMerge>
+                            </filter>
+                          </defs>
+
+                          {/* Source Node Origin */}
+                          <circle cx="160" cy="5" r="4" fill="var(--signal)" filter="url(#mobileLaserGlow)" />
+                          <circle cx="160" cy="5" r="7" fill="none" stroke="var(--signal)" strokeWidth="1" opacity="0.6" />
+
+                          {/* Dynamic Laser Beams to Targets */}
+                          {(() => {
+                            const count = Math.min(activeMobileSkill.targets.length, showAllTargets ? activeMobileSkill.targets.length : 5);
+                            return activeMobileSkill.targets.slice(0, count).map((target, idx) => {
+                              const step = 300 / Math.max(1, count);
+                              const destX = 10 + step * (idx + 0.5);
+                              const d = `M 160 5 C 160 26, ${destX} 26, ${destX} 44`;
+
+                              return (
+                                <g key={target.id}>
+                                  <path
+                                    d={d}
+                                    fill="none"
+                                    stroke="url(#mobileLaserGradSkill)"
+                                    strokeWidth="2"
+                                    className={styles.mobileLaserBeam}
+                                  />
+                                  <circle cx={destX} cy="44" r="3.5" fill="#60a5fa" filter="url(#mobileLaserGlow)" />
+                                </g>
+                              );
+                            });
+                          })()}
+                        </svg>
+                      </div>
+                    ) : null}
+
                     <div className={styles.mobileConnectionsSection}>
                       <div className={styles.mobileConnectionsHeader}>
                         <span>CONNECTED DELIVERABLES</span>
@@ -381,6 +429,54 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                         Open Deliverable ↗
                       </Link>
                     </div>
+
+                    {/* Living Laser Stream Ribbon */}
+                    {deliverableSkills.length > 0 ? (
+                      <div className={styles.mobileLaserWrapper} aria-hidden="true">
+                        <svg className={styles.mobileLaserCanvas} viewBox="0 0 320 48" preserveAspectRatio="none">
+                          <defs>
+                            <linearGradient id="mobileLaserGradDeliverable" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="#60a5fa" stopOpacity="1" />
+                              <stop offset="100%" stopColor="var(--signal)" stopOpacity="0.85" />
+                            </linearGradient>
+                            <filter id="mobileLaserGlowDeliv" x="-20%" y="-20%" width="140%" height="140%">
+                              <feGaussianBlur stdDeviation="2" result="blur" />
+                              <feMerge>
+                                <feMergeNode in="blur" />
+                                <feMergeNode in="SourceGraphic" />
+                              </feMerge>
+                            </filter>
+                          </defs>
+
+                          {/* Source Node Origin */}
+                          <circle cx="160" cy="5" r="4" fill="#60a5fa" filter="url(#mobileLaserGlowDeliv)" />
+                          <circle cx="160" cy="5" r="7" fill="none" stroke="#60a5fa" strokeWidth="1" opacity="0.6" />
+
+                          {/* Dynamic Laser Beams to Skills */}
+                          {(() => {
+                            const count = Math.min(deliverableSkills.length, showAllTargets ? deliverableSkills.length : 5);
+                            return deliverableSkills.slice(0, count).map((sk, idx) => {
+                              const step = 300 / Math.max(1, count);
+                              const destX = 10 + step * (idx + 0.5);
+                              const d = `M 160 5 C 160 26, ${destX} 26, ${destX} 44`;
+
+                              return (
+                                <g key={sk.id}>
+                                  <path
+                                    d={d}
+                                    fill="none"
+                                    stroke="url(#mobileLaserGradDeliverable)"
+                                    strokeWidth="2"
+                                    className={styles.mobileLaserBeam}
+                                  />
+                                  <circle cx={destX} cy="44" r="3.5" fill="var(--signal)" filter="url(#mobileLaserGlowDeliv)" />
+                                </g>
+                              );
+                            });
+                          })()}
+                        </svg>
+                      </div>
+                    ) : null}
 
                     <div className={styles.mobileConnectionsSection}>
                       <div className={styles.mobileConnectionsHeader}>

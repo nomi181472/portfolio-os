@@ -14,14 +14,15 @@
   gap: var(--space-wide);
 }
 
-/* ------------------------------------------------------------- Route Overview Strip */
+/* ------------------------------------------------------------- Route Overview Box */
 .routeOverview {
   border: 1px solid var(--rule);
   border-radius: var(--radius-card);
   background: var(--surface-raised);
-  padding: var(--space);
+  padding: clamp(var(--space), 3vw, var(--space-loose));
   position: relative;
   overflow: hidden;
+  box-shadow: var(--lift-subtle);
 }
 
 .routeOverviewHeader {
@@ -29,7 +30,7 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--space-tight);
+  gap: var(--space-snug);
   margin-bottom: var(--space);
   padding-bottom: var(--space-snug);
   border-bottom: 1px solid var(--rule);
@@ -47,70 +48,238 @@
 }
 
 .routeOverviewStats {
-  font-family: var(--font-data);
-  font-size: var(--text-fine);
-  color: var(--ink-bright);
   display: flex;
   align-items: center;
-  gap: var(--space-snug);
+  gap: var(--space-tight);
   flex-wrap: wrap;
 }
 
 .statPill {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-bright);
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: var(--radius-pill);
   background: var(--fill);
   border: 1px solid var(--rule);
+  white-space: nowrap;
 }
 
-/* Schematic Transit Track */
-.trackContainer {
+/* ------------------------------------------------------------- Mobile Route Track (< 640px) */
+.mobileTrack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--space-tight) 0;
+}
+
+@media (min-width: 640px) {
+  .mobileTrack {
+    display: none;
+  }
+}
+
+.mobileStationItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-snug);
+  position: relative;
+}
+
+.mobileStationGutter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 24px;
+  flex-shrink: 0;
+}
+
+.mobileConnectorLine {
+  width: 2px;
+  flex: 1;
+  min-height: 38px;
+  background: var(--rule-strong);
+  margin: 4px 0;
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  position: relative;
-  overflow-x: auto;
-  padding: var(--space-snug) var(--space-tight);
-  -webkit-overflow-scrolling: touch;
+  justify-content: center;
 }
 
-.trackNodeGroup {
+.mobileStrideBadge {
+  position: absolute;
+  left: 14px;
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-quiet);
+  background: var(--surface-raised);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+.mobileStationButton {
+  background: transparent;
+  border: none;
+  padding: 0 0 var(--space) 0;
+  cursor: pointer;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: left;
+  transition: opacity var(--dur-quick) var(--ease-out);
+}
+
+.mobileStationButton:hover {
+  opacity: 0.85;
+}
+
+.mobileStationHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.mobileStationName {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--text-lead);
+  color: var(--ink-bright);
+}
+
+.mobileStationYears {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  white-space: nowrap;
+}
+
+.mobileStationRoleLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.mobileStationRole {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.mobileStationStatusTag {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-bright);
+  background: var(--fill-strong);
+  border: 1px solid var(--rule-strong);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+}
+
+/* ------------------------------------------------------------- Desktop Route Track (>= 640px) */
+.desktopTrack {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .desktopTrack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-snug);
+    padding: var(--space-tight) 0;
+  }
+}
+
+.desktopTrackRail {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.desktopNodeGroup {
   display: flex;
   align-items: center;
   flex: 1;
-  min-width: 140px;
 }
 
-.trackNodeGroup:last-child {
+.desktopNodeGroup:last-child {
   flex: 0 0 auto;
 }
 
-.trackStationButton {
+.desktopConnectorLine {
+  flex: 1;
+  height: 2px;
+  background: var(--rule-strong);
+  margin: 0 var(--space-snug);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktopStridePill {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-quiet);
+  background: var(--surface-raised);
+  border: 1px solid var(--rule);
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.desktopLabelsGrid {
+  display: grid;
+  gap: var(--space);
+  width: 100%;
+}
+
+.desktopStationButton {
   background: transparent;
   border: none;
   padding: 0;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  gap: 3px;
   text-align: left;
   transition: opacity var(--dur-quick) var(--ease-out);
 }
 
-.trackStationButton:hover {
+.desktopStationButton:hover {
   opacity: 0.85;
 }
 
-.nodeMarkerRow {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.desktopStationName {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--text-lead);
+  color: var(--ink-bright);
 }
 
+.desktopStationYears {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+}
+
+.desktopStationRole {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink);
+}
+
+/* Shared Node Marker Styles */
 .nodeDot {
   width: 14px;
   height: 14px;
@@ -129,57 +298,20 @@
 
 .nodeDotPulse {
   position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
   border-radius: 50%;
-  border: 1px solid var(--signal);
+  border: 1.5px solid var(--signal);
   opacity: 0.6;
   animation: pulseBeacon 2.4s infinite ease-out;
 }
 
 @keyframes pulseBeacon {
-  0% { transform: scale(0.9); opacity: 0.8; }
-  70% { transform: scale(1.6); opacity: 0; }
-  100% { transform: scale(1.6); opacity: 0; }
-}
-
-.nodeConnectorLine {
-  flex: 1;
-  height: 2px;
-  background: var(--line-strong);
-  margin: 0 8px;
-  min-width: 32px;
-  position: relative;
-}
-
-.connectorDuration {
-  position: absolute;
-  top: -16px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-data);
-  font-size: 0.65rem;
-  color: var(--ink-quiet);
-  background: var(--surface-raised);
-  padding: 0 4px;
-  white-space: nowrap;
-}
-
-.nodeStationLabel {
-  font-family: var(--font-ui);
-  font-weight: 600;
-  font-size: var(--text-small);
-  color: var(--ink-bright);
-  white-space: nowrap;
-}
-
-.nodeStationMeta {
-  font-family: var(--font-data);
-  font-size: var(--text-fine);
-  color: var(--ink-quiet);
-  white-space: nowrap;
+  0% { transform: scale(0.9); opacity: 0.9; }
+  70% { transform: scale(1.7); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
 }
 
 /* ------------------------------------------------------------- Station Timeline Rail */
@@ -197,6 +329,7 @@
   padding: clamp(var(--space), 3vw, var(--space-loose));
   position: relative;
   transition: border-color var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) var(--ease-out);
+  scroll-margin-top: 5rem;
 }
 
 .stationCard:hover {
@@ -205,10 +338,10 @@
 
 .stationCardHighlighted {
   border-color: var(--signal);
-  box-shadow: 0 0 20px -4px var(--glow);
+  box-shadow: 0 0 24px -2px var(--glow);
 }
 
-/* Station Top Banner */
+/* Station Top Header Row */
 .stationHeaderRow {
   display: flex;
   align-items: flex-start;
@@ -222,6 +355,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .stationIndexMeta {
@@ -236,10 +371,10 @@
 }
 
 .stationOrgTitle {
-  font-size: clamp(var(--text-lead), 1.1rem + 0.5vw, var(--text-title));
+  font-size: clamp(1.3rem, 1.15rem + 0.8vw, 1.9rem);
   font-weight: 700;
   color: var(--ink-bright);
-  margin: 0;
+  margin: 2px 0 0 0;
   line-height: var(--leading-snug);
 }
 
@@ -257,7 +392,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--space-tight);
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .badgeRole {
@@ -275,10 +410,6 @@
   font-family: var(--font-data);
   font-size: var(--text-fine);
   color: var(--ink-quiet);
-  padding: 3px 8px;
-  border-radius: var(--radius-sm);
-  background: var(--fill-faint);
-  border: 1px solid var(--rule);
 }
 
 .stationMetaAside {
@@ -335,6 +466,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .durationBadge {
@@ -354,11 +486,11 @@
   background: var(--fill);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-sm);
-  padding: 2px 8px;
+  padding: 3px 8px;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   transition: all var(--dur-quick) var(--ease-out);
 }
 
@@ -389,6 +521,12 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+.telemetryValueRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .telemetryNumber {
@@ -534,7 +672,7 @@
   background: transparent;
   border: 1px solid var(--rule);
   border-radius: var(--radius-sm);
-  padding: 6px 12px;
+  padding: 8px 12px;
   font-family: var(--font-data);
   font-size: var(--text-fine);
   color: var(--ink-quiet);
