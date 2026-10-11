@@ -6,40 +6,22 @@
  * Invariants:
  * 1. Zero chat content passes through or is retained in database: chat messages
  *    travel 100% directly between browsers via RTCDataChannel.
- * 2. Signaling payloads are ephemeral in-memory state with a sliding 60-second TTL.
- * 3. Heartbeats track host presence (online / away / offline).
- * 4. Optional wakeup notification: can ping a webhook (Telegram/ntfy/Discord) if configured.
+ * 2. Signaling payloads are ephemeral state with a sliding 60-second TTL.
+ * 3. Dual-mode peer discovery:
+ *    - Mode A (Stateless Serverless / Vercel): Uses Upstash Redis REST for cross-container
+ *      shared signaling state.
+ *    - Mode B (Persistent Server / Docker / VPS): Uses zero-dependency in-memory Map bus.
+ * 4. Heartbeats track host presence (online / away / offline).
+ * 5. Optional wakeup notification: can ping a webhook (Telegram/ntfy/Discord) if configured.
  */
 
 import { NextResponse } from 'next/server';
 import type { SignalEnvelope, ChannelPresence } from '@/lib/p2p/types';
+import { getSignalingStore } from '@/lib/p2p/signalingStore';
 
-// In-memory ephemeral bus: channelId -> SignalEnvelope[]
-const signalsByChannel = new Map<string, SignalEnvelope[]>();
-
-// In-memory host presence: channelId -> lastHeartbeatTimestamp
-const hostHeartbeats = new Map<string, number>();
-
-// Sliding window TTL
-const SIGNAL_TTL_MS = 60_000; // 60 seconds
+// Sliding window presence TTL
 const HOST_ONLINE_TTL_MS = 75_000; // 75 seconds (accommodates mobile background timer jitter)
 const HOST_AWAY_TTL_MS = 240_000; // 4 minutes
-
-/**
- * Prunes expired signals from memory to prevent memory accumulation.
- */
-function pruneExpiredSignals(channelId: string) {
-  const now = Date.now();
-  const list = signalsByChannel.get(channelId);
-  if (!list) return;
-
-  const fresh = list.filter((sig) => now - sig.timestamp < SIGNAL_TTL_MS);
-  if (fresh.length === 0) {
-    signalsByChannel.delete(channelId);
-  } else {
-    signalsByChannel.set(channelId, fresh);
-  }
-}
 
 export async function POST(req: Request) {
   try {
@@ -50,7 +32,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing or invalid channelId' }, { status: 400 });
     }
 
-    pruneExpiredSignals(channelId);
+    const store = getSignalingStore();
 
     // 0. Verify host credentials against P2P_HOST_SECRET and P2P_HOST_EMAIL
     if (action === 'verify-host') {
@@ -84,12 +66,12 @@ export async function POST(req: Request) {
           return NextResponse.json({ error: 'Unauthorized heartbeat' }, { status: 401 });
         }
       }
-      hostHeartbeats.set(channelId, Date.now());
-      return NextResponse.json({ ok: true, status: 'online' });
+      await store.recordHostHeartbeat(channelId, Date.now());
+      return NextResponse.json({ ok: true, status: 'online', backend: store.backend });
     }
 
     if (action === 'get-presence') {
-      const lastSeen = hostHeartbeats.get(channelId) || 0;
+      const lastSeen = await store.getHostLastSeen(channelId);
       const now = Date.now();
       const diff = now - lastSeen;
 
@@ -107,7 +89,7 @@ export async function POST(req: Request) {
         activeVisitors: 0,
       };
 
-      return NextResponse.json({ presence, status });
+      return NextResponse.json({ presence, status, backend: store.backend });
     }
 
     // 2. Dispatch a signal (offer, answer, ice-candidate, leave)
@@ -122,28 +104,17 @@ export async function POST(req: Request) {
         timestamp: Date.now(),
       };
 
-      const current = signalsByChannel.get(channelId) || [];
-      current.push(signal);
-      signalsByChannel.set(channelId, current);
-
-      return NextResponse.json({ ok: true, signalId: signal.id });
+      await store.pushSignal(channelId, signal);
+      return NextResponse.json({ ok: true, signalId: signal.id, backend: store.backend });
     }
 
     // 3. Poll for signals addressed to recipient
     if (action === 'poll-signals') {
       const { role, clientId, since } = body;
-      const current = signalsByChannel.get(channelId) || [];
       const sinceTs = typeof since === 'number' ? since : 0;
 
-      const matched = current.filter((sig) => {
-        const isRecipient =
-          sig.to === role ||
-          (clientId && sig.to === clientId) ||
-          (role === 'host' && (sig.to === 'host' || sig.to === 'all'));
-        return isRecipient && sig.timestamp >= sinceTs;
-      });
-
-      return NextResponse.json({ signals: matched, serverTime: Date.now() });
+      const matched = await store.pollSignals(channelId, role, clientId, sinceTs);
+      return NextResponse.json({ signals: matched, serverTime: Date.now(), backend: store.backend });
     }
 
     // 4. Ping host's phone (Wakeup via webhook if configured)

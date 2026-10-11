@@ -135,8 +135,11 @@ Traditional chat applications require costly backend infrastructure: persistent 
 Portfolio OS achieves **100% Backendless Communication** using native browser **WebRTC DataChannels (`RTCDataChannel`)**:
 
 1. **Zero Database / Zero Message Storage**: Messages, read receipts, and voice audio are never written to any database or disk. All communication flows in-memory directly between the visitor and host browsers via encrypted DTLS/SCTP tunnels.
-2. **Stateless Ephemeral Signaling Mailbox**: The Next.js API route (`/api/p2p/signal`) functions exclusively as an ephemeral exchange mailbox for WebRTC session negotiation (SDP Offer/Answer and ICE candidates). Payloads live in an in-memory sliding buffer with a 60-second TTL and zero persistence.
-3. **Instant Direct Data Conduit**: The moment WebRTC ICE negotiation succeeds, the server is completely bypassed. All subsequent messages, typing states, and binary voice notes flow directly browser-to-browser.
+2. **Dual-Mode Ephemeral Signaling Mailbox**: The Next.js API route (`/api/p2p/signal`) functions exclusively as an ephemeral exchange mailbox for WebRTC session negotiation (SDP Offer/Answer and ICE candidates):
+   - **Mode A (Stateless Serverless / Vercel)**: When deployed on serverless lambdas where memory is not shared across instances, configure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. Signaling uses atomic Redis pipelines via native HTTPS `fetch` with a sliding 60-second TTL and zero third-party npm package overhead.
+   - **Mode B (Persistent Server / Docker / VPS)**: When self-hosting on a single persistent Node process (`next start`), signaling runs entirely in-memory (`P2P_SIGNALING_MODE=memory` or credentials omitted) with zero external services required.
+3. **Instant Direct Data Conduit**: The moment WebRTC ICE negotiation succeeds, the signaling mailbox is completely bypassed. All subsequent messages, typing states, and binary voice notes flow directly browser-to-browser.
+
 
 ---
 
@@ -322,7 +325,7 @@ portfolio-os/
 │   ├── p2p/                    # DirectChatPanel, VoiceRecorder, VoiceMessagePlayer
 │   └── agent/                  # AI Assistant with embedded P2P mode
 ├── lib/                        # Schema validation, graph traversal, SEO & P2P engines
-│   └── p2p/                    # WebRTC PeerClient, HostMultiPeerManager, crypto
+│   └── p2p/                    # WebRTC PeerClient, HostMultiPeerManager, signalingStore, crypto
 └── styles/
     ├── tokens.css              # Mathematical OKLCH design system
     └── globals.css             # Performance-tuned layout styling

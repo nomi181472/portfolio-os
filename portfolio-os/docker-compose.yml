@@ -1,0 +1,23 @@
+services:
+  portfolio-os:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: portfolio-os
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      # Optional P2P / Host configurations:
+      # - P2P_HOST_SECRET=your-secret-key
+      # - P2P_HOST_EMAIL=user@example.com
+      # - P2P_HOST_NAME=Portfolio Owner
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/p2p/channel"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s

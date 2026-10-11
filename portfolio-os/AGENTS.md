@@ -35,9 +35,15 @@ Instead of hardcoding developer profile data, contact details, projects, or metr
 
 Portfolio OS features a native, serverless-capable **Peer-to-Peer (P2P) direct communication system** connecting visitors directly with the portfolio owner over **WebRTC DataChannels**:
 
-1. **Zero Central Chat Servers**:
-   - WebRTC `RTCDataChannel` establishes a direct browser-to-browser data conduit with zero third-party messaging backends or recurring SaaS costs.
+1. **Zero Central Chat Servers & Dual-Mode Signaling**:
+   - WebRTC `RTCDataChannel` establishes a direct browser-to-browser data conduit with zero third-party messaging backends or recurring SaaS costs for message transport.
    - A lightweight Next.js route (`/api/p2p/signal`) serves solely as an initial signaling mailbox for WebRTC SDP offer/answer/ICE exchange and instant fallback relay during handshakes.
+   - **Dual-Mode Peer Discovery & Rendezvous Engine** (`lib/p2p/signalingStore.ts`):
+     - **Mode A: Stateless Serverless Deployment (Vercel / AWS Lambda)**:
+       Uses Upstash Redis REST (`UPSTASH_REDIS_REST_URL` & `UPSTASH_REDIS_REST_TOKEN`) via native HTTPS `fetch` (zero additional npm packages) to provide cross-container shared signaling state, atomic pipeline dispatch, and auto-expiring keys (60s signal TTL, 240s presence TTL).
+     - **Mode B: Persistent Server Deployment (Docker / VPS / Railway)**:
+       Uses zero-dependency in-memory Map bus with sliding TTL pruning. Automatically active when Upstash credentials are not configured or when `P2P_SIGNALING_MODE='memory'` is set.
+     - **Zero Hardcoded Credentials**: Upstash credentials are provided at deployment time via environment variables and never checked into source control.
 
 2. **Deterministic SQLite-Driven Channel Derivation**:
    - The public channel ID is derived dynamically from the active SQLite database (`portfolio.db` -> `getEntity('profile')` email) using SHA-256 (`deriveChannelId`).
