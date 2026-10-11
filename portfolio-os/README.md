@@ -229,6 +229,28 @@ sequenceDiagram
 - **Owner Authentication**: Protected by owner secret passphrase HMAC signature verification (`generateHostProof`).
 - **Access Anywhere**: Open `/direct` on any mobile phone, tablet, or desktop to monitor presence and chat live.
 
+### 6. Mobile PWA Installation & 24/7 Background Host Guide (Android)
+
+To keep your host status permanently **Online** on your phone without leaving your screen on:
+
+1. **Install PWA via Browser**:
+   - Open your deployed Portfolio OS domain in Chrome (or any Chromium browser on Android).
+   - Tap the browser menu (**⋮** / three dots) and select **"Install app"** (or **"Add to Home screen"**).
+   - Portfolio OS installs as a standalone Progressive Web App with zero browser address bar clutter.
+2. **Set App Battery Usage to "Unrestricted"**:
+   - Long-press the installed **Portfolio OS** app icon on your home screen or app drawer.
+   - Tap **App info (ℹ)** → select **Battery** (or **App battery usage**).
+   - Choose **Unrestricted** (instead of the default "Optimized").
+   - *Why this is essential*: Android's aggressive battery optimizer puts background WebRTC sockets and timers to sleep. "Unrestricted" allows the app to maintain live socket and WebRTC connections in the background.
+   - *(Optional pro-tip)*: In Android Recent Apps / Overview screen, tap the app icon and select **Lock** (padlock) so it stays resident in RAM.
+3. **Open Host Mode & Set Background Mode**:
+   - Launch Portfolio OS from your home screen and open `/direct` (or click 🔑 **Host** in the chat launcher).
+   - Sign in with your host credentials.
+   - Verify that **Background Mode** is set to **Active** (`🟢`).
+   - *How it works*: Background Mode runs an inaudible audio loop backed by the HTML5 Media Session API and resilient Web Worker heartbeat timers. This instructs Android to grant the PWA background media execution privileges, keeping you **Online** 24/7 even when your screen locks or you switch apps.
+   - Tap **"Enable Push Alerts"** to receive native system notifications with vibration and chime when a visitor initiates a chat.
+   - *(Optional)* Toggle **"Keep Screen On"** (`☀️`) if using a desk stand or wireless charging dock.
+
 ---
 
 ## 🏗️ Architecture & Directory Layout

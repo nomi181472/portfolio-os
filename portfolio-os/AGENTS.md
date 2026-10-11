@@ -63,6 +63,14 @@ Portfolio OS features a native, serverless-capable **Peer-to-Peer (P2P) direct c
    - Responsive layout: Master-detail drill-down on mobile phones (`< 768px`), dual-pane sidebar on tablets and desktops.
    - Clickable `/direct` entry points embedded in the chat widget header, mode selector, and mobile navigation drawer.
 
+7. **Mobile PWA & 24/7 Background Host Execution (Android)**:
+   - **Step-by-Step Host Setup**:
+     1. **Install PWA**: Open the portfolio in mobile Chrome → tap menu (⋮) → **Install app** (or **Add to Home screen**).
+     2. **Battery Unrestricted**: Long-press the installed app icon on home screen → **App info (ℹ)** → **Battery** (or **App battery usage**) → select **Unrestricted** (prevents Android from killing background networking).
+     3. **Activate Background Mode**: Open Portfolio OS → go to `/direct` → log in → ensure **Background Mode: Active** (`🟢`) is toggled on.
+   - **Keep-Alive Mechanism**: Uses an inaudible audio loop with the HTML5 Media Session API (`navigator.mediaSession`) and inline Web Worker interval timers (`createResilientInterval`) to grant the PWA background media execution privileges on Android, maintaining live WebRTC DataChannels and 18-second heartbeats (`HOST_ONLINE_TTL_MS = 75s`) with screen locked.
+   - **Push Alerts & Wake Lock**: Features native system notifications via Service Worker (`notificationclick` focuses `/direct`) and Screen Wake Lock API (`navigator.wakeLock`) for desk charging docks.
+
 ---
 
 ## Primary Audience & Goal
