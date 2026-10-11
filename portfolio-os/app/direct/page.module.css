@@ -473,3 +473,109 @@
     gap: 6px;
   }
 }
+
+.controlBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-tight);
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--rule);
+  background: var(--surface-raised);
+  font-size: 0.8125rem;
+}
+
+.controlGroup {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.toggleBtn {
+  appearance: none;
+  background: var(--fill-faint);
+  color: var(--ink);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-control);
+  padding: 5px 10px;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.toggleBtn:hover {
+  background: var(--fill);
+  color: var(--ink-bright);
+}
+
+.toggleBtnActive {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #10b981;
+}
+
+.tipsToggleBtn {
+  appearance: none;
+  background: transparent;
+  color: var(--ink-quiet);
+  border: none;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 6px;
+}
+
+.tipsToggleBtn:hover {
+  color: var(--ink-bright);
+}
+
+.tipsCard {
+  margin-top: 4px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-sunken);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.tipsCard h4 {
+  margin: 0 0 8px 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--ink-bright);
+}
+
+.tipsList {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tipsList li {
+  color: var(--ink-secondary);
+}
+
+.tipsList li strong {
+  color: var(--ink);
+}
+
+.tipsList code {
+  background: var(--fill);
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-family: var(--font-data);
+  font-size: 0.75rem;
+}
