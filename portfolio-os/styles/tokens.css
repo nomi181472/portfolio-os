@@ -10,7 +10,8 @@
  * Full color is exclusively reserved for embedded media, avatars, and iframes.
  */
 
-:root {
+:root,
+[data-appearance='dark'] {
   /* ---------------------------------------------------------- brand seed */
   --brand-primary: oklch(0.12 0.005 260);
   --brand-secondary: oklch(0.98 0.002 260);
@@ -53,6 +54,20 @@
   --signal: #ffffff;
   --signal-quiet: #a0a6b5;
   --signal-wash: rgba(255, 255, 255, 0.08);
+
+  /* ---------------------------------------------------- semantic aliases */
+  --ink-secondary: var(--ink-quiet);
+  --accent: var(--signal);
+  --rule-subtle: var(--rule);
+  --surface-hover: var(--fill);
+  --surface-active: var(--fill-strong);
+  --surface-secondary: var(--fill-faint);
+  --border-color: var(--rule);
+  --border-color-active: var(--line-strong);
+  --canvas: var(--surface);
+  --primary: var(--signal);
+  --signal-faint: var(--signal-wash);
+  --font-mono: var(--font-data);
 
   /* ------------------------------------------------------------- spacing */
   --space-hair: 0.25rem;
@@ -126,7 +141,8 @@
 }
 
 @supports (color: oklch(from red l c h)) {
-  :root {
+  :root,
+  [data-appearance='dark'] {
     --surface-sunk: oklch(from var(--brand-primary) 0.07 c h);
     --surface: oklch(from var(--brand-primary) 0.11 c h);
     --surface-raised: oklch(from var(--brand-primary) 0.16 calc(c * 0.9) h);

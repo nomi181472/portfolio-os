@@ -14,21 +14,16 @@
 }
 
 .tickSent {
-  color: var(--ink-secondary, #94a3b8);
+  color: var(--ink-faint);
   opacity: 0.65;
 }
 
 .tickDelivered {
-  color: var(--ink-secondary, #94a3b8);
+  color: var(--ink-quiet);
   opacity: 0.9;
 }
 
 .tickRead {
-  color: #38bdf8;
-  filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.45));
-}
-
-:global([data-theme="light"]) .tickRead {
-  color: #0284c7;
-  filter: drop-shadow(0 0 2px rgba(2, 132, 199, 0.3));
+  color: var(--signal);
+  filter: drop-shadow(0 0 2px var(--glow));
 }

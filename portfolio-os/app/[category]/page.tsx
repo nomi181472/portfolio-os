@@ -43,6 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 }
 
 import { SkillSectionGraph, type GraphSkillNode } from '@/components/skills/SkillSectionGraph';
+import { ExperienceRouteView } from '@/components/experience/ExperienceRouteView';
 
 const SKILL_CATEGORY_ORDER: string[] = [
   'Programming Languages',
@@ -144,6 +145,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             </section>
           );
         })
+      ) : definition.kind === 'experience' ? (
+        <ExperienceRouteView entities={entities} />
       ) : (
         <Rows entities={entities} />
       )}

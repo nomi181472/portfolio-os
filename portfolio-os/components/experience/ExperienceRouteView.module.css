@@ -1,0 +1,842 @@
+/**
+ * components/experience/ExperienceRouteView.module.css
+ *
+ * Visual Metaphor: "The Engineering Route (Station by Station)"
+ *
+ * Supports dark, sepia/paper, and high-contrast themes via CSS tokens.
+ * Mobile-first responsive down to 320px-360px viewports.
+ */
+
+.wrapper {
+  margin-top: var(--space-loose);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-wide);
+}
+
+/* ------------------------------------------------------------- Route Overview Box */
+.routeOverview {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  padding: clamp(var(--space), 3vw, var(--space-loose));
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--lift-subtle);
+}
+
+.routeOverviewHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-snug);
+  margin-bottom: var(--space);
+  padding-bottom: var(--space-snug);
+  border-bottom: 1px solid var(--rule);
+}
+
+.routeOverviewTitle {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+}
+
+.routeOverviewStats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.statPill {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-bright);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  border: 1px solid var(--rule);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------- Mobile Route Track (< 640px) */
+.mobileTrack {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--space-tight) 0;
+}
+
+@media (min-width: 640px) {
+  .mobileTrack {
+    display: none;
+  }
+}
+
+.mobileStationBlock {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.mobileStationButton {
+  background: transparent;
+  border: none;
+  padding: 6px 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-snug);
+  text-align: left;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--dur-quick) var(--ease-out);
+  width: 100%;
+}
+
+.mobileStationButton:hover {
+  background: var(--fill-faint);
+}
+
+.mobileGutterCol {
+  width: 24px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2px;
+}
+
+.mobileStationBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobileStationHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.mobileStationName {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--text-lead);
+  color: var(--ink-bright);
+  line-height: var(--leading-snug);
+  word-break: break-word;
+}
+
+.mobileStationYears {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  white-space: nowrap;
+}
+
+.mobileStationRoleLine {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.mobileStationRole {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  font-weight: 600;
+  color: var(--ink);
+  word-break: break-word;
+}
+
+.mobileStationStatusTag {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-bright);
+  background: var(--fill-strong);
+  border: 1px solid var(--rule-strong);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.mobileConnectorRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-snug);
+  padding: 2px 4px;
+}
+
+.mobileConnectorLine {
+  width: 2px;
+  height: 28px;
+  background: var(--rule-strong);
+  border-radius: 1px;
+}
+
+.mobileConnectorBody {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.mobileStrideBadge {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-quiet);
+  background: var(--fill);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-pill);
+  padding: 1px 8px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.strideIcon {
+  color: var(--ink-faint);
+  font-size: 0.75rem;
+}
+
+/* ------------------------------------------------------------- Desktop Route Track (>= 640px) */
+.desktopTrack {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .desktopTrack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-snug);
+    padding: var(--space-tight) 0;
+  }
+}
+
+.desktopTrackRail {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+}
+
+.desktopStationSegment {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.desktopStationSegmentLast {
+  flex: 1;
+}
+
+.desktopSegmentTrack {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 24px;
+  margin-bottom: var(--space-tight);
+}
+
+.desktopRailLineWrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 var(--space-snug);
+}
+
+.desktopRailLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--rule-strong);
+}
+
+.desktopStridePill {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-quiet);
+  background: var(--surface-raised);
+  border: 1px solid var(--rule);
+  padding: 1px 8px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+.desktopStationButton {
+  background: transparent;
+  border: none;
+  padding: 4px 8px 6px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  transition: opacity var(--dur-quick) var(--ease-out);
+}
+
+.desktopStationButton:hover {
+  opacity: 0.85;
+}
+
+.desktopStationHeader {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.desktopStationName {
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: var(--text-lead);
+  color: var(--ink-bright);
+}
+
+.desktopStationYears {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  white-space: nowrap;
+}
+
+.desktopStationMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  flex-wrap: wrap;
+}
+
+.desktopStationRole {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.desktopStationTag {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-bright);
+  background: var(--fill-strong);
+  border: 1px solid var(--rule-strong);
+  padding: 1px 6px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+/* Shared Node Marker Styles */
+.nodeDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--ink-bright);
+  background: var(--surface);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.nodeDotActive {
+  border-color: var(--signal);
+  background: var(--signal);
+  box-shadow: 0 0 10px var(--glow);
+}
+
+.nodeDotPulse {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 50%;
+  border: 1.5px solid var(--signal);
+  opacity: 0.6;
+  animation: pulseBeacon 2.4s infinite ease-out;
+}
+
+@keyframes pulseBeacon {
+  0% { transform: scale(0.9); opacity: 0.9; }
+  70% { transform: scale(1.7); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+
+/* ------------------------------------------------------------- Station Timeline Rail */
+.stationList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-loose);
+  position: relative;
+}
+
+.stationCard {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-card);
+  background: var(--surface-raised);
+  padding: clamp(var(--space), 3vw, var(--space-loose));
+  position: relative;
+  transition: border-color var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) var(--ease-out);
+  scroll-margin-top: 5rem;
+}
+
+.stationCard:hover {
+  border-color: var(--rule-strong);
+}
+
+.stationCardHighlighted {
+  border-color: var(--signal);
+  box-shadow: 0 0 24px -2px var(--glow);
+}
+
+/* Station Top Header Row */
+.stationHeaderRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-snug);
+}
+
+.stationIdentification {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.stationIndexMeta {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+}
+
+.stationOrgTitle {
+  font-size: clamp(1.3rem, 1.15rem + 0.8vw, 1.9rem);
+  font-weight: 700;
+  color: var(--ink-bright);
+  margin: 2px 0 0 0;
+  line-height: var(--leading-snug);
+}
+
+.stationOrgLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.stationOrgLink:hover {
+  text-decoration: underline;
+}
+
+.stationRoleBadges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-tight);
+  margin-top: 6px;
+}
+
+.badgeRole {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  font-weight: 600;
+  color: var(--ink-bright);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--fill-strong);
+  border: 1px solid var(--rule-strong);
+}
+
+.badgeContext {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+}
+
+.stationMetaAside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+@media (min-width: 640px) {
+  .stationMetaAside {
+    align-items: flex-end;
+  }
+}
+
+.statusIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.statusOngoing {
+  background: var(--fill-strong);
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-bright);
+}
+
+.statusCompleted {
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
+  color: var(--ink-quiet);
+}
+
+.liveDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-bright);
+  box-shadow: 0 0 6px var(--glow);
+  display: inline-block;
+}
+
+.periodLabel {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.durationBadge {
+  font-family: var(--font-data);
+  font-size: 0.7rem;
+  color: var(--ink-bright);
+  background: var(--fill);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+}
+
+.verifiedBadge {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  color: var(--ink-bright);
+  background: var(--fill);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-sm);
+  padding: 3px 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+
+.verifiedBadge:hover {
+  background: var(--fill-strong);
+  border-color: var(--ink-bright);
+}
+
+/* ------------------------------------------------------------- Station Telemetry HUD */
+.telemetryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-tight);
+  margin: var(--space) 0;
+  padding: var(--space-snug);
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-frame);
+}
+
+@media (min-width: 640px) {
+  .telemetryGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.telemetryTile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.telemetryValueRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.telemetryNumber {
+  font-family: var(--font-data);
+  font-size: var(--text-lead);
+  font-weight: 700;
+  color: var(--ink-bright);
+}
+
+.telemetryLabel {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  color: var(--ink-quiet);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ------------------------------------------------------------- Triad Content */
+.mandateText {
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  color: var(--ink);
+  margin: var(--space-snug) 0;
+}
+
+/* Deliverables Section */
+.deliverablesSection {
+  margin-top: var(--space);
+  padding-top: var(--space-snug);
+  border-top: 1px solid var(--rule);
+}
+
+.deliverablesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-tight);
+}
+
+.deliverablesTitle {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.deliverablesCount {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-faint);
+}
+
+.deliverablesWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.deliverableChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-bright);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-frame);
+  padding: 4px 10px;
+  text-decoration: none;
+  max-width: 100%;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+
+.deliverableChip:hover {
+  background: var(--fill-strong);
+  border-color: var(--ink-bright);
+}
+
+.deliverableName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.moreDeliverablesButton {
+  background: transparent;
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--radius-frame);
+  padding: 4px 10px;
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  cursor: pointer;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+
+.moreDeliverablesButton:hover {
+  color: var(--ink-bright);
+  border-color: var(--ink-bright);
+  background: var(--fill);
+}
+
+/* Transformation Highlight Card */
+.transformationCard {
+  margin-top: var(--space);
+  padding: var(--space-snug) var(--space);
+  background: var(--fill-faint);
+  border-left: 3px solid var(--signal);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.transformationHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  color: var(--ink-quiet);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.transformationText {
+  font-size: var(--text-small);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------- Station Logbook Disclosure */
+.logbookSection {
+  margin-top: var(--space-loose);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-snug);
+}
+
+.logbookToggle {
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: space-between;
+  transition: all var(--dur-quick) var(--ease-out);
+}
+
+.logbookToggle:hover {
+  color: var(--ink-bright);
+  border-color: var(--rule-strong);
+  background: var(--fill-faint);
+}
+
+.logbookDrawer {
+  margin-top: var(--space);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space);
+  padding-left: var(--space-tight);
+}
+
+.drawerBlockTitle {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 var(--space-tight) 0;
+}
+
+.responsibilitiesList {
+  margin: 0;
+  padding-left: var(--space);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.responsibilityItem {
+  font-size: var(--text-small);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+}
+
+.systemsWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.systemChip {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--fill);
+  border: 1px solid var(--rule);
+  color: var(--ink-bright);
+}
+
+.techWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.techChip {
+  font-family: var(--font-data);
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: var(--radius-sm);
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
+  color: var(--ink-quiet);
+}
+
+.detailLinkRow {
+  margin-top: var(--space-snug);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.detailLink {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-bright);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detailLink:hover {
+  text-decoration: underline;
+}

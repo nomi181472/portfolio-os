@@ -5,9 +5,9 @@
   width: 38px;
   height: 38px;
   border-radius: var(--radius-sm, 6px);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  background: var(--surface-hover, rgba(255, 255, 255, 0.04));
-  color: var(--ink-secondary, #9ca3af);
+  border: 1px solid var(--rule);
+  background: var(--fill-faint);
+  color: var(--ink-quiet);
   cursor: pointer;
   touch-action: none;
   user-select: none;
@@ -16,9 +16,9 @@
 }
 
 .micButton:hover:not(:disabled) {
-  background: var(--surface-active, rgba(255, 255, 255, 0.08));
-  color: var(--ink, #ffffff);
-  border-color: var(--border-color-active, rgba(255, 255, 255, 0.2));
+  background: var(--fill);
+  color: var(--ink-bright);
+  border-color: var(--rule-strong);
   transform: translateY(-1px);
 }
 
@@ -80,7 +80,7 @@
 }
 
 .recordingTimer {
-  font-family: var(--font-mono, monospace);
+  font-family: var(--font-data);
   font-size: 0.85rem;
   font-weight: 600;
   color: #ef4444;
@@ -128,7 +128,7 @@
 
 .releaseHint {
   font-size: 0.75rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
   font-style: italic;
   user-select: none;
 }
@@ -136,7 +136,7 @@
 .cancelBtn {
   background: transparent;
   border: none;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
   font-size: 0.85rem;
   cursor: pointer;
   padding: 4px 8px;
@@ -145,7 +145,7 @@
 }
 
 .cancelBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--fill-strong);
   color: #ef4444;
 }
 
@@ -156,15 +156,16 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: var(--ink, #ffffff);
-  color: var(--canvas, #000000);
-  border: none;
+  background: var(--fill-strong);
+  color: var(--ink-bright);
+  border: 1px solid var(--rule-strong);
   cursor: pointer;
-  transition: transform 0.15s ease, background-color 0.15s ease;
+  transition: transform 0.15s ease, background-color 0.15s ease, color 0.15s ease;
 }
 
 .sendAudioBtn:hover {
   transform: scale(1.08);
-  background: #38bdf8;
-  color: #000000;
+  background: var(--ink-bright);
+  color: var(--surface-raised);
+  border-color: var(--line-strong);
 }

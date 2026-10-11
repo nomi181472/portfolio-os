@@ -250,18 +250,110 @@
   }
 }
 
-@media (max-width: 40rem) {
+@media (max-width: 48rem) {
   .nodeLabel {
-    font-size: 13px;
+    font-size: 22px;
+    font-weight: 600;
   }
   .nodeCount {
-    font-size: 12px;
+    font-size: 18px;
+    font-weight: 600;
   }
   .nodeActive .nodeLabel {
-    font-size: 14px;
+    font-size: 24px;
+    font-weight: 700;
   }
   .nodeActive .nodeCount {
-    font-size: 13px;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .nodeShape {
+    stroke-width: 2;
+  }
+  .nodeActive .nodeShape {
+    stroke-width: 3;
+  }
+}
+
+/* Mobile Touch Carousel / Quick-Access Chip Strip */
+.mobileChipStrip {
+  display: none;
+}
+
+@media (max-width: 48rem) {
+  .mobileChipStrip {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.65rem 0.85rem;
+    background: var(--surface-raised);
+    border-top: 1px solid var(--rule-strong);
+    scrollbar-width: none;
+  }
+  .mobileChipStrip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mobileChip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--fill-faint);
+    color: var(--ink-quiet);
+    font-family: var(--font-ui);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: all var(--dur-quick) var(--ease-out);
+  }
+
+  .mobileChip:active {
+    transform: scale(0.95);
+  }
+
+  .mobileChipDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    transition: background var(--dur-quick) var(--ease-out);
+  }
+
+  .mobileChipLabel {
+    font-size: 12px;
+  }
+
+  .mobileChipCount {
+    font-family: var(--font-data);
+    font-size: 11px;
+    opacity: 0.85;
+    background: var(--fill);
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+
+  .mobileChipActive {
+    border-color: var(--signal);
+    background: var(--signal-wash);
+    color: var(--signal);
+    font-weight: 600;
+  }
+
+  .mobileChipActive .mobileChipDot {
+    background: var(--signal);
+    box-shadow: 0 0 6px var(--signal);
+  }
+
+  .mobileChipActive .mobileChipCount {
+    background: var(--signal-quiet);
+    color: var(--signal);
   }
 }
 
@@ -327,5 +419,49 @@
   transform: scale(0.96);
   background: var(--signal);
   color: var(--surface-sunk);
+}
+
+/* Dynamic Meta / Status Bar */
+.metaBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-snug);
+  padding: 0.6rem 1rem;
+  border-top: 1px solid var(--rule);
+  background: var(--surface-sunk);
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  color: var(--ink-quiet);
+}
+
+.metaStat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-bright);
+  font-weight: 500;
+}
+
+.metaDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 6px var(--glow);
+}
+
+.metaHint {
+  color: var(--ink-faint);
+  font-size: 11px;
+}
+
+@media (max-width: 32rem) {
+  .metaBar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 0.5rem 0.85rem;
+  }
 }
 

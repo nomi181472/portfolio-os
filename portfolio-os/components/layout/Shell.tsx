@@ -23,6 +23,7 @@ import { usePathname } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import type { AppearanceChoice } from '@/lib/theme';
 import { portfolioConfig } from '@/config/portfolio.config';
+import { useAppearance } from '@/components/theme/AppearanceProvider';
 import { Rail } from './Rail';
 import { GitHubBadge } from './GitHubBadge';
 
@@ -59,7 +60,9 @@ interface ShellProps {
   appearance?: AppearanceChoice;
 }
 
-export function Shell({ children, footer, profile, startupName, appearance, repoUrl }: ShellProps) {
+export function Shell({ children, footer, profile, startupName, appearance: propAppearance, repoUrl }: ShellProps) {
+  const { choice, appearance: activeAppearance } = useAppearance();
+  const currentAppearance = propAppearance || choice;
   const pathname = usePathname();
   const isDirectPage = pathname === '/direct' || pathname.startsWith('/direct');
 
@@ -93,10 +96,10 @@ export function Shell({ children, footer, profile, startupName, appearance, repo
   }, []);
 
   return (
-    <div className="shell">
+    <div className="shell" data-appearance={activeAppearance}>
       <a className="skip-link" href="#main">Skip to content</a>
       <GitHubBadge repoUrl={repoUrl} />
-      <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} appearance={appearance} repoUrl={repoUrl} />
+      <Rail onOpenSearch={openSearch} profile={profile} startupName={startupName} appearance={currentAppearance} repoUrl={repoUrl} />
       <div className="shell__main">
         <main id="main">{children}</main>
         {!isDirectPage && footer}

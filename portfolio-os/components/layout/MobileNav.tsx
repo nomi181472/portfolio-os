@@ -35,7 +35,7 @@ export function MobileNav({ onOpenSearch, profile, startupName, appearance = 'sy
    * be the words a person would type into a search engine.
    */
   const primaryDestinations = [
-    { href: '/', label: 'About', mark: 'artifact' as MarkName },
+    { href: '/', label: 'About', mark: 'foundation' as MarkName },
     { href: '/experience', label: 'Experience', mark: 'route' as MarkName },
     { href: '/products', label: 'Products', mark: 'artifact' as MarkName },
     { href: '/projects', label: 'Projects', mark: 'experiment' as MarkName },
@@ -75,6 +75,7 @@ export function MobileNav({ onOpenSearch, profile, startupName, appearance = 'sy
         destinations={primaryDestinations}
         drawerOpen={isOpen}
         onToggleDrawer={toggle}
+        profile={profile}
       />
       
       <MobileDrawer

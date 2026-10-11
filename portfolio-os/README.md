@@ -233,6 +233,51 @@ sequenceDiagram
 
 ## 🏗️ Architecture & Directory Layout
 
+### System Pipeline Architecture (Unicode Schematic)
+
+```text
+╭─────────────────────────────────────────────────────────────────────────────╮
+│  ◈ LAYER 01 : SINGLE SOURCE OF TRUTH                                        │
+│  ┌────────────────────────┐            ┌────────────────────────────────┐   │
+│  │ content/portfolio.json │ ◄────────► │ In-Browser Visual Editor (⌘+E) │   │
+│  │ (Zero Hardcoded Data)  │  Live Sync │ (Instant JSON Diff & Preview)  │   │
+│  └────────────────────────┘            └────────────────────────────────┘   │
+╰──────────────────────────────────────┬──────────────────────────────────────╯
+                                       │
+                                       │  ⚡ [ npm run index: Graph & Embeddings ]
+                                       ▼
+╭─────────────────────────────────────────────────────────────────────────────╮
+│  ◈ LAYER 02 : RELATIONAL STORAGE & SEMANTIC VECTOR INDEX                    │
+│  ┌───────────────────────────────────┐ ┌──────────────────────────────────┐ │
+│  │  SQLite Engine (portfolio.db)     │ │  Vector Store (vectors.json)     │ │
+│  │  • FTS5 Tokenized Full-Text Search│ │  • 384D / 64D Dense Embeddings   │ │
+│  │  • 16 Interconnected Collections  │ │  • Bidirectional Graph Topology  │ │
+│  └───────────────────────────────────┘ └──────────────────────────────────┘ │
+╰───────────────────┬───────────────────────────────────────┬─────────────────╯
+                    │                                       │
+                    ▼                                       ▼
+╭─────────────────────────────────────────────────────────────────────────────╮
+│  ◈ LAYER 03 : PORTFOLIO OS RUNTIME (Next.js 15 App Router)                  │
+│  • Draggable Multi-Window Desktop Shell  • ⌘+K Instant Fuzzy Command Menu   │
+│  • OKLCH Mathematical Color Palettes     • Zero-Cookie Privacy Telemetry    │
+╰───────────────────┬───────────────────────────────────────┬─────────────────╯
+                    │                                       │
+                    ├─── Dual Independent Client Engines ───┤
+                    │                                       │
+                    ▼                                       ▼
+╭──────────────────────────────────────╮ ╭────────────────────────────────────╮
+│  ◈ 100% LOCAL IN-BROWSER AI ENGINE   │ │  ◈ SERVERLESS P2P WEBRTC CONDUIT   │
+│  [ ONNX Runtime Web • WebGPU / WASM ]│ │  [ DTLS-SCTP E2E Encrypted Tunnel ]│
+├──────────────────────────────────────┤ ├────────────────────────────────────┤
+│  • Qwen 2.5-0.5B / SmolLM2-360M      │ │  • Zero Central Messaging Servers  │
+│  • Grounded RAG (Zero Hallucination) │ │  • Push-to-Talk Voice Notes (Opus) │
+│  • Clickable UI Cards & Deep Routes  │ │  • Live Read Receipts (✓, ✓✓ Blue) │
+│  • $0.00 Server Token Cost Forever   │ │  • PWA Standalone App for Host     │
+╰──────────────────────────────────────╯ ╰────────────────────────────────────╯
+```
+
+### Directory Structure
+
 ```text
 portfolio-os/
 ├── content/

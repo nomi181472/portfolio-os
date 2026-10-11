@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { MetaphorMark } from '@/components/metaphors/MetaphorMark';
-import { StatusBadge, OrganisationBadge } from './Badges';
+import { StatusBadge, OrganisationBadge, DepthBadge } from './Badges';
+import { SkillLensGauge } from '@/components/skills/SkillLensGauge';
 import { PeriodPulse } from './PeriodPulse';
 import { formatDate, formatPeriod } from '@/lib/format';
 import { pulseStagger } from '@/lib/pulse';
@@ -53,9 +54,17 @@ export function Row({ entity, showPeriod = true, index = 0 }: { entity: Resolved
             </Link>
           </h3>
           {isDeliverable && org ? <OrganisationBadge organisation={org} /> : null}
+          {kind === 'skills' && 'depth' in data && data.depth ? (
+            <DepthBadge depth={String(data.depth)} />
+          ) : null}
         </div>
         {context ? (
           <p className="label" style={{ marginTop: 4 }}>{context}</p>
+        ) : null}
+        {kind === 'skills' ? (
+          <div style={{ marginTop: 'var(--space-hair)', marginBottom: 'var(--space-hair)' }}>
+            <SkillLensGauge data={data as Record<string, unknown>} />
+          </div>
         ) : null}
         {data.summary ? <p className="row__summary">{data.summary}</p> : null}
         {data.technologies.length > 0 ? (
@@ -97,136 +106,20 @@ export function Row({ entity, showPeriod = true, index = 0 }: { entity: Resolved
         ) : null}
       </div>
       <div className="row__aside">
-        {'design' in data && data.design && 'support' in data && data.support ? (
+        {kind === 'skills' && 'firstUsed' in data && data.firstUsed ? (
           <span
             style={{
               fontFamily: 'var(--font-data)',
               fontSize: 'var(--text-fine)',
-              padding: '3px 8px',
+              padding: '2px 8px',
               borderRadius: '4px',
               background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              lineHeight: 1.4,
-              fontWeight: 500,
+              border: '1px solid rgba(255, 255, 255, 0.12)',
+              color: 'var(--ink-quiet)',
+              whiteSpace: 'nowrap',
             }}
           >
-            <span>Design: {String(data.design)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>Support: {String(data.support)}</span>
-          </span>
-        ) : 'agentic' in data && data.agentic && 'aiAssisted' in data && data.aiAssisted && 'independent' in data && data.independent ? (
-          <span
-            style={{
-              fontFamily: 'var(--font-data)',
-              fontSize: 'var(--text-fine)',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              lineHeight: 1.4,
-              fontWeight: 500,
-            }}
-          >
-            <span>Agentic: {String(data.agentic)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>AI: {String(data.aiAssisted)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>Independent: {String(data.independent)}</span>
-          </span>
-        ) : 'reading' in data && data.reading && 'writing' in data && data.writing ? (
-          <span
-            style={{
-              fontFamily: 'var(--font-data)',
-              fontSize: 'var(--text-fine)',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              lineHeight: 1.4,
-              fontWeight: 500,
-            }}
-          >
-            <span>Reading: {String(data.reading)}</span>
-            <span style={{ opacity: 0.4 }}>·</span>
-            <span>Writing: {String(data.writing)}</span>
-          </span>
-        ) : 'handling' in data && data.handling ? (
-          <span
-            style={{
-              fontFamily: 'var(--font-data)',
-              fontSize: 'var(--text-fine)',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-              display: 'inline-flex',
-              alignItems: 'center',
-              lineHeight: 1.4,
-              fontWeight: 500,
-            }}
-          >
-            Handling: {String(data.handling)}
-          </span>
-        ) : 'proficiency' in data && data.proficiency ? (
-          <span
-            style={{
-              fontFamily: 'var(--font-data)',
-              fontSize: 'var(--text-fine)',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-              display: 'inline-flex',
-              alignItems: 'center',
-              lineHeight: 1.4,
-              fontWeight: 500,
-            }}
-          >
-            Proficiency: {String(data.proficiency)}
-          </span>
-        ) : 'level' in data && data.level ? (
-          <span
-            style={{
-              fontFamily: 'var(--font-data)',
-              fontSize: 'var(--text-fine)',
-              padding: '3px 8px',
-              borderRadius: '4px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.16)',
-              color: 'var(--ink-bright)',
-              flexWrap: 'wrap',
-              maxWidth: '100%',
-              display: 'inline-flex',
-              alignItems: 'center',
-              lineHeight: 1.4,
-              fontWeight: 500,
-            }}
-          >
-            Level: {String(data.level)}
+            Since {String(data.firstUsed)}
           </span>
         ) : null}
         {org && (kind === 'products' || kind === 'projects') ? (

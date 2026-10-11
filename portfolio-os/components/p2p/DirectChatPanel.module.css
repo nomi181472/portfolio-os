@@ -9,7 +9,7 @@
   flex-direction: column;
   height: 100%;
   min-height: 380px;
-  background: var(--surface-float);
+  background: var(--surface-raised);
   color: var(--ink);
 }
 
@@ -18,8 +18,8 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-tight) var(--space-snug);
-  border-bottom: 1px solid var(--rule-subtle);
-  background: color-mix(in oklch, var(--surface-float) 80%, var(--primary) 20%);
+  border-bottom: 1px solid var(--rule);
+  background: var(--fill-faint);
   font-size: 0.8125rem;
 }
 
@@ -47,11 +47,11 @@
 }
 
 .dotOffline {
-  background: #6b7280;
+  background: var(--ink-faint);
 }
 
 .dotConnecting {
-  background: #3b82f6;
+  background: var(--signal);
   animation: pulse 1.5s infinite;
 }
 
@@ -74,7 +74,8 @@
 }
 
 .pingButton:hover:not(:disabled) {
-  background: var(--signal-faint, rgba(255, 255, 255, 0.08));
+  background: var(--fill);
+  color: var(--ink-bright);
 }
 
 .pingButton:disabled {
@@ -88,15 +89,15 @@
   gap: 6px;
   padding: 6px var(--space-snug);
   font-size: 0.75rem;
-  color: var(--ink-secondary, #9ca3af);
-  border-bottom: 1px solid var(--rule-subtle);
-  background: color-mix(in oklch, var(--surface-float) 95%, black 5%);
+  color: var(--ink-quiet);
+  border-bottom: 1px solid var(--rule);
+  background: var(--fill-faint);
 }
 
 .lockIcon {
   width: 12px;
   height: 12px;
-  color: #10b981;
+  color: var(--ink-quiet);
 }
 
 .messages {
@@ -112,7 +113,7 @@
   margin: auto;
   text-align: center;
   padding: var(--space);
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
   font-size: 0.875rem;
   max-width: 300px;
 }
@@ -120,7 +121,7 @@
 .emptyStateTitle {
   font-weight: 600;
   margin-bottom: 4px;
-  color: var(--ink);
+  color: var(--ink-bright);
 }
 
 .messageRow {
@@ -141,23 +142,26 @@
 
 .messageBubble {
   padding: 8px 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-card);
   font-size: 0.875rem;
   line-height: 1.45;
   word-break: break-word;
 }
 
 .bubbleVisitor {
-  background: color-mix(in oklch, var(--signal, #2563eb) 85%, black 15%);
-  color: #ffffff;
+  background: var(--fill-strong);
+  color: var(--ink-bright);
+  border: 1px solid var(--rule-strong);
   border-bottom-right-radius: 2px;
+  box-shadow: var(--lift-subtle);
 }
 
 .bubbleHost {
-  background: color-mix(in oklch, var(--surface-float) 60%, var(--primary) 40%);
+  background: var(--fill-faint);
   color: var(--ink);
-  border: 1px solid var(--rule-strong);
+  border: 1px solid var(--rule);
   border-bottom-left-radius: 2px;
+  box-shadow: var(--lift-subtle);
 }
 
 .audioBubble {
@@ -170,14 +174,14 @@
   gap: 6px;
   margin-top: 2px;
   font-size: 0.6875rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
 }
 
 .verifiedBadge {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  color: #10b981;
+  color: var(--ink-quiet);
   font-weight: 600;
 }
 
@@ -187,7 +191,7 @@
   gap: var(--space-tight);
   padding: var(--space-snug);
   border-top: 1px solid var(--rule);
-  background: var(--surface-float);
+  background: var(--surface-raised);
 }
 
 .textInput {
@@ -206,17 +210,17 @@
 }
 
 .textInput::placeholder {
-  color: var(--ink-faint, #9ca3af);
+  color: var(--ink-faint);
 }
 
 .textInput:focus {
-  border-color: var(--signal, #2563eb);
+  border-color: var(--line-strong);
 }
 
 .sendButton {
   flex-shrink: 0;
   appearance: none;
-  background: var(--fill, color-mix(in oklch, var(--surface-float) 80%, var(--primary) 20%));
+  background: var(--fill);
   color: var(--ink);
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius-control);
@@ -229,8 +233,8 @@
 }
 
 .sendButton:hover:not(:disabled) {
-  background: var(--ink);
-  color: var(--surface);
+  background: var(--fill-strong);
+  color: var(--ink-bright);
 }
 
 .sendButton:disabled {
@@ -258,13 +262,13 @@
 .introTitle {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--ink);
+  color: var(--ink-bright);
   margin: 0;
 }
 
 .introSubtitle {
   font-size: 0.8125rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
   line-height: 1.4;
   margin: 0;
 }
@@ -281,17 +285,17 @@
   align-items: center;
   justify-content: space-between;
   padding: 4px var(--space-snug);
-  background: color-mix(in oklch, var(--surface-float) 92%, var(--primary) 8%);
-  border-bottom: 1px solid var(--rule-subtle);
+  background: var(--fill-faint);
+  border-bottom: 1px solid var(--rule);
   font-size: 0.75rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-quiet);
 }
 
 .changeNameBtn {
   appearance: none;
   background: transparent;
   border: none;
-  color: var(--signal, #2563eb);
+  color: var(--ink-bright);
   cursor: pointer;
   font: inherit;
   font-size: 0.6875rem;
@@ -311,9 +315,9 @@
   align-items: center;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #38bdf8;
-  background: var(--surface-hover, rgba(255, 255, 255, 0.06));
-  border: 1px solid var(--rule, rgba(255, 255, 255, 0.15));
+  color: var(--ink-quiet);
+  background: var(--fill-faint);
+  border: 1px solid var(--rule);
   border-radius: 999px;
   padding: 2px 8px;
   text-decoration: none;
@@ -322,29 +326,29 @@
 }
 
 .hostLink:hover {
-  background: rgba(56, 189, 248, 0.15);
-  border-color: #38bdf8;
-  color: #ffffff;
+  background: var(--fill-strong);
+  border-color: var(--rule-strong);
+  color: var(--ink-bright);
 }
 
 .hostIntroNote {
   margin-top: 14px;
   padding-top: 10px;
-  border-top: 1px dashed var(--rule, rgba(255, 255, 255, 0.15));
+  border-top: 1px dashed var(--rule);
   font-size: 0.75rem;
-  color: var(--ink-secondary, #9ca3af);
+  color: var(--ink-faint);
   text-align: center;
 }
 
 .hostIntroLink {
-  color: #38bdf8;
+  color: var(--ink-bright);
   font-weight: 600;
-  text-decoration: none;
+  text-decoration: underline;
   margin-left: 4px;
 }
 
 .hostIntroLink:hover {
-  text-decoration: underline;
+  opacity: 0.8;
 }
 
 /* Mobile & Tablet Optimizations */
@@ -383,5 +387,3 @@
     padding: var(--space-snug);
   }
 }
-
-

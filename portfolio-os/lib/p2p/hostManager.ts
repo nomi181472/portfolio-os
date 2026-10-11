@@ -39,14 +39,57 @@ export interface HostManagerOptions {
   onNewMessage: (visitorId: string, msg: P2PMessage) => void;
 }
 
+/**
+ * Resilient interval runner that utilizes an in-memory Web Worker when in the browser
+ * to prevent aggressive Android background tab / screen-off timer throttling.
+ */
+function createResilientInterval(callback: () => void, intervalMs: number): () => void {
+  if (typeof window === 'undefined' || typeof Worker === 'undefined' || typeof Blob === 'undefined') {
+    const id = setInterval(callback, intervalMs);
+    return () => clearInterval(id);
+  }
+
+  try {
+    const blob = new Blob(
+      [
+        `let id = null;
+         self.onmessage = function(e) {
+           if (e.data === 'start') {
+             id = setInterval(function() { self.postMessage('tick'); }, ${intervalMs});
+           } else if (e.data === 'stop') {
+             if (id) clearInterval(id);
+           }
+         };`,
+      ],
+      { type: 'application/javascript' }
+    );
+    const workerUrl = URL.createObjectURL(blob);
+    const worker = new Worker(workerUrl);
+    worker.onmessage = () => {
+      callback();
+    };
+    worker.postMessage('start');
+    return () => {
+      try {
+        worker.postMessage('stop');
+        worker.terminate();
+        URL.revokeObjectURL(workerUrl);
+      } catch {}
+    };
+  } catch {
+    const id = setInterval(callback, intervalMs);
+    return () => clearInterval(id);
+  }
+}
+
 export class HostMultiPeerManager {
   public channelId: string;
   private secretKey?: string;
   private sessions = new Map<string, InternalVisitorSession>();
   private activeVisitorId: string | null = null;
 
-  private pollTimer: ReturnType<typeof setInterval> | null = null;
-  private heartbeatTimer: ReturnType<typeof setInterval> | null = null;
+  private stopPollTimer: (() => void) | null = null;
+  private stopHeartbeatTimer: (() => void) | null = null;
   private lastPollTimestamp = 0;
   private processedSignalIds = new Set<string>();
   private deliveredMessageIds = new Set<string>();
@@ -62,10 +105,49 @@ export class HostMultiPeerManager {
     this.onNewMessageCallback = options.onNewMessage;
   }
 
+  private handleVisibilityChange = () => {
+    if (typeof document !== 'undefined' && document.visibilityState === 'visible') {
+      void this.triggerHeartbeat();
+      void this.triggerPoll();
+    }
+  };
+
+  private handleFocus = () => {
+    void this.triggerHeartbeat();
+    void this.triggerPoll();
+  };
+
   start() {
     this.destroyed = false;
     this.startHostHeartbeat();
     this.startPolling();
+
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', this.handleVisibilityChange);
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('focus', this.handleFocus);
+    }
+  }
+
+  public async triggerHeartbeat() {
+    if (this.destroyed) return;
+    try {
+      await fetch('/api/p2p/signal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'host-heartbeat',
+          channelId: this.channelId,
+          secretKey: this.secretKey,
+        }),
+      });
+    } catch {}
+  }
+
+  public async triggerPoll() {
+    if (this.destroyed) return;
+    await this.pollSignals();
   }
 
   setActiveVisitor(visitorId: string | null) {
@@ -151,29 +233,23 @@ export class HostMultiPeerManager {
   }
 
   private startHostHeartbeat() {
-    const beat = async () => {
-      try {
-        await fetch('/api/p2p/signal', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'host-heartbeat',
-            channelId: this.channelId,
-            secretKey: this.secretKey,
-          }),
-        });
-      } catch {}
-    };
+    if (this.stopHeartbeatTimer) {
+      this.stopHeartbeatTimer();
+      this.stopHeartbeatTimer = null;
+    }
 
-    void beat();
-    this.heartbeatTimer = setInterval(() => {
-      void beat();
+    void this.triggerHeartbeat();
+    this.stopHeartbeatTimer = createResilientInterval(() => {
+      void this.triggerHeartbeat();
     }, 18_000);
   }
 
   private startPolling(intervalMs = 1200) {
-    if (this.pollTimer) clearInterval(this.pollTimer);
-    this.pollTimer = setInterval(() => {
+    if (this.stopPollTimer) {
+      this.stopPollTimer();
+      this.stopPollTimer = null;
+    }
+    this.stopPollTimer = createResilientInterval(() => {
       void this.pollSignals();
     }, intervalMs);
   }
@@ -537,13 +613,20 @@ export class HostMultiPeerManager {
 
   disconnect() {
     this.destroyed = true;
-    if (this.pollTimer) {
-      clearInterval(this.pollTimer);
-      this.pollTimer = null;
+    if (this.stopPollTimer) {
+      this.stopPollTimer();
+      this.stopPollTimer = null;
     }
-    if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer);
-      this.heartbeatTimer = null;
+    if (this.stopHeartbeatTimer) {
+      this.stopHeartbeatTimer();
+      this.stopHeartbeatTimer = null;
+    }
+
+    if (typeof document !== 'undefined') {
+      document.removeEventListener('visibilitychange', this.handleVisibilityChange);
+    }
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('focus', this.handleFocus);
     }
 
     for (const session of this.sessions.values()) {

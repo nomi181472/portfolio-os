@@ -14,6 +14,7 @@ import type { ConnectionState, P2PMessage, PresenceStatus } from '@/lib/p2p/type
 import { ReceiptTicks } from './ReceiptTicks';
 import { VoiceRecorderButton } from './VoiceRecorderButton';
 import { VoiceMessagePlayer } from './VoiceMessagePlayer';
+import { useAppearance } from '@/components/theme/AppearanceProvider';
 import styles from './DirectChatPanel.module.css';
 
 interface DirectChatPanelProps {
@@ -27,6 +28,7 @@ export function DirectChatPanel({
   ownerName: initialOwnerName,
   onClose,
 }: DirectChatPanelProps) {
+  const { appearance } = useAppearance();
   const [channelId, setChannelId] = useState<string | null>(null);
   const [ownerName, setOwnerName] = useState<string>(initialOwnerName || 'Host');
   const [presence, setPresence] = useState<PresenceStatus>('offline');
@@ -198,7 +200,7 @@ export function DirectChatPanel({
   }, [pingSent]);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-appearance={appearance}>
       {/* Presence Header */}
       <div className={styles.presenceBar}>
         <div className={styles.presenceStatus}>

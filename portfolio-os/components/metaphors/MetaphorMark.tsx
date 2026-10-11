@@ -90,6 +90,33 @@ const PATHS: Record<MarkName, { d: string; title: string }> = {
     title: 'Copy or fork this portfolio OS',
     d: 'M8 4h10a2 2 0 0 1 2 2v10M6 8h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z',
   },
+  // An arrow pointing back: previous entry in sequence.
+  'arrow-back': {
+    title: 'An arrow pointing back',
+    d: 'M20 12H4M10 6L4 12l6 6',
+  },
+  // An arrow pointing forward: next entry in sequence.
+  'arrow-next': {
+    title: 'An arrow pointing forward',
+    d: 'M4 12h16M14 6l6 6-6 6',
+  },
+  // Directional aliases
+  'arrow-left': {
+    title: 'An arrow pointing left',
+    d: 'M20 12H4M10 6L4 12l6 6',
+  },
+  'arrow-right': {
+    title: 'An arrow pointing right',
+    d: 'M4 12h16M14 6l6 6-6 6',
+  },
+  previous: {
+    title: 'Previous entry',
+    d: 'M20 12H4M10 6L4 12l6 6',
+  },
+  next: {
+    title: 'Next entry',
+    d: 'M4 12h16M14 6l6 6-6 6',
+  },
 };
 
 export interface MetaphorMarkProps {
@@ -115,10 +142,10 @@ export function MetaphorMark({ name, size = 20, labelled = false, className }: M
       className={className}
       role={labelled ? 'img' : 'presentation'}
       aria-hidden={labelled ? undefined : true}
-      aria-label={labelled ? mark.title : undefined}
+      aria-label={labelled ? mark?.title : undefined}
       focusable="false"
     >
-      <path d={mark.d} />
+      <path d={mark?.d ?? ''} />
     </svg>
   );
 }

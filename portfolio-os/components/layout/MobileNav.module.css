@@ -227,6 +227,31 @@
   flex-shrink: 0;
 }
 
+.tabAvatar {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule-strong);
+  flex-shrink: 0;
+  transition: border-color var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) var(--ease-out);
+}
+
+.tabItem[data-active='true'] .tabAvatar {
+  border-color: var(--signal);
+  box-shadow: 0 0 6px var(--glow);
+}
+
+.tabAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .tabLabel {
   font-size: 9.5px;
   letter-spacing: 0.2px;

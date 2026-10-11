@@ -6,7 +6,7 @@ import styles from '../MobileNav.module.css';
 interface MobileTopBarProps {
   onOpenSearch: () => void;
   profile: { name: string; avatar?: string };
-  onToggleDrawer: () => void;
+  onToggleDrawer?: () => void;
   repoUrl?: string;
 }
 
@@ -66,20 +66,6 @@ export function MobileTopBar({ onOpenSearch, profile, onToggleDrawer, repoUrl = 
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <circle cx="10.5" cy="10.5" r="6" />
             <path d="M15 15l5 5" strokeLinecap="square" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          className={styles.topBtn}
-          onClick={onToggleDrawer}
-          aria-label="Toggle Navigation Drawer"
-          title="All Sections"
-        >
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <rect x="3" y="4" width="7" height="7" rx="1.5" />
-            <rect x="14" y="4" width="7" height="7" rx="1.5" />
-            <rect x="3" y="14" width="7" height="7" rx="1.5" />
-            <rect x="14" y="14" width="7" height="7" rx="1.5" />
           </svg>
         </button>
       </div>

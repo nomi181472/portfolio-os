@@ -1,0 +1,446 @@
+.lightboxOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--scrim, rgba(3, 4, 6, 0.88));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lightboxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-snug) var(--space);
+  background: var(--surface-float, rgba(17, 19, 24, 0.9));
+  border-bottom: 1px solid var(--rule-strong);
+  gap: var(--space-snug);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.lightboxTitleWrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  min-width: 0;
+}
+
+.lightboxTitle {
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--ink-bright);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lightboxCounter {
+  font-size: var(--text-fine);
+  font-family: var(--font-data);
+  color: var(--ink-faint);
+  background: var(--fill);
+  padding: 2px 6px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.lightboxControls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.controlBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 32px;
+  padding: 0 8px;
+  border-radius: 6px;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-raised);
+  color: var(--ink);
+  font-size: var(--text-small);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.controlBtn:hover {
+  background: var(--fill-strong);
+  color: var(--ink-bright);
+  border-color: var(--line-strong);
+}
+
+.controlBtnActive {
+  background: var(--signal-wash);
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+.lightboxStage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.lightboxStageDragging {
+  cursor: grabbing;
+}
+
+.lightboxImgWrap {
+  position: relative;
+  max-width: 92vw;
+  max-height: 82vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease-out;
+  touch-action: none;
+}
+
+.lightboxImg {
+  max-width: 92vw;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
+}
+
+.navBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--surface-float, rgba(17, 19, 24, 0.85));
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-bright);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.15s ease;
+}
+
+.navBtn:hover {
+  background: var(--fill-strong);
+  border-color: var(--signal);
+}
+
+.navPrev {
+  left: var(--space);
+}
+
+.navNext {
+  right: var(--space);
+}
+
+.lightboxFooter {
+  padding: var(--space-snug) var(--space);
+  background: var(--surface-float, rgba(17, 19, 24, 0.9));
+  border-top: 1px solid var(--rule);
+  color: var(--ink-quiet);
+  font-size: var(--text-fine);
+  text-align: center;
+  flex-shrink: 0;
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+/* ------------------------------------------------ Tabbed Media Switcher */
+.tabContainer {
+  margin-bottom: var(--space-snug);
+}
+
+.tabHeaderWrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-tight);
+}
+
+.tabList {
+  display: flex;
+  align-items: center;
+  gap: var(--space-tight);
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  flex: 1;
+}
+
+.tabList::-webkit-scrollbar {
+  display: none;
+}
+
+.tabSteppers {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.tabStepBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-raised);
+  color: var(--ink-quiet);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tabStepBtn:hover {
+  color: var(--ink-bright);
+  border-color: var(--signal);
+  background: var(--fill-strong);
+}
+
+.tabBtn {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--rule-strong);
+  background: var(--surface-raised);
+  color: var(--ink-quiet);
+  font-size: var(--text-small);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabBtn:hover {
+  color: var(--ink-bright);
+  border-color: var(--line-strong);
+}
+
+.tabBtnActive {
+  background: var(--signal-wash);
+  color: var(--ink-bright);
+  border-color: var(--signal);
+  font-weight: 500;
+}
+
+/* ------------------------------------------------ Image Vitrine Hint */
+.imageClickable {
+  cursor: zoom-in;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.inspectBadge {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 4px;
+  background: var(--surface-float, rgba(17, 19, 24, 0.85));
+  border: 1px solid var(--rule-strong);
+  color: var(--ink);
+  pointer-events: none;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.imageClickable:hover .inspectBadge {
+  opacity: 1;
+  color: var(--ink-bright);
+  border-color: var(--signal);
+}
+
+/* ------------------------------------------------ Simulated OS Window Bar */
+.windowBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--surface-vitrine);
+  border-bottom: 1px solid var(--rule-strong);
+  gap: 10px;
+}
+
+.windowDots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.windowDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--rule-strong);
+}
+
+.windowDot:nth-child(1) {
+  background: rgba(255, 95, 86, 0.8);
+}
+.windowDot:nth-child(2) {
+  background: rgba(255, 189, 46, 0.8);
+}
+.windowDot:nth-child(3) {
+  background: rgba(39, 201, 63, 0.8);
+}
+
+.windowAddress {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--surface-sunk);
+  padding: 3px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--rule);
+  font-size: var(--text-fine);
+  font-family: var(--font-data);
+  color: var(--ink-quiet);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.windowActions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.windowActionBtn {
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink-quiet);
+  width: 26px;
+  height: 26px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s ease;
+  text-decoration: none;
+}
+
+.windowActionBtn:hover {
+  color: var(--ink-bright);
+  border-color: var(--rule-strong);
+  background: var(--fill);
+}
+
+/* ------------------------------------------------ Touch Scroll Shield */
+.touchShield {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.touchShieldPrompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: var(--surface-float, rgba(17, 19, 24, 0.95));
+  border: 1px solid var(--signal);
+  color: var(--ink-bright);
+  font-size: var(--text-small);
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  animation: pulseScale 2s infinite ease-in-out;
+}
+
+@keyframes pulseScale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.relockBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 4;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: var(--surface-float, rgba(17, 19, 24, 0.85));
+  border: 1px solid var(--rule-strong);
+  color: var(--ink-quiet);
+  font-size: 11px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.relockBtn:hover {
+  color: var(--ink-bright);
+  border-color: var(--signal);
+}
+
+/* ------------------------------------------------ Fullscreen Modal for Iframes */
+.fullscreenModal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--surface-sunk);
+  display: flex;
+  flex-direction: column;
+}
+
+.fullscreenModalBody {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}

@@ -14,6 +14,7 @@ import { fontVariables } from '@/lib/fonts';
 import { absoluteUrl, siteUrl } from '@/lib/seo';
 import { APPEARANCE_META, configuredAppearance, type Appearance, type AppearanceChoice } from '@/lib/theme';
 import { AppearanceScript } from '@/components/theme/AppearanceScript';
+import { AppearanceProvider } from '@/components/theme/AppearanceProvider';
 import { Shell } from '@/components/layout/Shell';
 import { Footer } from '@/components/layout/Footer';
 import { ScrollManager } from '@/components/layout/ScrollManager';
@@ -124,18 +125,20 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <AppearanceScript fallback={fallback} defaultChoice={defaultChoice} />
       </head>
       <body>
-        <OfflineProvider />
-        <ScrollManager />
-        {portfolioConfig.features.analytics ? <AnalyticsProvider /> : null}
-        <Shell
-          profile={{ name: profile.name, avatar: profile.avatar }}
-          startupName={bundle.data.startup?.name}
-          appearance={defaultChoice}
-          repoUrl={repoUrl}
-          footer={<Footer profile={profile} source={bundle.source} />}
-        >
-          {children}
-        </Shell>
+        <AppearanceProvider defaultChoice={defaultChoice} fallback={fallback}>
+          <OfflineProvider />
+          <ScrollManager />
+          {portfolioConfig.features.analytics ? <AnalyticsProvider /> : null}
+          <Shell
+            profile={{ name: profile.name, avatar: profile.avatar }}
+            startupName={bundle.data.startup?.name}
+            appearance={defaultChoice}
+            repoUrl={repoUrl}
+            footer={<Footer profile={profile} source={bundle.source} />}
+          >
+            {children}
+          </Shell>
+        </AppearanceProvider>
       </body>
     </html>
   );

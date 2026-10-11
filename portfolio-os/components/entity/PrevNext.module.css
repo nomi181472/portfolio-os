@@ -1,0 +1,107 @@
+/**
+ * components/entity/PrevNext.module.css
+ *
+ * Tactile, responsive navigation for adjacent portfolio entities.
+ * Includes directional translation micro-interactions on arrow metaphor marks.
+ */
+
+.nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space);
+  padding-top: var(--space-loose);
+  border-top: 1px solid var(--rule);
+  margin-top: var(--space-loose);
+}
+
+@media (max-width: 640px) {
+  .nav {
+    grid-template-columns: 1fr;
+    gap: var(--space-snug);
+  }
+
+  .spacer {
+    display: none;
+  }
+}
+
+.spacer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.prevNextCard {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-snug) var(--space);
+  background: var(--surface-raised, var(--surface));
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-frame, 6px);
+  text-decoration: none;
+  min-height: 72px;
+  justify-content: center;
+  transition: all var(--dur-quick, 0.15s) var(--ease-out, ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.prevNextCard:hover,
+.prevNextCard:focus-visible {
+  border-color: var(--signal);
+  background: var(--fill-faint);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.prevNextMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink-faint);
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.arrowIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-quiet);
+  transition: transform var(--dur-quick, 0.15s) ease, color var(--dur-quick, 0.15s) ease;
+}
+
+.prevNextCard:hover .arrowIcon,
+.prevNextCard:focus-visible .arrowIcon {
+  color: var(--signal);
+}
+
+.prevNextCard[data-direction="prev"]:hover .arrowIcon,
+.prevNextCard[data-direction="prev"]:focus-visible .arrowIcon {
+  transform: translateX(-4px);
+}
+
+.prevNextCard[data-direction="next"]:hover .arrowIcon,
+.prevNextCard[data-direction="next"]:focus-visible .arrowIcon {
+  transform: translateX(4px);
+}
+
+.prevNextTitleWrap {
+  display: block;
+}
+
+.prevNextTitle {
+  font-family: var(--font-display);
+  font-size: var(--text-lead);
+  font-weight: 500;
+  line-height: var(--leading-snug);
+  color: var(--ink-bright);
+  word-break: break-word;
+  transition: color var(--dur-quick, 0.15s) ease;
+}
+
+.prevNextCard:hover .prevNextTitle,
+.prevNextCard:focus-visible .prevNextTitle {
+  color: var(--signal);
+}

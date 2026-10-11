@@ -288,6 +288,9 @@ export const EducationSchema = EntitySchema.extend({
   degree: z.string().optional(),
   field: z.string().optional(),
   specialisation: z.string().optional(),
+  location: z.string().optional(),
+  credentialId: z.string().optional(),
+  verificationUrl: safeUrl.optional(),
   subjects: z.array(z.string()).default([]),
   achievements: z.array(z.string()).default([]),
 });
