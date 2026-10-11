@@ -57,6 +57,9 @@ function playChime() {
   } catch {}
 }
 
+const SILENT_AUDIO_URI =
+  'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+
 export default function DirectHostPage() {
   const { appearance } = useAppearance();
   const [email, setEmail] = useState('');
@@ -77,8 +80,147 @@ export default function DirectHostPage() {
   const [mobileView, setMobileView] = useState<'rooms' | 'chat'>('rooms');
   const [replyText, setReplyText] = useState('');
 
+  // Mobile background & persistent host state
+  const [backgroundAudioActive, setBackgroundAudioActive] = useState(false);
+  const [wakeLockActive, setWakeLockActive] = useState(false);
+  const [wakeLockSupported, setWakeLockSupported] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState<NotificationPermission>('default');
+  const [showAndroidTips, setShowAndroidTips] = useState(false);
+
   const managerRef = useRef<HostMultiPeerManager | null>(null);
   const logRef = useRef<HTMLDivElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  // Background Audio Keep-Alive for Android / mobile browsers
+  const enableBackgroundAudio = useCallback(async () => {
+    if (typeof window === 'undefined') return;
+    try {
+      if (!audioRef.current) {
+        const audio = new Audio(SILENT_AUDIO_URI);
+        audio.loop = true;
+        audio.volume = 0.01;
+        audioRef.current = audio;
+      }
+      await audioRef.current.play();
+      setBackgroundAudioActive(true);
+
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: 'Portfolio OS — Host Online',
+          artist: 'Direct Line Active',
+          album: 'Listening for visitor chats in background',
+          artwork: [
+            { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+            { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+          ],
+        });
+        navigator.mediaSession.setActionHandler('play', () => {
+          audioRef.current?.play().catch(() => {});
+          setBackgroundAudioActive(true);
+        });
+        navigator.mediaSession.setActionHandler('pause', () => {
+          audioRef.current?.pause();
+          setBackgroundAudioActive(false);
+        });
+      }
+    } catch (err) {
+      console.warn('[DirectHostPage] Background audio activation note:', err);
+    }
+  }, []);
+
+  const disableBackgroundAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    setBackgroundAudioActive(false);
+  }, []);
+
+  const toggleBackgroundAudio = useCallback(async () => {
+    if (backgroundAudioActive) {
+      disableBackgroundAudio();
+    } else {
+      await enableBackgroundAudio();
+    }
+  }, [backgroundAudioActive, disableBackgroundAudio, enableBackgroundAudio]);
+
+  // Screen Wake Lock API (keeps screen awake on Android desk stand/dock)
+  const acquireWakeLock = useCallback(async () => {
+    if (typeof navigator === 'undefined' || !('wakeLock' in navigator)) return;
+    try {
+      const sentinel = await navigator.wakeLock.request('screen');
+      wakeLockRef.current = sentinel;
+      setWakeLockActive(true);
+      sentinel.addEventListener('release', () => {
+        if (wakeLockRef.current === sentinel) {
+          wakeLockRef.current = null;
+        }
+      });
+    } catch {
+      setWakeLockActive(false);
+    }
+  }, []);
+
+  const releaseWakeLock = useCallback(async () => {
+    if (wakeLockRef.current) {
+      try {
+        await wakeLockRef.current.release();
+      } catch {}
+      wakeLockRef.current = null;
+    }
+    setWakeLockActive(false);
+  }, []);
+
+  const toggleWakeLock = useCallback(async () => {
+    if (wakeLockActive) {
+      await releaseWakeLock();
+    } else {
+      await acquireWakeLock();
+    }
+  }, [wakeLockActive, releaseWakeLock, acquireWakeLock]);
+
+  const requestNotificationPermission = useCallback(async () => {
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    try {
+      const perm = await Notification.requestPermission();
+      setNotificationPermission(perm);
+    } catch {}
+  }, []);
+
+  // Check Wake Lock & Notification capabilities on mount
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'wakeLock' in navigator) {
+      setWakeLockSupported(true);
+    }
+    if (typeof window !== 'undefined' && 'Notification' in window) {
+      setNotificationPermission(Notification.permission);
+    }
+  }, []);
+
+  // Restore screen wake lock when returning to visible state if it was active
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (wakeLockActive && document.visibilityState === 'visible' && !wakeLockRef.current) {
+        void acquireWakeLock();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [wakeLockActive, acquireWakeLock]);
+
+  // Clean up wake lock and background audio on unmount
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      if (wakeLockRef.current) {
+        void wakeLockRef.current.release();
+        wakeLockRef.current = null;
+      }
+    };
+  }, []);
 
   // 1. Fetch public channel discovery info & check for stored credentials on mount
   useEffect(() => {
@@ -142,6 +284,9 @@ export default function DirectHostPage() {
     setChannelId(cid);
     setAuthenticated(true);
 
+    // Auto-enable background keep-alive audio
+    void enableBackgroundAudio();
+
     if (managerRef.current) {
       managerRef.current.disconnect();
     }
@@ -159,13 +304,40 @@ export default function DirectHostPage() {
           return updatedSessions.length > 0 ? (updatedSessions[0]?.id ?? null) : null;
         });
       },
-      onNewMessage: (visitorId) => {
+      onNewMessage: (visitorId, msg) => {
         playChime();
         // Highlight active session
         setActiveSessionId((current) => {
           if (!current) return visitorId;
           return current;
         });
+
+        // If screen is off or app is in background, dispatch native notification
+        if (typeof document !== 'undefined' && document.hidden) {
+          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
+            const senderName = msg.senderName || 'Visitor';
+            const body = msg.text || (msg.audioData ? '🎤 Voice note received' : 'New message received');
+            if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+              navigator.serviceWorker.ready.then((reg) => {
+                reg.showNotification(`Direct Chat: ${senderName}`, {
+                  body,
+                  icon: '/icons/icon-192.png',
+                  badge: '/bot.svg',
+                  tag: `direct-msg-${visitorId}`,
+                  data: { url: '/direct' },
+                });
+              }).catch(() => {});
+            } else {
+              try {
+                new Notification(`Direct Chat: ${senderName}`, {
+                  body,
+                  icon: '/icons/icon-192.png',
+                  tag: `direct-msg-${visitorId}`,
+                });
+              } catch {}
+            }
+          }
+        }
       },
     });
 
@@ -226,6 +398,8 @@ export default function DirectHostPage() {
 
   const handleLogout = () => {
     clearHostCredentials();
+    disableBackgroundAudio();
+    void releaseWakeLock();
     if (managerRef.current) {
       managerRef.current.disconnect();
       managerRef.current = null;
@@ -405,6 +579,99 @@ export default function DirectHostPage() {
               </button>
             </div>
           </div>
+
+          {/* Controls Bar for Background & Mobile Host */}
+          <div className={styles.controlBar}>
+            <div className={styles.controlGroup}>
+              {/* Background Audio Keep-Alive */}
+              <button
+                type="button"
+                className={`${styles.toggleBtn} ${
+                  backgroundAudioActive ? styles.toggleBtnActive : ''
+                }`}
+                onClick={toggleBackgroundAudio}
+                title="Keeps Android browser alive in background via silent audio loop and MediaSession"
+              >
+                <span>{backgroundAudioActive ? '🟢' : '⚪'}</span>
+                <span>
+                  Background Mode: {backgroundAudioActive ? 'Active' : 'Paused'}
+                </span>
+              </button>
+
+              {/* Screen Wake Lock */}
+              {wakeLockSupported ? (
+                <button
+                  type="button"
+                  className={`${styles.toggleBtn} ${
+                    wakeLockActive ? styles.toggleBtnActive : ''
+                  }`}
+                  onClick={toggleWakeLock}
+                  title="Prevents phone screen from turning off (Desk/Dock mode)"
+                >
+                  <span>{wakeLockActive ? '☀️' : '🌙'}</span>
+                  <span>
+                    Keep Screen On: {wakeLockActive ? 'Active' : 'Off'}
+                  </span>
+                </button>
+              ) : null}
+
+              {/* Push Notifications */}
+              {notificationPermission !== 'granted' ? (
+                <button
+                  type="button"
+                  className={styles.toggleBtn}
+                  onClick={requestNotificationPermission}
+                  title="Allow browser notifications for new messages while screen is off"
+                >
+                  <span>🔔</span>
+                  <span>Enable Push Alerts</span>
+                </button>
+              ) : (
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    color: '#10b981',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    padding: '4px 6px',
+                  }}
+                  title="Browser notifications granted"
+                >
+                  ✓ Alerts Enabled
+                </span>
+              )}
+            </div>
+
+            <button
+              type="button"
+              className={styles.tipsToggleBtn}
+              onClick={() => setShowAndroidTips((prev) => !prev)}
+            >
+              {showAndroidTips ? 'Hide Android Setup ▲' : '📱 Android Background Setup ▼'}
+            </button>
+          </div>
+
+          {/* Android Background Tips Drawer */}
+          {showAndroidTips ? (
+            <div className={styles.tipsCard}>
+              <h4>📱 Keeping Host Mode Online 24/7 on Android</h4>
+              <ol className={styles.tipsList}>
+                <li>
+                  <strong>Set Battery to Unrestricted:</strong> Long press the Portfolio OS app icon → <em>App info</em> → <em>Battery</em> → Select <strong>Unrestricted</strong>. This prevents Android OS from putting the app to sleep in the background.
+                </li>
+                <li>
+                  <strong>Lock in Recent Apps:</strong> Open the Android App Switcher (swipe up and hold), tap the app menu or icon, and choose <strong>Lock</strong> (padlock icon) so Android never closes it.
+                </li>
+                <li>
+                  <strong>Background Mode (Active):</strong> Keep the <em>Background Mode</em> toggle above active. It runs an inaudible audio loop + Media Session that signals Android to maintain active WebRTC and network heartbeats even with the screen locked.
+                </li>
+                <li>
+                  <strong>Deep Wakeup Push (ntfy.sh):</strong> To wake your phone even after device restarts, set <code>P2P_ALERT_WEBHOOK_URL</code> in your deployment environment to a free <a href="https://ntfy.sh" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--ink-bright)', textDecoration: 'underline' }}>ntfy.sh</a> topic URL.
+                </li>
+              </ol>
+            </div>
+          ) : null}
 
           {/* Two-Column Dashboard (Desktop/Tablet) or Drill-down (Mobile) */}
           <div
