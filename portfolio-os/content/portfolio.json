@@ -4254,10 +4254,15 @@
         "Computer Vision",
         "Deep Learning"
       ],
+      "credentialId": "23K-8069",
+      "verificationUrl": "https://www.nu.edu.pk/verification?id=23k-8069",
+      "relatedProjects": [
+        "proj-need"
+      ],
       "media": [
         {
           "type": "image",
-          "url": "https://raw.githubusercontent.com/nomi181472/portfolio-os/refs/heads/main/media/ds.png",
+          "url": "/media/ds.png",
           "title": "Master of Science in Data Science Degree",
           "caption": "Official MS Data Science degree certificate awarded by National University of Computer & Emerging Sciences (NUCES-FAST), Islamabad (Roll No. 23K-8069, Degree No. 25-2254).",
           "alt": "MS Data Science degree certificate awarded by NUCES-FAST to Noman Ali",
@@ -4266,7 +4271,7 @@
         },
         {
           "type": "image",
-          "url": "https://raw.githubusercontent.com/nomi181472/portfolio-os/refs/heads/main/media/ds-transcript.png",
+          "url": "/media/ds-transcript.png",
           "title": "Official Academic Transcript — MS Data Science",
           "caption": "Official MS Data Science academic transcript issued by NUCES-FAST Controller of Examinations (Roll No. 23K-8069).",
           "alt": "Official MS Data Science academic transcript for Noman Ali from NUCES-FAST",
@@ -4333,6 +4338,14 @@
         "Operating Systems",
         "Algorithms",
         "SQL"
+      ],
+      "credentialId": "17K-3652",
+      "verificationUrl": "https://www.nu.edu.pk/verification?id=17k-3652",
+      "relatedProjects": [
+        "proj-bscs-fyp"
+      ],
+      "relatedPublications": [
+        "pub-ieee-2021"
       ],
       "media": [
         {

@@ -19,6 +19,10 @@ export function EntityHeader({ entity }: { entity: ResolvedEntity }) {
     ('issued' in data && data.issued ? formatDate(String(data.issued)) : '');
   const periodLine = stamped ? `${stamped}${duration ? ` · ${duration}` : ''}` : '';
 
+  const verificationLink = Array.isArray(data.links)
+    ? (data.links as Array<{ type?: string; url?: string; label?: string }>).find((l) => l.type === 'verification')
+    : null;
+
   return (
     <header style={{ marginBottom: 'var(--space-wide)' }}>
       <p className="meta" style={{ marginBottom: 'var(--space-tight)' }}>{category.singular}</p>
@@ -48,21 +52,25 @@ export function EntityHeader({ entity }: { entity: ResolvedEntity }) {
           <DepthBadge depth={String(data.depth)} />
         ) : null}
       </div>
+
       {('organisation' in data && data.organisation) ||
       ('institution' in data && data.institution) ||
       ('venue' in data && data.venue) ||
-      ('context' in data && data.context) ? (
+      ('context' in data && data.context) ||
+      ('location' in data && data.location) ? (
         <p className="label" style={{ marginTop: 'var(--space-snug)', color: 'var(--ink-quiet)' }}>
           {[
             'organisation' in data && data.organisation ? String(data.organisation) : null,
             'institution' in data && data.institution ? String(data.institution) : null,
             'venue' in data && data.venue ? String(data.venue) : null,
             'context' in data && data.context ? String(data.context) : null,
+            'location' in data && data.location ? String(data.location) : null,
           ]
             .filter(Boolean)
             .join(' · ')}
         </p>
       ) : null}
+
       {'authors' in data && Array.isArray(data.authors) && data.authors.length ? (
         <p className="meta" style={{ marginTop: 'var(--space-hair)', color: 'var(--ink-faint)' }}>
           {(data.authors as string[]).join(' · ')}
@@ -98,6 +106,47 @@ export function EntityHeader({ entity }: { entity: ResolvedEntity }) {
         {'state' in data && data.state ? <span className="badge" data-state={String(data.state)}>{humanise(String(data.state))}</span> : null}
         <SourceBadge source={data.source as never} />
         {periodLine ? <PeriodPulse text={periodLine} className="meta" repeat /> : null}
+
+        {/* Education Credentials & Official Verification Badges */}
+        {entity.kind === 'education' ? (
+          <>
+            {'degree' in data && data.degree ? (
+              <span className="badge" style={{ fontFamily: 'var(--font-data)' }}>
+                Degree: {String(data.degree)}
+              </span>
+            ) : null}
+            {'field' in data && data.field ? (
+              <span className="badge" style={{ fontFamily: 'var(--font-data)' }}>
+                Field: {String(data.field)}
+              </span>
+            ) : null}
+            {'specialisation' in data && data.specialisation ? (
+              <span className="badge" style={{ fontFamily: 'var(--font-data)' }}>
+                Specialisation: {String(data.specialisation)}
+              </span>
+            ) : null}
+            {verificationLink ? (
+              <a
+                href={verificationLink.url}
+                target="_blank"
+                rel="noreferrer"
+                className="badge"
+                style={{
+                  borderColor: 'var(--signal)',
+                  color: 'var(--signal)',
+                  textDecoration: 'none',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 4,
+                  fontWeight: 500,
+                }}
+              >
+                <span>✓</span> {verificationLink.label || 'Officially Verified'} ↗
+              </a>
+            ) : null}
+          </>
+        ) : null}
+
         {entity.kind === 'skills' ? <SkillLensGauge data={data} /> : null}
         <CopyEntityButton entityData={data} name={entity.data.name} />
       </div>
@@ -108,6 +157,7 @@ export function EntityHeader({ entity }: { entity: ResolvedEntity }) {
         </p>
       ) : null}
       
+      {/* Experience Deliverables */}
       {entity.kind === 'experience' && entity.relations.some((r) => r.kind === 'products' || r.kind === 'projects') ? (
         <section style={{ marginTop: 'var(--space-loose)', marginBottom: 'var(--space-wide)', padding: 'var(--space)', border: '1px solid var(--rule-strong)', borderRadius: '10px', background: 'var(--surface-raised)' }}>
           <h3 className="label" style={{ color: 'var(--signal)', marginBottom: 'var(--space-snug)', display: 'flex', alignItems: 'center', gap: 'var(--space-tight)' }}>
@@ -116,6 +166,50 @@ export function EntityHeader({ entity }: { entity: ResolvedEntity }) {
           <div style={{ display: 'grid', gap: 'var(--space-snug)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 16rem), 1fr))' }}>
             {entity.relations
               .filter((r) => r.kind === 'products' || r.kind === 'projects')
+              .map((item) => {
+                const itemCat = CATEGORIES[item.kind];
+                return (
+                  <Link
+                    key={`${item.kind}:${item.id}`}
+                    href={item.href}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 'var(--space-snug)',
+                      padding: 'var(--space-snug) var(--space)',
+                      border: '1px solid var(--rule)',
+                      borderRadius: '6px',
+                      background: 'var(--surface-raised)',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span style={{ color: 'var(--signal)', display: 'flex', alignItems: 'center' }}>
+                      <MetaphorMark name={itemCat.mark} size={20} />
+                    </span>
+                    <div>
+                      <span className="title" style={{ fontSize: 'var(--text-body)', color: 'var(--ink-bright)', display: 'block' }}>
+                        {(item.name.split('—')[0] ?? item.name).trim()}
+                      </span>
+                      <span className="meta" style={{ fontSize: 'var(--text-fine)', color: 'var(--ink-faint)' }}>
+                        {itemCat.singular} · View technical record →
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
+          </div>
+        </section>
+      ) : null}
+
+      {/* Education Deliverables (Research, Capstones, Publications) */}
+      {entity.kind === 'education' && entity.relations.some((r) => r.kind === 'publications' || r.kind === 'research' || r.kind === 'projects') ? (
+        <section style={{ marginTop: 'var(--space-loose)', marginBottom: 'var(--space-wide)', padding: 'var(--space)', border: '1px solid var(--rule-strong)', borderRadius: '10px', background: 'var(--surface-raised)' }}>
+          <h3 className="label" style={{ color: 'var(--signal)', marginBottom: 'var(--space-snug)', display: 'flex', alignItems: 'center', gap: 'var(--space-tight)' }}>
+            <span>Academic Research, Capstones & Publications</span>
+          </h3>
+          <div style={{ display: 'grid', gap: 'var(--space-snug)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 16rem), 1fr))' }}>
+            {entity.relations
+              .filter((r) => r.kind === 'publications' || r.kind === 'research' || r.kind === 'projects')
               .map((item) => {
                 const itemCat = CATEGORIES[item.kind];
                 return (

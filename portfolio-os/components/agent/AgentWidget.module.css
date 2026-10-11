@@ -1375,22 +1375,28 @@
   }
 
   .launcher {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    padding: 0;
-    border-radius: 50%;
-    justify-content: center;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    justify-content: center !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+    transition: transform var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) var(--ease-out);
+  }
+
+  .launcher:active {
+    transform: scale(0.92);
   }
 
   .launcherText {
-    display: none;
+    display: none !important;
   }
 
   .launcherIcon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
   }
 
   /* When open, widget becomes a native full-screen / bottom-sheet viewport */

@@ -120,7 +120,7 @@ export const CATEGORIES: Record<EntityKind, CategoryDefinition> = {
     mark: 'foundation',
     question: 'What was I trained in?',
     note: 'Formal grounding, linked forward to the work it made possible.',
-    sections: ['description', 'subjects', 'achievements', ...COMMON],
+    sections: ['description', 'credential', 'subjects', 'achievements', ...COMMON],
   },
   skills: {
     kind: 'skills',

@@ -373,6 +373,82 @@ a.tech:hover {
 }
 
 /* ==========================================================================
+   Briefing HUD Matrix (§14)
+   Responsive telemetry grid displaying key profile facts with micro-labels.
+   ========================================================================== */
+.briefingGrid {
+  display: grid;
+  gap: var(--space);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  margin-top: var(--space);
+  padding: 0;
+}
+
+.briefingCard {
+  background: var(--surface-raised);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-card);
+  padding: var(--space-snug) var(--space);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color var(--dur-quick) var(--ease-out), box-shadow var(--dur-quick) var(--ease-out);
+}
+
+.briefingCard:hover {
+  border-color: var(--line-strong);
+}
+
+.briefingCard__label {
+  font-family: var(--font-data);
+  font-size: var(--text-fine);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.briefingCard__value {
+  margin: 0;
+  color: var(--ink-bright);
+}
+
+.briefingCard__value--highlight {
+  font-size: clamp(1.2rem, 1.05rem + 0.6vw, 1.55rem);
+  font-weight: 600;
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--signal);
+}
+
+.briefingCard__value--text {
+  font-size: var(--text-small);
+  line-height: var(--leading-snug);
+  color: var(--ink);
+}
+
+@media (max-width: 48rem) {
+  .briefingGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-tight);
+  }
+  .briefingCard {
+    padding: var(--space-tight) var(--space-snug);
+  }
+  .briefingCard--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 25rem) {
+  .briefingCard__value--highlight {
+    font-size: 1.15rem;
+  }
+  .briefingCard__value--text {
+    font-size: 0.8125rem;
+  }
+}
+
+/* ==========================================================================
    Disclosure: depth costs one deliberate action. Nothing auto-expands.
    ========================================================================== */
 
@@ -645,7 +721,7 @@ a.tech:hover {
     min-width: 0;
     width: 100%;
     padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(6.5rem + env(safe-area-inset-bottom, 0px));
   }
   .page { padding-inline: var(--gutter); }
   .row {

@@ -216,7 +216,7 @@ export function SchematicView({
               <circle
                 cx={node.x}
                 cy={node.y}
-                r={node.radius + 18}
+                r={node.radius + 24}
                 className={styles.nodeHit}
               />
 
@@ -244,6 +244,33 @@ export function SchematicView({
         })}
       </svg>
 
+      {/* Mobile Touch Carousel / Quick-Access Chip Strip */}
+      <div className={styles.mobileChipStrip} role="tablist" aria-label="Portfolio collections">
+        {nodes.map((node) => {
+          const isSelected = activeKind === node.kind;
+          return (
+            <button
+              key={node.kind}
+              type="button"
+              role="tab"
+              aria-selected={isSelected}
+              className={`${styles.mobileChip} ${isSelected ? styles.mobileChipActive : ''}`}
+              onClick={() => {
+                if (selectedKind === node.kind) {
+                  setSelectedKind(null);
+                } else {
+                  setSelectedKind(node.kind);
+                }
+              }}
+            >
+              <span className={styles.mobileChipDot} />
+              <span className={styles.mobileChipLabel}>{node.label}</span>
+              <span className={styles.mobileChipCount}>{node.count}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Floating Inspection Bar for Touch / Active Node */}
       {activeNode ? (
         <div className={styles.inspector} role="status">
@@ -263,6 +290,17 @@ export function SchematicView({
           </Link>
         </div>
       ) : null}
+
+      {/* Dynamic Status / Meta Bar */}
+      <div className={styles.metaBar}>
+        <div className={styles.metaStat}>
+          <span className={styles.metaDot} />
+          <span>{nodes.length} collections · {nodes.reduce((sum, n) => sum + n.count, 0)} entries</span>
+        </div>
+        <div className={styles.metaHint}>
+          Tap any collection to inspect connections
+        </div>
+      </div>
     </div>
   );
 }

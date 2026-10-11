@@ -17,12 +17,13 @@ interface MobileBottomBarProps {
   destinations: PrimaryDestination[];
   drawerOpen: boolean;
   onToggleDrawer: () => void;
+  profile?: { name: string; avatar?: string };
 }
 
 /**
  * Bottom tab bar navigation for mobile views.
  */
-export function MobileBottomBar({ destinations, drawerOpen, onToggleDrawer }: MobileBottomBarProps) {
+export function MobileBottomBar({ destinations, drawerOpen, onToggleDrawer, profile }: MobileBottomBarProps) {
   const pathname = usePathname();
   const { ripples, triggerRipple } = useRipple();
 
@@ -49,7 +50,13 @@ export function MobileBottomBar({ destinations, drawerOpen, onToggleDrawer }: Mo
               <span key={r.id} className={styles.tabRipple} style={{ left: r.x, top: r.y }} />
             ))}
             <span className={styles.tabIcon}>
-              <MetaphorMark name={tab.mark} size={18} />
+              {tab.href === '/' && profile?.avatar ? (
+                <span className={styles.tabAvatar}>
+                  <img src={profile.avatar} alt="" className={styles.tabAvatarImg} />
+                </span>
+              ) : (
+                <MetaphorMark name={tab.mark} size={18} />
+              )}
             </span>
             <span className={styles.tabLabel}>{tab.label}</span>
           </Link>

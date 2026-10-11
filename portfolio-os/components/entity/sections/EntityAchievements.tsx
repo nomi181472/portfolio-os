@@ -6,8 +6,15 @@ export function EntityAchievements({ entity }: SectionProps) {
   const data = entity.data as Record<string, unknown>;
   const items = list(data.achievements);
   if (!items.length) return null;
+
+  const isEducation = entity.kind === 'education';
+  const label = isEducation ? 'Academic Highlights & Outcomes' : 'What changed';
+  const hint = isEducation
+    ? 'Key research breakthroughs, honors, and verified outcomes'
+    : 'Outcomes, with their context';
+
   return (
-    <Disclosure label="What changed" hint="Outcomes, with their context">
+    <Disclosure label={label} hint={hint} defaultOpen={isEducation}>
       <Bullets items={items} />
     </Disclosure>
   );

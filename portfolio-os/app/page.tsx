@@ -99,10 +99,6 @@ export default async function SurfacePage() {
         <section style={{ marginTop: 'var(--space-wide)' }} aria-labelledby="map-heading" data-analytics-section="map">
           <h2 id="map-heading" className="visually-hidden">Map of this portfolio</h2>
           <Schematic graph={graph} name={profile.name} />
-          <p className="meta" style={{ marginTop: 'var(--space-snug)' }}>
-            Node size is the number of entries. Line weight is the number of real connections between them. Select a node
-            to enter that collection.
-          </p>
         </section>
       ) : null}
 
@@ -113,18 +109,30 @@ export default async function SurfacePage() {
           <p className="section__note">Opened in layers. The first is enough to decide whether to keep reading.</p>
         </div>
 
-        <dl style={{ display: 'grid', gap: 'var(--space-loose)', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 12rem), 1fr))' }}>
+        <dl className="briefingGrid">
           {briefing.yearsActive ? (
-            <div><dt className="meta">Practising</dt><dd className="title" style={{ margin: 0 }}>{briefing.yearsActive} years</dd></div>
-          ) : null}
-          {briefing.focus ? (
-            <div><dt className="meta">Current focus</dt><dd className="title" style={{ margin: 0 }}>{briefing.focus}</dd></div>
-          ) : null}
-          {briefing.domains.length ? (
-            <div><dt className="meta">Domains</dt><dd style={{ margin: 0 }}>{briefing.domains.join(' · ')}</dd></div>
+            <div className="briefingCard">
+              <dt className="briefingCard__label">Practising</dt>
+              <dd className="briefingCard__value briefingCard__value--highlight">{briefing.yearsActive} years</dd>
+            </div>
           ) : null}
           {profile.location ? (
-            <div><dt className="meta">Based</dt><dd style={{ margin: 0 }}>{profile.location}</dd></div>
+            <div className="briefingCard">
+              <dt className="briefingCard__label">Based</dt>
+              <dd className="briefingCard__value briefingCard__value--highlight" style={{ fontSize: 'clamp(1rem, 0.95rem + 0.4vw, 1.25rem)' }}>{profile.location}</dd>
+            </div>
+          ) : null}
+          {briefing.focus ? (
+            <div className="briefingCard briefingCard--wide">
+              <dt className="briefingCard__label">Current focus</dt>
+              <dd className="briefingCard__value briefingCard__value--text">{briefing.focus}</dd>
+            </div>
+          ) : null}
+          {briefing.domains.length ? (
+            <div className="briefingCard briefingCard--wide">
+              <dt className="briefingCard__label">Domains</dt>
+              <dd className="briefingCard__value briefingCard__value--text">{briefing.domains.join(' · ')}</dd>
+            </div>
           ) : null}
         </dl>
 
