@@ -3694,6 +3694,9 @@
         "proj-resume-hr",
         "proj-quant-rl-trading"
       ],
+      "relatedResearch": [
+        "res-tracker-simulation"
+      ],
       "featured": true
     },
     {
@@ -4215,6 +4218,80 @@
       ],
       "relatedProjects": [
         "proj-need"
+      ],
+      "featured": true
+    },
+    {
+      "id": "res-tracker-simulation",
+      "slug": "tracker-failure-simulation-adversarial-benchmarking",
+      "name": "Adversarial Stress-Testing and Failure Diagnosis in Multi-Object Trackers",
+      "state": "experiment",
+      "period": {
+        "startDate": "2025-07-01",
+        "ongoing": true
+      },
+      "lastUpdated": "2026-10-11",
+      "question": "Can controllable synthetic perturbations (camera jitter, non-linear acceleration, occlusions, detector dropouts) deterministically expose and categorize failure modes across modern multi-object tracking paradigms?",
+      "summary": "Investigating deterministic failure modes and edge-case fragility across 16 multi-object tracking algorithms under synthetic and real-world adversarial stress.",
+      "abstract": "A research exploration into why and when visual multi-object trackers fail. By synthesizing fine-grained perturbation axes (severe occlusions, trajectory crossings, detector dropouts, camera shake, and spatial noise), this study isolates algorithmic breakdowns across Kalman filter approximations, appearance re-identification embeddings, and association algorithms (ByteTrack, BoT-SORT, OC-SORT, DeepOCSORT, etc.).",
+      "description": "Multi-object tracking (MOT) models are typically evaluated on benchmark aggregates like MOTA, HOTA, and IDF1 over smooth, curated sequences. However, these aggregate metrics frequently mask catastrophic real-time failure modes—including ID switches during brief occlusions, track drift under non-linear velocity changes, and association collapse during camera jitter. This ongoing research project investigates failure diagnostics by placing 16 tracking architectures inside an adversarial evaluation simulator. By introducing controllable, reproducible ground-truth perturbations alongside real camera footage, the research analyzes the exact degradation boundaries of motion models (Kalman filters, NSA-Kalman) versus appearance feature matchers (Re-ID embeddings) to guide the engineering of robust, production-grade tracking systems.",
+      "technologies": [
+        "Python",
+        "FastAPI",
+        "PyTorch",
+        "OpenCV",
+        "ByteTrack",
+        "BoT-SORT",
+        "OC-SORT",
+        "DeepOCSORT",
+        "Next.js",
+        "TypeScript"
+      ],
+      "tags": [
+        "Computer Vision",
+        "Multi-Object Tracking",
+        "Failure Analysis",
+        "Adversarial Stress Testing",
+        "Ground Truth Simulation",
+        "HOTA / MOTA Benchmarks",
+        "Research in Progress"
+      ],
+      "findings": [
+        {
+          "date": "2025-11-20",
+          "observation": "Pure motion-based association algorithms (e.g., standard Kalman filters) undergo rapid track fragmentation under high-frequency camera shake, whereas observation-centric trackers (OC-SORT) preserve trajectory consistency by recalculating virtual momentum over occlusion intervals.",
+          "confidence": "high"
+        },
+        {
+          "date": "2026-03-15",
+          "observation": "Re-ID appearance embeddings reduce ID switches during linear crossing trajectories, but exhibit catastrophic association latency and false swaps under sudden illumination changes or severe sensor noise compared to second-stage low-confidence IoU association (ByteTrack).",
+          "confidence": "high"
+        }
+      ],
+      "links": [
+        {
+          "label": "Interactive Tracker Failure Lab",
+          "url": "https://pg-trackers.nomanali.online/",
+          "type": "demo",
+          "visibility": "public"
+        },
+        {
+          "label": "Trackers GitHub Repository",
+          "url": "https://github.com/nomi181472/trackers",
+          "type": "repository",
+          "visibility": "public"
+        }
+      ],
+      "relatedSkills": [
+        "sk-computer-vision",
+        "sk-python",
+        "sk-pytorch-cuda",
+        "sk-fastapi",
+        "sk-video-streaming"
+      ],
+      "relatedProjects": [
+        "proj-tracker-simulator",
+        "proj-zero-shots-trackers"
       ],
       "featured": true
     }
