@@ -563,40 +563,172 @@
     border-style: solid;
   }
 
-  .mobileLaserWrapper {
+  /* ==========================================================================
+     Model 1: Vertical River / Circuit Flow Graph
+     ========================================================================== */
+  .mobileFlowControl {
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: 100%;
-    padding: 6px 0;
-    margin: 2px 0 6px 0;
-    background: rgba(0, 0, 0, 0.25);
+    justify-content: space-between;
+    padding: 6px 10px;
+    background: var(--fill-faint);
+    border: 1px solid var(--rule);
     border-radius: 8px;
+    margin-top: 4px;
+  }
+
+  .mobileFlowMeta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-data);
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    color: var(--ink-quiet);
+    text-transform: uppercase;
+  }
+
+  .mobileFlowPulse {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--signal);
+    box-shadow: 0 0 6px var(--glow);
+    animation: flowPulseDot 2s infinite ease-in-out;
+  }
+
+  @keyframes flowPulseDot {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(0.7); opacity: 0.4; }
+  }
+
+  .mobileFlowToggle {
+    display: flex;
+    gap: 3px;
+    background: var(--fill);
+    padding: 2px;
+    border-radius: 6px;
     border: 1px solid var(--rule);
   }
 
-  .mobileLaserCanvas {
+  .mobileFlowToggleBtn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: var(--font-data);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--ink-quiet);
+    cursor: pointer;
+    transition: all var(--duration-fast);
+  }
+
+  .mobileFlowToggleBtnActive {
+    background: var(--surface-raised);
+    color: var(--ink-bright);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+  }
+
+  /* River Canvas Frame */
+  .mobileRiverContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px 8px 6px;
+    background: var(--fill-faint);
+    border-radius: 8px;
+    border: 1px solid var(--rule);
+    overflow: hidden;
+  }
+
+  .mobileRiverHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: var(--font-data);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--ink-quiet);
+    text-transform: uppercase;
+    padding-inline: 4px;
+    margin-bottom: 4px;
+  }
+
+  .mobileRiverSourceLabel {
+    color: var(--signal);
+    font-weight: 600;
+  }
+
+  .mobileRiverSignalRate {
+    color: var(--ink-faint);
+  }
+
+  .mobileRiverSvg {
     display: block;
     width: 100%;
-    max-width: 320px;
-    height: 48px;
+    height: 64px;
     overflow: visible;
   }
 
-  .mobileLaserBeam {
-    transition: d var(--duration-fast) var(--ease-snappy), stroke var(--duration-fast);
-    animation: mobileLaserPulse 2.4s ease-in-out infinite;
+  .riverPulseRing {
+    animation: pulseRingAnim 2.2s infinite ease-out;
+    transform-origin: 160px 8px;
   }
 
-  @keyframes mobileLaserPulse {
-    0%, 100% {
-      opacity: 0.95;
-      stroke-width: 2.2px;
-    }
-    50% {
-      opacity: 0.45;
-      stroke-width: 1.4px;
-    }
+  @keyframes pulseRingAnim {
+    0% { r: 5; opacity: 0.8; stroke-width: 1.5; }
+    100% { r: 14; opacity: 0; stroke-width: 0.5; }
+  }
+
+  .riverBranchGroup {
+    cursor: pointer;
+  }
+
+  .riverPath {
+    transition: stroke var(--duration-fast) var(--ease-snappy), stroke-width var(--duration-fast), stroke-opacity var(--duration-fast);
+  }
+
+  .riverPathSelected {
+    stroke-dasharray: none;
+    filter: drop-shadow(0 0 6px var(--glow));
+  }
+
+  /* Target Items in River Flow */
+  .mobileFlowPin {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--fill-strong);
+    border: 1px solid var(--rule-strong);
+    flex-shrink: 0;
+    transition: all var(--duration-fast);
+  }
+
+  .mobileFlowPinActive {
+    background: var(--signal);
+    border-color: var(--signal);
+    box-shadow: 0 0 6px var(--glow);
+    transform: scale(1.3);
+  }
+
+  .mobileTargetItemActive {
+    background: var(--signal-wash) !important;
+    border-color: var(--signal) !important;
+    box-shadow: 0 0 10px var(--fill-strong);
+  }
+
+  .mobileTargetArrowLink {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    margin-left: auto;
+    color: var(--ink-quiet);
+    text-decoration: none;
   }
 }
 

@@ -39,6 +39,7 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
   const [selectedSkillId, setSelectedSkillId] = useState<string | null>(null);
   const [selectedTargetId, setSelectedTargetId] = useState<string | null>(null);
   const [showAllTargets, setShowAllTargets] = useState(false);
+  const [mobileFlowMode, setMobileFlowMode] = useState<'river' | 'list'>('river');
 
   // Filter skills that have at least one product/project target, plus list other standalone skills
   const connectedSkills = useMemo(() => skills.filter((s) => s.targets.length > 0), [skills]);
@@ -295,17 +296,56 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                       </Link>
                     </div>
 
-                    {/* Living Laser Stream Ribbon */}
-                    {activeMobileSkill.targets.length > 0 ? (
-                      <div className={styles.mobileLaserWrapper} aria-hidden="true">
-                        <svg className={styles.mobileLaserCanvas} viewBox="0 0 320 48" preserveAspectRatio="none">
+                    {/* Model 1: Flow Mode Switcher */}
+                    <div className={styles.mobileFlowControl}>
+                      <div className={styles.mobileFlowMeta}>
+                        <span className={styles.mobileFlowPulse} />
+                        <span>CIRCUIT RIVER FLOW</span>
+                      </div>
+                      <div className={styles.mobileFlowToggle}>
+                        <button
+                          type="button"
+                          className={`${styles.mobileFlowToggleBtn} ${
+                            mobileFlowMode === 'river' ? styles.mobileFlowToggleBtnActive : ''
+                          }`}
+                          onClick={() => setMobileFlowMode('river')}
+                          aria-label="Vertical River Flow View"
+                        >
+                          🔀 River
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.mobileFlowToggleBtn} ${
+                            mobileFlowMode === 'list' ? styles.mobileFlowToggleBtnActive : ''
+                          }`}
+                          onClick={() => setMobileFlowMode('list')}
+                          aria-label="List View"
+                        >
+                          📋 List
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Model 1: Vertical River SVG Emitter & Edges */}
+                    {mobileFlowMode === 'river' && activeMobileSkill.targets.length > 0 ? (
+                      <div className={styles.mobileRiverContainer} aria-hidden="true">
+                        <div className={styles.mobileRiverHeader}>
+                          <span className={styles.mobileRiverSourceLabel}>
+                            SOURCE EMITTER · {activeMobileSkill.name.toUpperCase()}
+                          </span>
+                          <span className={styles.mobileRiverSignalRate}>
+                            {activeMobileSkill.targets.length} CHANNELS
+                          </span>
+                        </div>
+
+                        <svg className={styles.mobileRiverSvg} viewBox="0 0 320 64" preserveAspectRatio="none">
                           <defs>
-                            <linearGradient id="mobileLaserGradSkill" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <linearGradient id="mobileRiverGradSkill" x1="0%" y1="0%" x2="0%" y2="100%">
                               <stop offset="0%" stopColor="var(--signal)" stopOpacity="1" />
-                              <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.85" />
+                              <stop offset="100%" stopColor="var(--signal-quiet)" stopOpacity="0.85" />
                             </linearGradient>
-                            <filter id="mobileLaserGlow" x="-20%" y="-20%" width="140%" height="140%">
-                              <feGaussianBlur stdDeviation="2" result="blur" />
+                            <filter id="mobileRiverGlow" x="-20%" y="-20%" width="140%" height="140%">
+                              <feGaussianBlur stdDeviation="2.5" result="blur" />
                               <feMerge>
                                 <feMergeNode in="blur" />
                                 <feMergeNode in="SourceGraphic" />
@@ -313,28 +353,50 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                             </filter>
                           </defs>
 
-                          {/* Source Node Origin */}
-                          <circle cx="160" cy="5" r="4" fill="var(--signal)" filter="url(#mobileLaserGlow)" />
-                          <circle cx="160" cy="5" r="7" fill="none" stroke="var(--signal)" strokeWidth="1" opacity="0.6" />
+                          {/* Top Source Emitter Node */}
+                          <circle cx="160" cy="8" r="8" fill="none" stroke="var(--signal)" strokeWidth="1" opacity="0.4" className={styles.riverPulseRing} />
+                          <circle cx="160" cy="8" r="4.5" fill="var(--signal)" filter="url(#mobileRiverGlow)" />
 
-                          {/* Dynamic Laser Beams to Targets */}
+                          {/* Branching Vertical River Edges */}
                           {(() => {
                             const count = Math.min(activeMobileSkill.targets.length, showAllTargets ? activeMobileSkill.targets.length : 5);
-                            return activeMobileSkill.targets.slice(0, count).map((target, idx) => {
-                              const step = 300 / Math.max(1, count);
-                              const destX = 10 + step * (idx + 0.5);
-                              const d = `M 160 5 C 160 26, ${destX} 26, ${destX} 44`;
+                            const list = activeMobileSkill.targets.slice(0, count);
+                            return list.map((target, idx) => {
+                              const destX = count === 1 ? 160 : 20 + (idx / (count - 1)) * 280;
+                              const destY = 56;
+                              const isSelected = selectedTargetId === target.id;
+                              const isAnySelected = Boolean(selectedTargetId);
+                              const isDimmed = isAnySelected && !isSelected;
+                              const d = `M 160 8 C 160 36, ${destX} 32, ${destX} ${destY}`;
 
                               return (
-                                <g key={target.id}>
+                                <g key={target.id} className={styles.riverBranchGroup}>
                                   <path
                                     d={d}
                                     fill="none"
-                                    stroke="url(#mobileLaserGradSkill)"
-                                    strokeWidth="2"
-                                    className={styles.mobileLaserBeam}
+                                    stroke={isSelected ? 'url(#mobileRiverGradSkill)' : isDimmed ? 'var(--rule)' : 'url(#mobileRiverGradSkill)'}
+                                    strokeWidth={isSelected ? 2.6 : isDimmed ? 1 : 1.5}
+                                    strokeOpacity={isSelected ? 1 : isDimmed ? 0.15 : 0.65}
+                                    className={`${styles.riverPath} ${isSelected ? styles.riverPathSelected : ''}`}
                                   />
-                                  <circle cx={destX} cy="44" r="3.5" fill="#60a5fa" filter="url(#mobileLaserGlow)" />
+
+                                  {/* Traveling Energy Pulse on Selected or Primary Edge */}
+                                  {(isSelected || (!isAnySelected && idx === 0)) && (
+                                    <circle r="3.2" fill="var(--signal)" filter="url(#mobileRiverGlow)">
+                                      <animateMotion path={d} dur="1.6s" repeatCount="indefinite" />
+                                    </circle>
+                                  )}
+
+                                  {/* Target Receptor Node */}
+                                  <circle
+                                    cx={destX}
+                                    cy={destY}
+                                    r={isSelected ? 5 : 3.5}
+                                    fill={isSelected ? 'var(--signal)' : 'var(--surface-raised)'}
+                                    stroke={isSelected ? 'var(--signal)' : 'var(--rule-strong)'}
+                                    strokeWidth={isSelected ? 2 : 1}
+                                    filter={isSelected ? 'url(#mobileRiverGlow)' : undefined}
+                                  />
                                 </g>
                               );
                             });
@@ -352,27 +414,53 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                       </div>
 
                       <div className={styles.mobileTargetList}>
-                        {(showAllTargets ? activeMobileSkill.targets : activeMobileSkill.targets.slice(0, 5)).map((target) => (
-                          <Link
-                            key={target.id}
-                            href={target.href}
-                            className={styles.mobileTargetItem}
-                          >
-                            <div className={styles.mobileTargetLeft}>
-                              <span
-                                className={`${styles.mobileTargetBadge} ${
-                                  target.kind === 'products'
-                                    ? styles.mobileTargetBadgeProduct
-                                    : styles.mobileTargetBadgeProject
-                                }`}
+                        {(showAllTargets ? activeMobileSkill.targets : activeMobileSkill.targets.slice(0, 5)).map((target) => {
+                          const isTargetActive = selectedTargetId === target.id;
+                          return (
+                            <div
+                              key={target.id}
+                              className={`${styles.mobileTargetItem} ${isTargetActive ? styles.mobileTargetItemActive : ''}`}
+                              onClick={() => {
+                                if (selectedTargetId !== target.id) {
+                                  setSelectedTargetId(target.id);
+                                } else {
+                                  router.push(target.href);
+                                }
+                              }}
+                              role="button"
+                              tabIndex={0}
+                              aria-label={`Select deliverable ${target.name}`}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') router.push(target.href);
+                              }}
+                            >
+                              <div className={styles.mobileTargetLeft}>
+                                <span
+                                  className={`${styles.mobileFlowPin} ${isTargetActive ? styles.mobileFlowPinActive : ''}`}
+                                  aria-hidden="true"
+                                />
+                                <span
+                                  className={`${styles.mobileTargetBadge} ${
+                                    target.kind === 'products'
+                                      ? styles.mobileTargetBadgeProduct
+                                      : styles.mobileTargetBadgeProject
+                                  }`}
+                                >
+                                  {target.kind === 'products' ? 'PRODUCT' : 'PROJECT'}
+                                </span>
+                                <span className={styles.mobileTargetName}>{target.name}</span>
+                              </div>
+                              <Link
+                                href={target.href}
+                                className={styles.mobileTargetArrowLink}
+                                aria-label={`Open ${target.name}`}
+                                onClick={(e) => e.stopPropagation()}
                               >
-                                {target.kind === 'products' ? 'PRODUCT' : 'PROJECT'}
-                              </span>
-                              <span className={styles.mobileTargetName}>{target.name}</span>
+                                <span className={styles.mobileTargetArrow}>→</span>
+                              </Link>
                             </div>
-                            <span className={styles.mobileTargetArrow}>→</span>
-                          </Link>
-                        ))}
+                          );
+                        })}
                       </div>
 
                       {activeMobileSkill.targets.length > 5 ? (
@@ -430,17 +518,56 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                       </Link>
                     </div>
 
-                    {/* Living Laser Stream Ribbon */}
-                    {deliverableSkills.length > 0 ? (
-                      <div className={styles.mobileLaserWrapper} aria-hidden="true">
-                        <svg className={styles.mobileLaserCanvas} viewBox="0 0 320 48" preserveAspectRatio="none">
+                    {/* Model 1: Flow Mode Switcher */}
+                    <div className={styles.mobileFlowControl}>
+                      <div className={styles.mobileFlowMeta}>
+                        <span className={styles.mobileFlowPulse} />
+                        <span>CIRCUIT RIVER FLOW</span>
+                      </div>
+                      <div className={styles.mobileFlowToggle}>
+                        <button
+                          type="button"
+                          className={`${styles.mobileFlowToggleBtn} ${
+                            mobileFlowMode === 'river' ? styles.mobileFlowToggleBtnActive : ''
+                          }`}
+                          onClick={() => setMobileFlowMode('river')}
+                          aria-label="Vertical River Flow View"
+                        >
+                          🔀 River
+                        </button>
+                        <button
+                          type="button"
+                          className={`${styles.mobileFlowToggleBtn} ${
+                            mobileFlowMode === 'list' ? styles.mobileFlowToggleBtnActive : ''
+                          }`}
+                          onClick={() => setMobileFlowMode('list')}
+                          aria-label="List View"
+                        >
+                          📋 List
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Model 1: Vertical River SVG Emitter & Edges */}
+                    {mobileFlowMode === 'river' && deliverableSkills.length > 0 ? (
+                      <div className={styles.mobileRiverContainer} aria-hidden="true">
+                        <div className={styles.mobileRiverHeader}>
+                          <span className={styles.mobileRiverSourceLabel}>
+                            SOURCE EMITTER · {activeMobileTarget.name.toUpperCase()}
+                          </span>
+                          <span className={styles.mobileRiverSignalRate}>
+                            {deliverableSkills.length} SKILLS
+                          </span>
+                        </div>
+
+                        <svg className={styles.mobileRiverSvg} viewBox="0 0 320 64" preserveAspectRatio="none">
                           <defs>
-                            <linearGradient id="mobileLaserGradDeliverable" x1="0%" y1="0%" x2="0%" y2="100%">
-                              <stop offset="0%" stopColor="#60a5fa" stopOpacity="1" />
+                            <linearGradient id="mobileRiverGradDeliverable" x1="0%" y1="0%" x2="0%" y2="100%">
+                              <stop offset="0%" stopColor="var(--signal-quiet)" stopOpacity="1" />
                               <stop offset="100%" stopColor="var(--signal)" stopOpacity="0.85" />
                             </linearGradient>
-                            <filter id="mobileLaserGlowDeliv" x="-20%" y="-20%" width="140%" height="140%">
-                              <feGaussianBlur stdDeviation="2" result="blur" />
+                            <filter id="mobileRiverGlowDeliv" x="-20%" y="-20%" width="140%" height="140%">
+                              <feGaussianBlur stdDeviation="2.5" result="blur" />
                               <feMerge>
                                 <feMergeNode in="blur" />
                                 <feMergeNode in="SourceGraphic" />
@@ -448,28 +575,50 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                             </filter>
                           </defs>
 
-                          {/* Source Node Origin */}
-                          <circle cx="160" cy="5" r="4" fill="#60a5fa" filter="url(#mobileLaserGlowDeliv)" />
-                          <circle cx="160" cy="5" r="7" fill="none" stroke="#60a5fa" strokeWidth="1" opacity="0.6" />
+                          {/* Top Source Emitter Node */}
+                          <circle cx="160" cy="8" r="8" fill="none" stroke="var(--signal)" strokeWidth="1" opacity="0.4" className={styles.riverPulseRing} />
+                          <circle cx="160" cy="8" r="4.5" fill="var(--signal)" filter="url(#mobileRiverGlowDeliv)" />
 
-                          {/* Dynamic Laser Beams to Skills */}
+                          {/* Branching Vertical River Edges */}
                           {(() => {
                             const count = Math.min(deliverableSkills.length, showAllTargets ? deliverableSkills.length : 5);
-                            return deliverableSkills.slice(0, count).map((sk, idx) => {
-                              const step = 300 / Math.max(1, count);
-                              const destX = 10 + step * (idx + 0.5);
-                              const d = `M 160 5 C 160 26, ${destX} 26, ${destX} 44`;
+                            const list = deliverableSkills.slice(0, count);
+                            return list.map((sk, idx) => {
+                              const destX = count === 1 ? 160 : 20 + (idx / (count - 1)) * 280;
+                              const destY = 56;
+                              const isSelected = selectedSkillId === sk.id;
+                              const isAnySelected = Boolean(selectedSkillId);
+                              const isDimmed = isAnySelected && !isSelected;
+                              const d = `M 160 8 C 160 36, ${destX} 32, ${destX} ${destY}`;
 
                               return (
-                                <g key={sk.id}>
+                                <g key={sk.id} className={styles.riverBranchGroup}>
                                   <path
                                     d={d}
                                     fill="none"
-                                    stroke="url(#mobileLaserGradDeliverable)"
-                                    strokeWidth="2"
-                                    className={styles.mobileLaserBeam}
+                                    stroke={isSelected ? 'url(#mobileRiverGradDeliverable)' : isDimmed ? 'var(--rule)' : 'url(#mobileRiverGradDeliverable)'}
+                                    strokeWidth={isSelected ? 2.6 : isDimmed ? 1 : 1.5}
+                                    strokeOpacity={isSelected ? 1 : isDimmed ? 0.15 : 0.65}
+                                    className={`${styles.riverPath} ${isSelected ? styles.riverPathSelected : ''}`}
                                   />
-                                  <circle cx={destX} cy="44" r="3.5" fill="var(--signal)" filter="url(#mobileLaserGlowDeliv)" />
+
+                                  {/* Traveling Energy Pulse on Selected or Primary Edge */}
+                                  {(isSelected || (!isAnySelected && idx === 0)) && (
+                                    <circle r="3.2" fill="var(--signal)" filter="url(#mobileRiverGlowDeliv)">
+                                      <animateMotion path={d} dur="1.6s" repeatCount="indefinite" />
+                                    </circle>
+                                  )}
+
+                                  {/* Target Receptor Node */}
+                                  <circle
+                                    cx={destX}
+                                    cy={destY}
+                                    r={isSelected ? 5 : 3.5}
+                                    fill={isSelected ? 'var(--signal)' : 'var(--surface-raised)'}
+                                    stroke={isSelected ? 'var(--signal)' : 'var(--rule-strong)'}
+                                    strokeWidth={isSelected ? 2 : 1}
+                                    filter={isSelected ? 'url(#mobileRiverGlowDeliv)' : undefined}
+                                  />
                                 </g>
                               );
                             });
@@ -487,19 +636,45 @@ export function SkillSectionGraph({ sectionTitle, skills }: SkillSectionGraphPro
                       </div>
 
                       <div className={styles.mobileTargetList}>
-                        {(showAllTargets ? deliverableSkills : deliverableSkills.slice(0, 5)).map((skill) => (
-                          <Link
-                            key={skill.id}
-                            href={skill.href}
-                            className={styles.mobileTargetItem}
-                          >
-                            <div className={styles.mobileTargetLeft}>
-                              <span className={styles.mobileTargetBadgeSkill}>SKILL</span>
-                              <span className={styles.mobileTargetName}>{skill.name}</span>
+                        {(showAllTargets ? deliverableSkills : deliverableSkills.slice(0, 5)).map((skill) => {
+                          const isSkillActive = selectedSkillId === skill.id;
+                          return (
+                            <div
+                              key={skill.id}
+                              className={`${styles.mobileTargetItem} ${isSkillActive ? styles.mobileTargetItemActive : ''}`}
+                              onClick={() => {
+                                if (selectedSkillId !== skill.id) {
+                                  setSelectedSkillId(skill.id);
+                                } else {
+                                  router.push(skill.href);
+                                }
+                              }}
+                              role="button"
+                              tabIndex={0}
+                              aria-label={`Select skill ${skill.name}`}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') router.push(skill.href);
+                              }}
+                            >
+                              <div className={styles.mobileTargetLeft}>
+                                <span
+                                  className={`${styles.mobileFlowPin} ${isSkillActive ? styles.mobileFlowPinActive : ''}`}
+                                  aria-hidden="true"
+                                />
+                                <span className={styles.mobileTargetBadgeSkill}>SKILL</span>
+                                <span className={styles.mobileTargetName}>{skill.name}</span>
+                              </div>
+                              <Link
+                                href={skill.href}
+                                className={styles.mobileTargetArrowLink}
+                                aria-label={`Open ${skill.name}`}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <span className={styles.mobileTargetArrow}>→</span>
+                              </Link>
                             </div>
-                            <span className={styles.mobileTargetArrow}>→</span>
-                          </Link>
-                        ))}
+                          );
+                        })}
                       </div>
 
                       {deliverableSkills.length > 5 ? (

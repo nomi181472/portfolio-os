@@ -28,7 +28,13 @@ export type MetaphorMark =
   | 'channel'
   | 'trajectory'
   | 'incubator'
-  | 'copy';
+  | 'copy'
+  | 'arrow-back'
+  | 'arrow-next'
+  | 'arrow-left'
+  | 'arrow-right'
+  | 'previous'
+  | 'next';
 
 export interface CategoryDefinition {
   kind: EntityKind;
