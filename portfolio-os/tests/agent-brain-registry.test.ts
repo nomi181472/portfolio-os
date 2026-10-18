@@ -16,6 +16,7 @@ import {
   EMBEDDING_MODEL,
   CONVERSATION_MODEL,
   SMOLLM_MODEL,
+  SMOLLM_CUSTOM_MODEL,
 } from '../lib/agent/registry';
 import { detectBackend } from '../lib/agent/models/brain';
 
@@ -37,6 +38,12 @@ test('production models match verified registry configurations', () => {
   assert.equal(SMOLLM_MODEL.role, 'smollm');
   assert.equal(SMOLLM_MODEL.artifact.dtype, 'int8');
   assert.ok(SMOLLM_MODEL.artifact.bytes > 300_000_000);
+
+  // Custom Fine-Tuned SmolLM2 model: SmolLM2-360M-Portfolio-ONNX
+  assert.equal(SMOLLM_CUSTOM_MODEL.id, 'SmolLM2-360M-Portfolio-ONNX');
+  assert.equal(SMOLLM_CUSTOM_MODEL.role, 'smollm2_portfolio_custom');
+  assert.equal(SMOLLM_CUSTOM_MODEL.artifact.dtype, 'int8');
+  assert.equal(SMOLLM_CUSTOM_MODEL.artifact.bytes, 364_106_587);
 });
 
 test('auditRegistry validates production models with zero problems', () => {

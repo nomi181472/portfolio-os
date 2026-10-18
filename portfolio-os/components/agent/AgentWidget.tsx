@@ -117,6 +117,15 @@ const AVAILABLE_MODELS: ModelListItem[] = [
     description: 'SmolLM2 360M Instruct ultra-compact conversational model (~363 MB int8). High-speed client-side inference powered by ONNX Runtime.',
   },
   {
+    id: 'SmolLM2-360M-Portfolio-ONNX',
+    role: 'smollm2_portfolio_custom',
+    name: 'SmolLM2 360M Portfolio Custom (Fine-tuned)',
+    badge: 'Fine-tuned LLM (360M)',
+    size: formatMb(modelForRole('smollm2_portfolio_custom').artifact.bytes),
+    url: modelForRole('smollm2_portfolio_custom').artifact.url,
+    description: 'Fine-tuned version of smollm2_portfolio (~364 MB int8). Custom-trained specifically on verified portfolio facts, achievements, and systems architecture with evidence grounding.',
+  },
+  {
     id: 'none',
     role: 'none',
     name: 'Direct Search Engine (Keyword Only)',
@@ -307,6 +316,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     conversation: false,
     fluent: false,
     smollm: false,
+    smollm2_portfolio_custom: false,
     none: true,
   });
   const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
@@ -385,7 +395,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         conversationalEngineRef.current = conversationalEngine;
 
         const savedChoice = (localStorage.getItem('portfolio-agent-selected-model') as ModelChoiceId | null) ?? 'none';
-        const isLocalLLM = savedChoice === 'conversation' || savedChoice === 'fluent' || savedChoice === 'smollm';
+        const isLocalLLM = savedChoice === 'conversation' || savedChoice === 'fluent' || savedChoice === 'smollm' || savedChoice === 'smollm2_portfolio_custom';
         setState({
           status: 'ready',
           engine: isLocalLLM ? conversationalEngine : standardEngine,
@@ -399,7 +409,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   // Switch engine when user selects between local LLM and direct/embedding models
   useEffect(() => {
     if (state.status !== 'ready') return;
-    const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm';
+    const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm' || selectedModelChoice === 'smollm2_portfolio_custom';
     const targetEngine = isLocalLLM ? conversationalEngineRef.current : standardEngineRef.current;
     if (targetEngine && state.engine !== targetEngine) {
       setState((prev) => (prev.status === 'ready' ? { ...prev, engine: targetEngine } : prev));
@@ -663,7 +673,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         return;
       }
 
-      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status === 'failed') {
+      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm' || selectedModelChoice === 'smollm2_portfolio_custom') && chat.status === 'failed') {
         const id = nextId.current++;
         setDraft('');
         const normalised = normaliseQuestion(trimmed, state.engine.aliases);
@@ -717,10 +727,14 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         return;
       }
 
-      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status !== 'ready') {
+      if ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm' || selectedModelChoice === 'smollm2_portfolio_custom') && chat.status !== 'ready') {
         const id = nextId.current++;
         setDraft('');
         const normalised = normaliseQuestion(trimmed, state.engine.aliases);
+        const preparingText =
+          selectedModelChoice === 'smollm2_portfolio_custom'
+            ? 'Please be patient — SmolLM2 360M Custom (fine-tuned version of smollm2_portfolio) is currently loading into your browser. Once prepared, it will converse naturally without falling back.'
+            : 'Please be patient — the local conversational model is currently loading into your browser. Once prepared, it will converse naturally without falling back.';
         setTurns((current) => [
           ...current,
           {
@@ -731,7 +745,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               intent: 'general',
               routing: { intent: 'general', confidence: 0, signals: [], uncertain: true },
               normalised,
-              text: 'Please be patient — the local conversational model is currently loading into your browser. Once prepared, it will converse naturally without falling back.',
+              text: preparingText,
               cards: [],
               navigation: [],
               empty: true,
@@ -750,9 +764,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       const pendingMessage =
         selectedModelChoice === 'embedding'
           ? 'Computing embeddings & ranking vectors…'
-          : selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm'
-            ? 'Analyzing context & synthesizing answer with local LLM…'
-            : 'Searching portfolio records…';
+          : selectedModelChoice === 'smollm2_portfolio_custom'
+            ? 'Analyzing context & synthesizing answer with fine-tuned SmolLM2 custom model…'
+            : selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm'
+              ? 'Analyzing context & synthesizing answer with local LLM…'
+              : 'Searching portfolio records…';
 
       // The question renders immediately, so the log never appears to stall.
       setTurns((current) => [...current, { id, question: trimmed, answer: null, pendingMessage }]);
@@ -764,8 +780,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         // Mode-specific execution:
         // 1. Without model ('none'): Pass no embedder and no conversation (pure SQLite / FTS / deterministic retrieval).
         // 2. Embedding ('embedding'): Pass embedder only (vector search, semantic ranking, no LLM prose synthesis).
-        // 3. Conversational ('conversation' / 'fluent' / 'smollm'): Pass both embedder (for vector search) and conversation (for local LLM natural speech).
-        const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm';
+        // 3. Conversational ('conversation' / 'fluent' / 'smollm' / 'smollm2_portfolio_custom'): Pass both embedder (for vector search) and conversation (for local LLM natural speech).
+        const isLocalLLM = selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm' || selectedModelChoice === 'smollm2_portfolio_custom';
         const activeEngine = isLocalLLM
           ? (conversationalEngineRef.current ?? state.engine)
           : (standardEngineRef.current ?? state.engine);
@@ -995,7 +1011,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
    */
   // `brain.ts` already memoises loaded pipelines by role, so the timings are
   // re-read from the loader's own record rather than measured twice here.
-  const startChat = useCallback((role: 'conversation' | 'fluent' | 'smollm' = 'conversation') => {
+  const startChat = useCallback((role: 'conversation' | 'fluent' | 'smollm' | 'smollm2_portfolio_custom' = 'conversation') => {
     if (isDownloading) return;
     setChat({ status: 'loading' });
 
@@ -1121,8 +1137,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           conversationRef.current = null;
           setChat({ status: 'idle' });
         }
-      } else if (item.role === 'conversation' || item.role === 'fluent' || item.role === 'smollm') {
-        const chatRole = item.role as 'conversation' | 'fluent' | 'smollm';
+      } else if (item.role === 'conversation' || item.role === 'fluent' || item.role === 'smollm' || item.role === 'smollm2_portfolio_custom') {
+        const chatRole = item.role as 'conversation' | 'fluent' | 'smollm' | 'smollm2_portfolio_custom';
         if (semantic.status !== 'ready') {
           startModel().then((ok) => {
             if (ok && chat.status !== 'ready') {
@@ -1148,8 +1164,8 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
     if (item.role === 'embedding') {
       startModel();
-    } else if (item.role === 'conversation' || item.role === 'fluent' || item.role === 'smollm') {
-      const chatRole = item.role as 'conversation' | 'fluent' | 'smollm';
+    } else if (item.role === 'conversation' || item.role === 'fluent' || item.role === 'smollm' || item.role === 'smollm2_portfolio_custom') {
+      const chatRole = item.role as 'conversation' | 'fluent' | 'smollm' | 'smollm2_portfolio_custom';
       const needsEmbeddingDownload = !cachedModels['embedding'] || semantic.status !== 'ready';
       if (needsEmbeddingDownload) {
         startModel().then((ok) => {
@@ -1195,13 +1211,13 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     const saved = localStorage.getItem('portfolio-agent-selected-model') as ModelChoiceId | null;
     void checkAllModelCaches().then((cachedMap) => {
       if (!active) return;
-      if (saved && ['embedding', 'conversation', 'fluent', 'smollm', 'none'].includes(saved)) {
+      if (saved && ['embedding', 'conversation', 'fluent', 'smollm', 'smollm2_portfolio_custom', 'none'].includes(saved)) {
         if (saved === 'none' || cachedMap[saved]) {
           setSelectedModelChoice(saved);
           if (saved === 'embedding') {
             startModel();
-          } else if (saved === 'conversation' || saved === 'fluent' || saved === 'smollm') {
-            const chatRole = saved as 'conversation' | 'fluent' | 'smollm';
+          } else if (saved === 'conversation' || saved === 'fluent' || saved === 'smollm' || saved === 'smollm2_portfolio_custom') {
+            const chatRole = saved as 'conversation' | 'fluent' | 'smollm' | 'smollm2_portfolio_custom';
             startModel().then(() => {
               startChat(chatRole);
             });
@@ -1608,10 +1624,17 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                       {chat.backend ? `${chat.backend.toUpperCase()} · ` : ''}
                       {formatBytes(chat.bytesLoaded ?? 0)} of{' '}
                       {formatBytes(chat.bytesTotal)}. Downloading ONNX weights...
+                      {selectedModelChoice === 'smollm2_portfolio_custom' && (
+                        <span style={{ display: 'block', fontSize: '0.75rem', opacity: 0.9, marginTop: '2px', color: 'var(--accent-primary, #60a5fa)' }}>
+                          ★ This is a fine-tuned version of smollm2_portfolio.
+                        </span>
+                      )}
                     </>
                   ) : (
                     <>
-                      Loading the conversational model...
+                      {selectedModelChoice === 'smollm2_portfolio_custom'
+                        ? 'Loading SmolLM2 360M Custom (fine-tuned version of smollm2_portfolio)...'
+                        : 'Loading the conversational model...'}
                     </>
                   )}
                 </p>
@@ -1739,10 +1762,10 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               {(() => {
                 const isSelectedModelPreparing =
                   (selectedModelChoice === 'embedding' && semantic.status !== 'ready' && semantic.status !== 'failed') ||
-                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status !== 'ready' && chat.status !== 'failed');
+                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm' || selectedModelChoice === 'smollm2_portfolio_custom') && chat.status !== 'ready' && chat.status !== 'failed');
                 const isSelectedModelUnsupported =
                   (selectedModelChoice === 'embedding' && semantic.status === 'failed') ||
-                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm') && chat.status === 'failed');
+                  ((selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm' || selectedModelChoice === 'smollm2_portfolio_custom') && chat.status === 'failed');
                 const selectedModelName = AVAILABLE_MODELS.find((m) => m.role === selectedModelChoice)?.name ?? 'Model';
 
                 return (
@@ -1751,7 +1774,9 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                       <div className={styles.composerLoadingBanner}>
                         <span className={styles.composerLoadingDot} />
                         <span>
-                          {selectedModelName} is loading into browser memory... Please wait before asking.
+                          {selectedModelChoice === 'smollm2_portfolio_custom'
+                            ? 'SmolLM2 360M Portfolio Custom (fine-tuned version of smollm2_portfolio) is loading into browser memory... Please wait before asking.'
+                            : `${selectedModelName} is loading into browser memory... Please wait before asking.`}
                         </span>
                       </div>
                     )}
@@ -1774,7 +1799,9 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                             : isSelectedModelUnsupported
                               ? 'Model is not supported on your device or browser.'
                               : isSelectedModelPreparing
-                                ? `${selectedModelName} is loading, please wait...`
+                                ? selectedModelChoice === 'smollm2_portfolio_custom'
+                                  ? 'SmolLM2 360M Custom (fine-tuned version of smollm2_portfolio) is loading, please wait...'
+                                  : `${selectedModelName} is loading, please wait...`
                                 : 'Ask about a technology, or paste a job description.'
                         }
                         onChange={(event) => setDraft(event.target.value)}
@@ -1809,7 +1836,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           </form>
 
           {pendingDownloadModel && (() => {
-            const isConversational = pendingDownloadModel.role === 'conversation' || pendingDownloadModel.role === 'fluent' || pendingDownloadModel.role === 'smollm';
+            const isConversational = pendingDownloadModel.role === 'conversation' || pendingDownloadModel.role === 'fluent' || pendingDownloadModel.role === 'smollm' || pendingDownloadModel.role === 'smollm2_portfolio_custom';
             const alsoNeedsEmbedding = isConversational && !cachedModels['embedding'];
             const embeddingBytes = modelForRole('embedding').artifact.bytes;
             const modelBytes = pendingDownloadModel.role !== 'none' ? modelForRole(pendingDownloadModel.role).artifact.bytes : 0;
@@ -1821,6 +1848,11 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
               <div className={styles.modalBackdrop}>
                 <div className={styles.modalCard}>
                   <h3 className={styles.modalTitle}>Download {pendingDownloadModel.name}?</h3>
+                  {pendingDownloadModel.role === 'smollm2_portfolio_custom' && (
+                    <p className={styles.brainNote} style={{ marginBottom: '8px', color: 'var(--accent-primary, #60a5fa)', fontWeight: 500 }}>
+                      ★ Note: This model is a custom fine-tuned version of smollm2_portfolio.
+                    </p>
+                  )}
                   <p className={styles.modalBody}>
                     {alsoNeedsEmbedding ? (
                       <>

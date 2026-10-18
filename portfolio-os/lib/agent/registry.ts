@@ -41,7 +41,7 @@
 /** Which compute backend the weights will run on. Reported, never assumed. */
 export type ModelBackend = 'webgpu' | 'wasm';
 
-export type ModelRole = 'embedding' | 'conversation' | 'fluent' | 'smollm';
+export type ModelRole = 'embedding' | 'conversation' | 'fluent' | 'smollm' | 'smollm2_portfolio_custom';
 
 export interface ModelArtifact {
   /**
@@ -175,6 +175,23 @@ export const SMOLLM_MODEL: ModelDefinition = {
 };
 
 /**
+ * SmolLM2 360M Portfolio Custom — fine-tuned version of smollm2_portfolio (SmolLM2-360M-Portfolio-ONNX).
+ * Custom-trained on verified portfolio facts, achievements, and systems architecture with evidence grounding.
+ */
+export const SMOLLM_CUSTOM_MODEL: ModelDefinition = {
+  id: 'SmolLM2-360M-Portfolio-ONNX',
+  role: 'smollm2_portfolio_custom',
+  label: 'SmolLM2 360M Portfolio Custom (Fine-tuned)',
+  autoDownload: false,
+  artifact: {
+    url: 'https://huggingface.co/buckets/nouman/potfolio-os-llms/resolve/smollm2-artifacts/transformersjs/SmolLM2-360M-Portfolio-ONNX/onnx/model_int8.onnx',
+    bytes: 364_106_587,
+    dtype: 'int8',
+  },
+  devices: ['wasm'],
+};
+
+/**
  * The optional 1.5B, for a reader who wants a better answer and is willing to wait
  * for it. Never auto-downloaded: 1165 MB is not a thing to push on someone who
  * asked a question.
@@ -204,6 +221,7 @@ export const MODELS: readonly ModelDefinition[] = [
   EMBEDDING_MODEL,
   CONVERSATION_MODEL,
   SMOLLM_MODEL,
+  SMOLLM_CUSTOM_MODEL,
   FLUENT_MODEL,
 ];
 
