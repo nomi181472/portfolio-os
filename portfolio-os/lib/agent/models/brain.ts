@@ -351,6 +351,7 @@ const TASK_FOR_ROLE: Record<ModelRole, 'feature-extraction' | 'text-generation'>
   conversation: 'text-generation',
   fluent: 'text-generation',
   smollm: 'text-generation',
+  smollm2_portfolio_custom: 'text-generation',
 };
 
 /**
@@ -366,6 +367,8 @@ interface TransformersModule {
   env: {
     allowLocalModels: boolean;
     useBrowserCache: boolean;
+    remoteHost?: string;
+    remotePathTemplate?: string;
     version: string;
     backends?: { onnx?: { wasm?: { wasmPaths?: string | { wasm?: string } } } };
   };
@@ -470,6 +473,14 @@ async function attempt(
 
   let bytesLoaded = 0;
   let bytesTotal = artifact.bytes;
+
+  if (role === 'smollm2_portfolio_custom') {
+    transformers.env.remoteHost = 'https://huggingface.co/buckets/nouman/potfolio-os-llms/resolve/smollm2-artifacts/transformersjs/';
+    transformers.env.remotePathTemplate = '{model}/';
+  } else {
+    transformers.env.remoteHost = 'https://huggingface.co/';
+    transformers.env.remotePathTemplate = '{model}/resolve/{revision}/';
+  }
 
   const pipeline = await transformers.pipeline(TASK_FOR_ROLE[role], model.id, {
     // `dtype` is what actually selects the weights file. When `model` is a repo id

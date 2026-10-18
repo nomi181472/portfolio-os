@@ -11,7 +11,7 @@
  */
 
 export type WorkerRequest =
-  | { type: 'LOAD_MODEL'; id: string; role: 'conversation' | 'fluent' | 'smollm' | 'embedding' }
+  | { type: 'LOAD_MODEL'; id: string; role: 'conversation' | 'fluent' | 'smollm' | 'smollm2_portfolio_custom' | 'embedding' }
   | {
       type: 'GENERATE';
       id: string;
@@ -43,6 +43,14 @@ self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
       env.allowLocalModels = false;
       env.useBrowserCache = true;
 
+      if (req.role === 'smollm2_portfolio_custom') {
+        env.remoteHost = 'https://huggingface.co/buckets/nouman/potfolio-os-llms/resolve/smollm2-artifacts/transformersjs/';
+        env.remotePathTemplate = '{model}/';
+      } else {
+        env.remoteHost = 'https://huggingface.co/';
+        env.remotePathTemplate = '{model}/resolve/{revision}/';
+      }
+
       // Multi-threading configuration inside background Web Worker
       const threads =
         typeof navigator !== 'undefined' && navigator.hardwareConcurrency
@@ -59,9 +67,11 @@ self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
           ? 'onnx-community/Qwen2.5-1.5B-Instruct'
           : req.role === 'smollm'
             ? 'onnx-community/SmolLM2-360M-Instruct-ONNX'
-            : req.role === 'embedding'
-              ? 'Xenova/all-MiniLM-L6-v2'
-              : 'onnx-community/Qwen2.5-0.5B-Instruct';
+            : req.role === 'smollm2_portfolio_custom'
+              ? 'SmolLM2-360M-Portfolio-ONNX'
+              : req.role === 'embedding'
+                ? 'Xenova/all-MiniLM-L6-v2'
+                : 'onnx-community/Qwen2.5-0.5B-Instruct';
 
       const task = req.role === 'embedding' ? 'feature-extraction' : 'text-generation';
       const dtype = 'int8';

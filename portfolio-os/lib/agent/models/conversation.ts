@@ -173,7 +173,7 @@ export function pruneHistoryToTokenLimit(
  * and a skill-check retrieval can carry ten of them, so the cap is what keeps ten rich
  * records cheap enough to sit inside `MAX_CONTEXT_TOKENS`.
  */
-export const MAX_SUMMARY_CHARS = 160;
+export const MAX_SUMMARY_CHARS = 240;
 
 /**
  * A record's summary, flattened to a single bounded line for the prompt.
@@ -197,6 +197,17 @@ export interface PromptFactsRecord {
   kind?: string;
   evidenceState?: string;
   receiptNames?: readonly string[];
+  /** Site path, e.g. /products/verseye. Lets the model link only to pages that exist. */
+  href?: string;
+  organisation?: string;
+  /** Pre-formatted, e.g. "2024-02 to present". */
+  period?: string;
+  status?: string;
+  /** Self-assessed depth (skills only). */
+  depth?: string;
+  technologies?: readonly string[];
+  /** Records that back this one, with their site paths. Preferred over receiptNames. */
+  receipts?: readonly { name: string; href?: string }[];
 }
 
 export interface PromptFactsContext {
@@ -206,6 +217,7 @@ export interface PromptFactsContext {
     discipline?: string;
     focus?: string;
     email?: string;
+    location?: string;
     links?: readonly { label: string; url: string; type?: string }[];
   };
   availabilityStatement?: string | null;
@@ -262,16 +274,25 @@ export function buildInstruction(
   const recordsLines = (context.records ?? []).flatMap((record) => {
     const kind = record.kind ? ` (${record.kind})` : '';
     const summary = summariseForPrompt(record.summary);
+    const org = record.organisation ? `; Org: ${record.organisation}` : '';
+    const period = record.period ? `; Period: ${record.period}` : '';
+    const status = record.status ? `; Status: ${record.status}` : '';
+    const depth = record.depth ? `; Depth: ${record.depth} (self-assessed)` : '';
+    const tech = record.technologies && record.technologies.length > 0 ? `; Tech: ${record.technologies.slice(0, 6).join(', ')}` : '';
+    const link = record.href ? `; Link: ${record.href}` : '';
     const evidenceState = record.evidenceState ? `; Evidence: ${record.evidenceState}` : '';
-    const receipts = record.receiptNames && record.receiptNames.length > 0
-      ? `; backed by: ${record.receiptNames.join(', ')}`
-      : '';
-    const head = `- ${record.key} — ${record.name}${kind}: ${summary || 'documented in portfolio'}${evidenceState}${receipts}`;
+    const backers = record.receipts && record.receipts.length > 0
+      ? record.receipts.slice(0, 5).map((r) => (r.href ? `${r.name} (${r.href})` : r.name))
+      : (record.receiptNames ?? []).slice(0, 5);
+    const receipts = backers.length > 0 ? `; backed by: ${backers.join(', ')}` : '';
+    const head = `- ${record.key} — ${record.name}${kind}: ${summary || 'documented in portfolio'}${org}${period}${status}${depth}${tech}${link}${evidenceState}${receipts}`;
+
     return [head];
   });
 
   const disciplineText = profile.discipline ? `, ${profile.discipline}` : '';
   const focusText = profile.focus ? ` Focus: ${profile.focus}` : '';
+  const locationText = profile.location ? ` Location: ${profile.location}.` : '';
 
   const lines = [
     `You are the interactive AI Portfolio Assistant for ${name}.`,
@@ -301,7 +322,7 @@ export function buildInstruction(
     `- When discussing projects or technical suitability, you may conclude with markdown links to explore specific portfolio links, deep-dives, or direct contact methods.`,
     '',
     'FACTS',
-    `Profile: ${profile.name}${disciplineText}.${focusText}`,
+    `Profile: ${profile.name}${disciplineText}.${focusText}${locationText}`,
     `Availability: ${availability}`,
   ];
 
@@ -733,7 +754,7 @@ export interface Conversation {
 
 export async function createConversation(
   retrieve: {
-    role: 'conversation' | 'fluent' | 'smollm';
+    role: 'conversation' | 'fluent' | 'smollm' | 'smollm2_portfolio_custom';
     backend?: 'webgpu' | 'wasm';
     load: () => Promise<{ pipeline: unknown; backend: 'webgpu' | 'wasm' }>;
   },

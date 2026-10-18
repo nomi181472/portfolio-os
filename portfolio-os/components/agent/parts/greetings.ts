@@ -26,6 +26,12 @@ export function getGreetingMessage(role?: string, candidateName?: string): strin
     `SmolLM2 360M is running locally in your browser! What would you like to explore about ${name}?`,
   ];
 
+  const smollmCustomVariations = [
+    `SmolLM2 360M Portfolio Custom (fine-tuned version of smollm2_portfolio) is ready! Ask me anything about ${name}’s backend architecture, cloud engineering, or project history.`,
+    `Loaded SmolLM2 360M Custom! This is a fine-tuned version of smollm2_portfolio trained specifically on ${name}’s verified portfolio. Ask me about technical experience or evaluate fit.`,
+    `SmolLM2 360M Custom (fine-tuned version of smollm2_portfolio) is running locally in your browser! What would you like to explore about ${name}?`,
+  ];
+
   const embeddingVariations = [
     'All-MiniLM-L6-v2 (~23 MB) is online! Searching 384-dimensional vector space for semantic concept matches across portfolio passages.',
     `Local Semantic Search ready! Powered by all-MiniLM-L6-v2 to search ${name}’s portfolio by semantic meaning.`,
@@ -34,6 +40,7 @@ export function getGreetingMessage(role?: string, candidateName?: string): strin
   let pool = defaultVariations;
   if (role === 'conversation') pool = qwen05Variations;
   else if (role === 'smollm') pool = smollmVariations;
+  else if (role === 'smollm2_portfolio_custom') pool = smollmCustomVariations;
   else if (role === 'embedding') pool = embeddingVariations;
 
   const randomIndex = Math.floor(Math.random() * pool.length);

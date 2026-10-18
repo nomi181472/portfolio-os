@@ -28,6 +28,8 @@ import {
 import { scoreMatch } from '../scoring';
 import { buildKnowledge } from '../knowledge';
 import type { EntityRef, KnowledgeRecord, PortfolioKnowledge } from '../types';
+import { buildInstruction } from '../models/conversation';
+import { allowedLinksFromInstruction, stripUnknownLinks } from '../sanitizeLinks';
 import { buildGraph } from '@/lib/graph';
 import type {
   AgentAnswer,
@@ -136,6 +138,7 @@ export function buildConversationalEngineFromKnowledge(
     const candidateRecords = relevant.slice(0, 8).map((hit) => {
       const evidenceState = hit.record.evidence.length > 0 ? 'corroborated' : 'documented';
       const receiptNames = hit.record.evidence.map((e) => e.name);
+      const rp = hit.record.period;
       return {
         key: hit.key,
         name: hit.record.name,
@@ -143,6 +146,13 @@ export function buildConversationalEngineFromKnowledge(
         kind: hit.record.kind,
         evidenceState,
         receiptNames,
+        href: hit.record.href,
+        ...(hit.record.organisation ? { organisation: hit.record.organisation } : {}),
+        ...(rp && rp.start ? { period: `${rp.start} to ${rp.ongoing ? 'present' : (rp.end ?? '')}`.trim() } : {}),
+        ...(hit.record.status ? { status: hit.record.status } : {}),
+        ...(hit.record.depth ? { depth: hit.record.depth } : {}),
+        ...(hit.record.technologies?.length ? { technologies: hit.record.technologies } : {}),
+        receipts: hit.record.evidence.map((e) => ({ name: e.name, href: e.href })),
       };
     });
 
@@ -152,6 +162,7 @@ export function buildConversationalEngineFromKnowledge(
         name: knowledge.profile.name,
         discipline: knowledge.profile.discipline,
         focus: knowledge.profile.focus,
+        location: knowledge.profile.location,
         email: knowledge.profile.email,
         links: knowledge.profile.links,
       },
@@ -197,7 +208,9 @@ export function buildConversationalEngineFromKnowledge(
         );
 
         if (selection.text && selection.text.trim().length > 0) {
-          text = selection.text.trim();
+          const raw = selection.text.trim();
+          const instruction = buildInstruction(facts);
+          text = stripUnknownLinks(raw, allowedLinksFromInstruction(instruction));
         } else {
           const candidateName = knowledge.profile.name || 'the candidate';
           text = `I am here to answer any questions about ${candidateName}'s software engineering, architecture, and technical experience. What would you like to know?`;
