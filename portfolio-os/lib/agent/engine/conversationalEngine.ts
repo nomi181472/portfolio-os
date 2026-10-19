@@ -29,7 +29,7 @@ import { scoreMatch } from '../scoring';
 import { buildKnowledge } from '../knowledge';
 import type { EntityRef, KnowledgeRecord, PortfolioKnowledge } from '../types';
 import { buildInstruction } from '../models/conversation';
-import { allowedLinksFromInstruction, stripUnknownLinks } from '../sanitizeLinks';
+import { allowedLinksFromInstruction, buildLinkIndex, repairLinks } from '../sanitizeLinks';
 import { buildGraph } from '@/lib/graph';
 import type {
   AgentAnswer,
@@ -100,6 +100,7 @@ export function buildConversationalEngineFromKnowledge(
   };
 
   const history: ConversationTurn[] = [];
+  const linkIndex = buildLinkIndex(knowledge.records, knowledge.navigation);   // real routes: lets valid links survive, repairs near-misses, strips invented ones
 
   const remember = (question: string, text: string, cards: readonly EntityRef[]): void => {
     while (history.length >= 6) {
@@ -210,7 +211,7 @@ export function buildConversationalEngineFromKnowledge(
         if (selection.text && selection.text.trim().length > 0) {
           const raw = selection.text.trim();
           const instruction = buildInstruction(facts);
-          text = stripUnknownLinks(raw, allowedLinksFromInstruction(instruction));
+          text = repairLinks(raw, linkIndex, allowedLinksFromInstruction(instruction));
         } else {
           const candidateName = knowledge.profile.name || 'the candidate';
           text = `I am here to answer any questions about ${candidateName}'s software engineering, architecture, and technical experience. What would you like to know?`;

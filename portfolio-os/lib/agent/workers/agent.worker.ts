@@ -119,14 +119,10 @@ self.onmessage = async (e: MessageEvent<WorkerRequest>) => {
     }
 
     try {
-      const messages = [
-        { role: 'system', content: req.instruction },
-        ...(req.history || []).flatMap((h: any) => [
-          { role: 'user', content: h.question },
-          { role: 'assistant', content: h.answer },
-        ]),
-        { role: 'user', content: req.question },
-      ];
+      // Same builder as the main-thread path: user turns are fenced in <question>…</question> (the prompt-injection boundary, and the exact
+      // format the fine-tuned model was trained on). Do not hand-build messages here.
+      const { renderMessages } = await import('../models/conversation');
+      const messages = renderMessages(req.instruction, req.question, (req.history || []) as any);
 
       const { TextStreamer } = await import('@huggingface/transformers');
       const streamer = generatorPipeline.tokenizer
