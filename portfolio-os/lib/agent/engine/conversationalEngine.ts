@@ -15,8 +15,7 @@
  */
 
 import { buildAliasTable } from '../aliases';
-import { normalisePosting, normaliseQuestion } from '../normalize';
-import { looksLikeJobDescription, splitPosting } from '../intent';
+import { normaliseQuestion } from '../normalize';
 import { buildLexicalIndex, retrieve, type Embedder } from '../retrieve';
 import {
   checkActions,
@@ -25,11 +24,10 @@ import {
   type CheckedAction,
   type ResolvedAction,
 } from '../navigation';
-import { scoreMatch } from '../scoring';
 import { buildKnowledge } from '../knowledge';
 import type { EntityRef, KnowledgeRecord, PortfolioKnowledge } from '../types';
 import { buildInstruction } from '../models/conversation';
-import { allowedLinksFromInstruction, stripUnknownLinks } from '../sanitizeLinks';
+import { allowedLinksFromInstruction, buildLinkIndex, repairLinks } from '../sanitizeLinks';
 import { buildGraph } from '@/lib/graph';
 import type {
   AgentAnswer,
@@ -60,6 +58,11 @@ export function buildConversationalEngine(options: BuildEngineOptions): Engine {
 /**
  * Build the conversational engine from rehydrated client knowledge.
  */
+/** Messages at least this long are treated as a brief (job description / requirement list): evidence is gathered per sentence. */
+const LONG_BRIEF_CHARS = 300;
+const MAX_BRIEF_PARTS = 16;
+const BRIEF_RECORD_LIMIT = 10;
+
 export function buildConversationalEngineFromKnowledge(
   knowledge: PortfolioKnowledge,
   options: EngineFromKnowledgeOptions,
@@ -100,6 +103,7 @@ export function buildConversationalEngineFromKnowledge(
   };
 
   const history: ConversationTurn[] = [];
+  const linkIndex = buildLinkIndex(knowledge.records, knowledge.navigation);   // real routes: lets valid links survive, repairs near-misses, strips invented ones
 
   const remember = (question: string, text: string, cards: readonly EntityRef[]): void => {
     while (history.length >= 6) {
@@ -123,19 +127,36 @@ export function buildConversationalEngineFromKnowledge(
     const trimmed = question.trim();
     const normalised = normaliseQuestion(trimmed, aliases);
 
-    const posting = looksLikeJobDescription(trimmed) ? splitPosting(trimmed) : null;
-    const terms = posting
-      ? normalisePosting(posting.requirements, posting.preferred, aliases)
-      : normalised.terms;
-    const match = posting ? scoreMatch({ terms, knowledge }) : undefined;
-
     // Retrieve verified knowledge records relevant to the user query
-    const relevant = await retrieve(trimmed, knowledge, lexical, {
-      embedder: answerOptions.embedder ?? options.embedder ?? null,
-      limit: 10,
-    });
+    const retrievalEmbedder = answerOptions.embedder ?? options.embedder ?? null;
+    let relevant = await retrieve(trimmed, knowledge, lexical, { embedder: retrievalEmbedder, limit: 10 });
 
-    const candidateRecords = relevant.slice(0, 8).map((hit) => {
+    // A long message (job description, requirement list) mentions many different things. Retrieving once for the whole text lets a few
+    // dominant words win, so also retrieve per sentence and keep the best evidence for EACH requirement.
+    const isLongBrief = trimmed.length >= LONG_BRIEF_CHARS;
+    if (isLongBrief) {
+      const parts = trimmed
+        .split(/(?<=[.!?;:])\s+|\n+/)
+        .map((part) => part.trim())
+        .filter((part) => part.length >= 20 && part.length <= 400)
+        .slice(0, MAX_BRIEF_PARTS);
+      const merged = new Map<string, (typeof relevant)[number]>();
+      const perPart: (typeof relevant)[] = [];
+      for (const part of parts) {
+        perPart.push(await retrieve(part, knowledge, lexical, { embedder: retrievalEmbedder, limit: 2 }));
+      }
+      // round-robin so every requirement contributes its best hit before any requirement contributes a second one
+      for (let rank = 0; rank < 2; rank += 1) {
+        for (const hits of perPart) {
+          const hit = hits[rank];
+          if (hit && !merged.has(hit.key)) merged.set(hit.key, hit);
+        }
+      }
+      for (const hit of relevant) if (!merged.has(hit.key)) merged.set(hit.key, hit);
+      relevant = [...merged.values()];
+    }
+
+    const candidateRecords = relevant.slice(0, isLongBrief ? BRIEF_RECORD_LIMIT : 8).map((hit) => {
       const evidenceState = hit.record.evidence.length > 0 ? 'corroborated' : 'documented';
       const receiptNames = hit.record.evidence.map((e) => e.name);
       const rp = hit.record.period;
@@ -175,20 +196,6 @@ export function buildConversationalEngineFromKnowledge(
         roleNames: knowledge.experienceSpan.roles.map((r) => r.name).join(', '),
       },
       records: candidateRecords,
-      ...(posting && match
-        ? {
-            matchResult: {
-              score: match.score,
-              documentedOnlyScore: match.documentedOnlyScore,
-              strong: match.requirements.filter((t) => t.state === 'strong').map((t) => t.term),
-              partial: match.requirements.filter((t) => t.state === 'partial').map((t) => t.term),
-              uncorroborated: match.requirements
-                .filter((t) => t.state === 'documented-uncorroborated')
-                .map((t) => t.term),
-              missing: match.unverifiable,
-            },
-          }
-        : {}),
     };
 
     let text: string;
@@ -199,21 +206,18 @@ export function buildConversationalEngineFromKnowledge(
     // Prompt instructions govern hallucination, truth boundaries, and false premise correction.
     if (answerOptions.conversation) {
       try {
-        const selection = await answerOptions.conversation.select(
-          trimmed,
-          candidateRecords,
-          history,
-          facts,
-          answerOptions.onToken,
-        );
+        let selection = await answerOptions.conversation.select(trimmed, candidateRecords, history, facts, answerOptions.onToken);
+        if (!selection.text || selection.text.trim().length === 0) {
+          // sampling occasionally yields an empty reply: try once more instead of showing a canned message
+          selection = await answerOptions.conversation.select(trimmed, candidateRecords, history, facts, answerOptions.onToken);
+        }
 
         if (selection.text && selection.text.trim().length > 0) {
           const raw = selection.text.trim();
           const instruction = buildInstruction(facts);
-          text = stripUnknownLinks(raw, allowedLinksFromInstruction(instruction));
+          text = repairLinks(raw, linkIndex, allowedLinksFromInstruction(instruction));
         } else {
-          const candidateName = knowledge.profile.name || 'the candidate';
-          text = `I am here to answer any questions about ${candidateName}'s software engineering, architecture, and technical experience. What would you like to know?`;
+          text = 'Sorry, I could not put a reply together for that. Could you try rephrasing it?';
         }
 
         selectedKeys = selection.keys;
@@ -253,20 +257,19 @@ export function buildConversationalEngineFromKnowledge(
 
     return {
       question: trimmed,
-      intent: posting ? 'job-match' : 'general',
+      intent: 'general',
       routing: {
-        intent: posting ? 'job-match' : 'general',
+        intent: 'general',
         confidence: 1,
         signals: [],
         uncertain: false,
       },
-      normalised: posting ? normaliseQuestion(trimmed, aliases) : normalised,
+      normalised,
       text,
       cards,
       navigation: nav,
       empty: cards.length === 0,
       caveats: [],
-      ...(match ? { match } : {}),
       ...(modelActions !== undefined ? { actions: modelActions } : {}),
     };
   }

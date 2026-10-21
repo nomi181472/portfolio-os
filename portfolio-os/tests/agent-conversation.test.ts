@@ -56,8 +56,8 @@ test('buildInstruction generates prose-first prompt with all required sections a
 
   // Check CONVERSATION & FORMATTING GUIDELINES (encourages markdown, tables, bullets, no JSON constraint)
   assert.match(instruction, /CONVERSATION & FORMATTING GUIDELINES/);
-  assert.match(instruction, /markdown formatting/);
-  assert.match(instruction, /markdown tables for metrics\/breakdowns/);
+  assert.match(instruction, /markdown links/);
+  assert.match(instruction, /markdown table \(a grid\)/);
   assert.match(instruction, /Refer to Noman as "Noman" or "he"/);
 
   // Check TRUTH & EVIDENCE BOUNDARIES and SAFETY
