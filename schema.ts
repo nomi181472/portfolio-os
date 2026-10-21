@@ -30,11 +30,11 @@ const slug = z
  * URLs are validated for shape *and* protocol. javascript:, data: and file:
  * never reach the DOM — this is the choke point for §98.
  */
-const SAFE_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
+const SAFE_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'] as const;
 export const safeUrl = z
   .string()
   .min(1)
-  .superRefine((value, ctx) => {
+  .superRefine((value: string, ctx: z.RefinementCtx) => {
     if (value.startsWith('/')) return; // site-relative asset
     let parsed: URL;
     try {
@@ -43,7 +43,7 @@ export const safeUrl = z
       ctx.addIssue({ code: 'custom', message: 'Not a valid URL. Use https://… or a path starting with /' });
       return;
     }
-    if (!SAFE_PROTOCOLS.includes(parsed.protocol)) {
+    if (!(SAFE_PROTOCOLS as readonly string[]).includes(parsed.protocol)) {
       ctx.addIssue({
         code: 'custom',
         message: `Protocol "${parsed.protocol}" is not allowed. Use ${SAFE_PROTOCOLS.join(', ')}`,
@@ -186,8 +186,21 @@ export const EntitySchema = z.object({
   media: z.array(MediaSchema).default([]),
   evidence: z.array(EvidenceSchema).default([]),
   timeline: z.array(TimelineEventSchema).default([]),
+  aliases: z.array(z.string()).default([]),
   featured: z.boolean().default(false),
   order: z.number().int().optional(),
+  /**
+   * Presentation, not content. `immersive` gives an entity that *is* a running
+   * application the full page width and drops the connected-work footer, so the
+   * embed reads as the work. The renderer keys off this field and never off a
+   * slug (§105), which is why a fork can opt any entity in without a code change.
+   */
+  presentation: z.enum(['standard', 'immersive']).default('standard'),
+  /**
+   * A single call to action for the header — typically launching a project's
+   * live workspace. Authored here, so no component carries a URL (§71).
+   */
+  primaryAction: z.object({ label: z.string().min(1), url: safeUrl }).optional(),
   /** Outbound references, by entity id. */
   relatedSkills: z.array(z.string()).default([]),
   relatedProducts: z.array(z.string()).default([]),
@@ -196,6 +209,7 @@ export const EntitySchema = z.object({
   relatedPublications: z.array(z.string()).default([]),
   relatedExperience: z.array(z.string()).default([]),
   relatedEducation: z.array(z.string()).default([]),
+  relatedAwards: z.array(z.string()).default([]),
 });
 
 /* ----------------------------------------------------------- collections */
@@ -224,6 +238,39 @@ export const ProfileSchema = z.object({
   email: z.string().email().optional(),
 });
 
+/**
+ * Availability is a statement the portfolio *owner* makes about themselves, not
+ * something anything in this file may infer.
+ *
+ * It is an enum rather than a boolean on purpose. "Closed" and "open to work" are
+ * not the only two honest answers — "looking for opportunities" is a real third
+ * state, and a boolean would force one of the three to be expressed as a
+ * negation of the others, which is exactly the kind of drift that turns into a
+ * false claim the moment a reader takes it literally.
+ *
+ * The portfolio intelligence agent reads this field verbatim. It is never
+ * derived from `experience[].period.ongoing`, from the presence of an email
+ * address, or from any other signal in the document.
+ */
+export const AvailabilityStatusSchema = z.enum([
+  'open-to-work',
+  'looking-for-opportunities',
+  'closed',
+]);
+
+export const AvailabilitySchema = z.object({
+  /**
+   * Defaults to 'closed' so that a fork which has not thought about this cannot
+   * accidentally ship an availability claim. The agent's wording for every value
+   * is fixed in lib/agent/knowledge.ts and is never generated.
+   */
+  status: AvailabilityStatusSchema.default('closed'),
+  /** Free text the owner controls. Shown as written; never paraphrased. */
+  note: z.string().optional(),
+  /** When the owner last set this. The agent never guesses freshness. */
+  updatedAt: isoish.optional(),
+});
+
 export const ExperienceSchema = EntitySchema.extend({
   organisation: z.string().optional(),
   role: z.string().optional(),
@@ -241,6 +288,9 @@ export const EducationSchema = EntitySchema.extend({
   degree: z.string().optional(),
   field: z.string().optional(),
   specialisation: z.string().optional(),
+  location: z.string().optional(),
+  credentialId: z.string().optional(),
+  verificationUrl: safeUrl.optional(),
   subjects: z.array(z.string()).default([]),
   achievements: z.array(z.string()).default([]),
 });
@@ -262,6 +312,14 @@ export const ArchitectureSchema = z.object({
     .default([]),
 });
 
+export const IntegrationSchema = z.object({
+  name: z.string().min(1),
+  type: z.string().min(1),
+  status: z.string().default('Active'),
+  detail: z.string().min(1),
+  url: safeUrl.optional(),
+});
+
 export const ProductSchema = EntitySchema.extend({
   tagline: z.string().optional(),
   category: z.string().optional(),
@@ -269,6 +327,7 @@ export const ProductSchema = EntitySchema.extend({
   features: z
     .array(z.object({ name: z.string().min(1), detail: z.string().optional() }))
     .default([]),
+  integrations: z.array(IntegrationSchema).default([]),
   architecture: ArchitectureSchema.optional(),
   metrics: z.array(z.object({ label: z.string(), value: z.string(), note: z.string().optional() })).default([]),
 });
@@ -411,11 +470,18 @@ export const FutureSchema = z.object({
 
 /* -------------------------------------------------------------- document */
 
+export const TaxonomySchema = z.object({
+  families: z.record(z.array(z.string())).default({}),
+  aliases: z.record(z.array(z.string())).default({}),
+});
+
 export const PortfolioSchema = z.object({
   schemaVersion: z.string().default(SCHEMA_VERSION),
   /** Set true on the shipped sample so the UI can say so out loud (§96). */
   exampleContent: z.boolean().default(false),
   profile: ProfileSchema,
+  availability: AvailabilitySchema.default({ status: 'closed' }),
+  taxonomy: TaxonomySchema.optional(),
   experience: z.array(ExperienceSchema).default([]),
   education: z.array(EducationSchema).default([]),
   products: z.array(ProductSchema).default([]),

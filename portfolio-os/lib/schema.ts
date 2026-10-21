@@ -30,11 +30,11 @@ const slug = z
  * URLs are validated for shape *and* protocol. javascript:, data: and file:
  * never reach the DOM — this is the choke point for §98.
  */
-const SAFE_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'];
+const SAFE_PROTOCOLS = ['http:', 'https:', 'mailto:', 'tel:'] as const;
 export const safeUrl = z
   .string()
   .min(1)
-  .superRefine((value, ctx) => {
+  .superRefine((value: string, ctx: z.RefinementCtx) => {
     if (value.startsWith('/')) return; // site-relative asset
     let parsed: URL;
     try {
@@ -43,7 +43,7 @@ export const safeUrl = z
       ctx.addIssue({ code: 'custom', message: 'Not a valid URL. Use https://… or a path starting with /' });
       return;
     }
-    if (!SAFE_PROTOCOLS.includes(parsed.protocol)) {
+    if (!(SAFE_PROTOCOLS as readonly string[]).includes(parsed.protocol)) {
       ctx.addIssue({
         code: 'custom',
         message: `Protocol "${parsed.protocol}" is not allowed. Use ${SAFE_PROTOCOLS.join(', ')}`,
