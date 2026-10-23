@@ -184,7 +184,7 @@ export const SMOLLM_CUSTOM_MODEL: ModelDefinition = {
   label: 'SmolLM2 360M Portfolio Custom (Fine-tuned)',
   autoDownload: false,
   artifact: {
-    url: 'https://huggingface.co/buckets/nouman/potfolio-os-llms/resolve/smollm2-artifacts/transformersjs/SmolLM2-360M-Portfolio-ONNX/onnx/model_int8.onnx',
+    url: 'https://huggingface.co/buckets/nouman/potfolio-os-llms/resolve/smollm2-artifacts/transformersjs/SmolLM2-360M-Portfolio-ONNX/onnx/model_int8_v2.onnx',
     bytes: 364_106_587,
     dtype: 'int8',
   },
