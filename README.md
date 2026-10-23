@@ -124,6 +124,37 @@ npx vercel
 
 ---
 
+## 🧠 On-Device AI Assistant & Fine-Tuning Pipeline
+
+Portfolio OS features a custom, private in-browser AI conversational assistant running directly on the client via WebAssembly (WASM) & Transformers.js with **0 server costs** and **0 hallucinations**.
+
+You can fine-tune your own personalized lightweight model (e.g. `SmolLM2-360M`) on your career data using the end-to-end dataset builder and training notebook:
+
+🔗 **Fine-Tuning Notebook Repository:** [https://github.com/nomi181472/llm-notebooks](https://github.com/nomi181472/llm-notebooks)
+
+### Architecture & Pipeline Workflow
+
+```mermaid
+flowchart TD
+    A["portfolio.json<br>(Experience, Projects & Tech Stacks)"] --> B["build_portfolio_os_dataset.py<br>(Synthetic QA & Prompt Alignment)"]
+    B --> C["portfolio_os_training_data.json<br>(Grounding-checked QA Dataset)"]
+    C --> D["Colab/Kaggle Notebook<br>(LoRA Fine-Tuning SmolLM2-360M)"]
+    D --> E["Model Export<br>(Merge LoRA ➔ ONNX INT8)"]
+    E --> F["Hugging Face Hub<br>(Upload ONNX Artifacts)"]
+    F --> G["registry.ts<br>(Plug in Custom Model ID)"]
+    G --> H["🚀 Live On-Device Assistant<br>(In-Browser Transformers.js / WASM)"]
+```
+
+#### How It Works:
+1. **Source Data (`content/portfolio.json`)**: Contains your verified career achievements, projects, timeline, and links.
+2. **Dataset Generation (`build_portfolio_os_dataset.py`)**: Uses the site's own retrieval engine to generate hundreds of grounded QA instruction pairs. Every answer is machine-verified against ground-truth facts to prevent hallucinations.
+3. **LoRA Fine-Tuning**: Run the Google Colab / Kaggle notebook in [nomi181472/llm-notebooks](https://github.com/nomi181472/llm-notebooks) to train the model with crash-safe checkpointing.
+4. **Quantized ONNX Export**: Merges LoRA weights and exports into an INT8 ONNX package optimized for Transformers.js in the browser.
+5. **Hugging Face Hub**: Host your exported `model_int8.onnx` and tokenizer files on Hugging Face.
+6. **In-Browser Inference**: Register your custom model in `lib/agent/registry.ts`. Visitors can chat directly with your AI assistant with zero backend compute overhead!
+
+---
+
 ## 📡 Peer-to-Peer (P2P) Direct Communication & Voice Messaging
 
 Portfolio OS includes a native **serverless peer-to-peer (P2P) direct communication system** connecting prospective clients, recruiters, and collaborators directly with the portfolio owner:
