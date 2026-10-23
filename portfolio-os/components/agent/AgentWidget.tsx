@@ -67,7 +67,6 @@ import {
 } from '@/lib/agent/models/conversation';
 import { createWorkerConversation } from '@/lib/agent/workers/worker-client';
 import { coldBytes, formatMb, modelForRole, type ModelBackend, type ModelRole } from '@/lib/agent/registry';
-import { getGreetingMessage } from '@/components/agent/parts/greetings';
 import { checkAllModelCachesHelper } from '@/components/agent/parts/modelHelpers';
 import { streamTurnAnswer } from '@/components/agent/parts/streaming';
 import { DirectChatPanel } from '@/components/p2p/DirectChatPanel';
@@ -154,12 +153,17 @@ type EngineState =
   | { status: 'ready'; engine: Engine }
   | { status: 'failed' };
 
+/** Model choices that answer with a local LLM (everything they show is model-written). */
+const LLM_CHOICES: ReadonlySet<string> = new Set(['conversation', 'fluent', 'smollm', 'smollm2_portfolio_custom']);
+
 interface Turn {
   id: number;
   question: string;
   answer: AgentAnswer | null;
   modelName?: string;
   pendingMessage?: string;
+  /** The model's own opening message (shown without a visitor bubble). */
+  welcome?: boolean;
 }
 
 /**
@@ -321,13 +325,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   });
   const [isModelPickerOpen, setIsModelPickerOpen] = useState(false);
   const [pendingDownloadModel, setPendingDownloadModel] = useState<ModelListItem | null>(null);
-  const [greetingMessage, setGreetingMessage] = useState(
-    'What do you want to know about me? Give me your JDK, and I will give you an honest answer as far as possible.',
-  );
-
-  const pickRandomGreeting = useCallback((role?: ModelChoiceId) => {
-    setGreetingMessage(getGreetingMessage(role, knowledgeRef.current?.profile.name));
-  }, []);
   const modelPickerRef = useRef<HTMLDivElement>(null);
   const knowledgeRef = useRef<PortfolioKnowledge | null>(null);
   const standardEngineRef = useRef<Engine | null>(null);
@@ -591,6 +588,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
     // histories are dropped together, because the engine's bound feeds the model's
     // prompt and leaving it behind would mean a reopened panel silently conditioning
     // its answers on a conversation the reader can no longer see.
+    welcomedForRef.current = null;
     setTurns([]);
     // Narrowed rather than assumed: `state` is a union, and an engine only exists
     // once the knowledge file has loaded. There is no history to clear before that,
@@ -615,7 +613,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   }, [onClose]);
 
   const ask = useCallback(
-    async (question: string) => {
+    async (question: string, askOptions?: { welcome?: boolean }) => {
       const trimmed = question.trim();
       if (!trimmed || state.status !== 'ready' || busy) return;
 
@@ -758,20 +756,19 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
       }
 
       const id = nextId.current++;
-      setDraft('');
+      if (!askOptions?.welcome) setDraft('');
       setBusy(true);
 
+      // LLM answers show a plain typing indicator: no canned status sentence in the assistant's voice.
       const pendingMessage =
         selectedModelChoice === 'embedding'
           ? 'Computing embeddings & ranking vectors…'
-          : selectedModelChoice === 'smollm2_portfolio_custom'
-            ? 'Analyzing context & synthesizing answer with fine-tuned SmolLM2 custom model…'
-            : selectedModelChoice === 'conversation' || selectedModelChoice === 'fluent' || selectedModelChoice === 'smollm'
-              ? 'Analyzing context & synthesizing answer with local LLM…'
-              : 'Searching portfolio records…';
+          : LLM_CHOICES.has(selectedModelChoice)
+            ? '…'
+            : 'Searching portfolio records…';
 
       // The question renders immediately, so the log never appears to stall.
-      setTurns((current) => [...current, { id, question: trimmed, answer: null, pendingMessage }]);
+      setTurns((current) => [...current, { id, question: trimmed, answer: null, pendingMessage, ...(askOptions?.welcome ? { welcome: true } : {}) }]);
 
       // Allow the UI thread to paint the pending state and not freeze the window
       await new Promise((resolve) => setTimeout(resolve, 30));
@@ -981,7 +978,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           return false;
         }
         setSemantic({ status: 'ready', chunks: after.total });
-        pickRandomGreeting('embedding');
         return true;
       })
       .catch((err: unknown) => {
@@ -999,7 +995,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         );
         return false;
       });
-  }, [isDownloading, pickRandomGreeting]);
+  }, [isDownloading]);
 
   /**
    * Load the conversational model. Separate from `startModel` on purpose.
@@ -1042,7 +1038,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
 
         if (workerConversation) {
           conversationRef.current = workerConversation;
-          pickRandomGreeting(role);
           setChat({
             status: 'ready',
             backend: 'wasm',
@@ -1090,7 +1085,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           return;
         }
         conversationRef.current = conversation;
-        pickRandomGreeting(role);
         setChat({
           status: 'ready',
           backend: loadedContainer.current.backend,
@@ -1103,7 +1097,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
         if (chatAttempt.current !== attempt) return;
         setChat({ status: 'failed', message: lastFailedMessage });
       });
-  }, [isDownloading, checkAllModelCaches, pickRandomGreeting]);
+  }, [isDownloading, checkAllModelCaches]);
 
   const handleSelectModel = useCallback((item: ModelListItem) => {
     if (isDownloading) return;
@@ -1247,6 +1241,19 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
   }, []);
 
   const summary = describeBrain(brain);
+
+  // When a local LLM becomes ready, let the MODEL open the conversation (no canned banner / random greeting).
+  const welcomedForRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!LLM_CHOICES.has(selectedModelChoice)) {
+      welcomedForRef.current = null;
+      return;
+    }
+    if (chat.status !== 'ready' || state.status !== 'ready' || busy || turns.length > 0) return;
+    if (welcomedForRef.current === selectedModelChoice) return;
+    welcomedForRef.current = selectedModelChoice;
+    void ask('Hi', { welcome: true });
+  }, [selectedModelChoice, chat.status, state.status, busy, turns.length, ask]);
 
   return (
     <div
@@ -1420,7 +1427,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
           ) : null}
 
           <div className={styles.log} ref={logRef} aria-live="polite" aria-atomic="false">
-            {turns.length === 0 && state.status === 'ready' ? (
+            {turns.every((t) => t.welcome) && state.status === 'ready' ? (
               <div className={styles.suggestions}>
                 <p className={styles.suggestionsLead}>Try one of these:</p>
                 {SUGGESTIONS.map((suggestion) => (
@@ -1445,18 +1452,6 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
              * build date as if it were today's. `generatedAt` is deliberately unused
              * here for exactly that reason.
              */}
-            {chat.status === 'ready' && turns.length === 0 ? (
-              <p className={styles.brainNote}>
-                ⚡ <strong>I am alive!</strong> My neural brain is now powered by ONNX directly in your browser. {greetingMessage} Activated on{' '}
-                {new Date().toLocaleDateString(undefined, {
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                })}
-                .
-              </p>
-            ) : null}
-
             {/* Real measured timings, and active model indicator. */}
             {chat.status === 'ready' ? (
               <p className={styles.brainTimings}>
@@ -1743,6 +1738,7 @@ export function AgentWidget({ open, onOpen, onClose }: AgentWidgetProps) {
                           className={styles.contextResetBtn}
                           disabled={busy || isDownloading}
                           onClick={() => {
+                            welcomedForRef.current = null;
                             setTurns([]);
                             standardEngineRef.current?.clearHistory();
                             conversationalEngineRef.current?.clearHistory();
@@ -1939,6 +1935,8 @@ function Turn({
 
   return (
     <article className={styles.turn}>
+      {turn.welcome ? null : (
+        <>
       {/* User Message (Right Side) */}
       <div className={styles.userMessageRow}>
         <div className={styles.userBubble}>
@@ -1952,6 +1950,9 @@ function Turn({
           </svg>
         </div>
       </div>
+
+        </>
+      )}
 
       {/* Agent Response (Left Side) */}
       <div className={styles.agentMessageRow}>

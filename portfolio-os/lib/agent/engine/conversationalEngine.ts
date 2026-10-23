@@ -200,7 +200,6 @@ export function buildConversationalEngineFromKnowledge(
 
     let text: string;
     let modelActions: readonly CheckedAction[] | undefined;
-    let selectedKeys: readonly string[] = [];
 
     // 100% Conversational path:
     // Prompt instructions govern hallucination, truth boundaries, and false premise correction.
@@ -220,7 +219,6 @@ export function buildConversationalEngineFromKnowledge(
           text = 'Sorry, I could not put a reply together for that. Could you try rephrasing it?';
         }
 
-        selectedKeys = selection.keys;
       } catch (err: unknown) {
         const errorDetail = err instanceof Error ? err.message : String(err);
         console.error('ConversationalEngine processing error:', err);
@@ -231,24 +229,9 @@ export function buildConversationalEngineFromKnowledge(
       text = `I am ${candidateName}'s conversational assistant. Please load and enable the conversational local model to chat with me.`;
     }
 
-    // Determine displayed evidence cards:
-    // Use keys selected by model if present, otherwise top relevant records.
-    const chosenKeys = selectedKeys.length > 0
-      ? selectedKeys
-      : relevant.slice(0, 3).map((r) => r.key);
-
-    const cards: EntityRef[] = chosenKeys
-      .map((k) => knowledge.byKey.get(k))
-      .filter((rec): rec is KnowledgeRecord => Boolean(rec))
-      .map((rec) => ({
-        key: rec.key,
-        kind: rec.kind,
-        id: rec.id,
-        name: rec.name,
-        href: rec.href,
-        summary: rec.summary,
-        evidence: rec.evidence,
-      }));
+    // LLM mode shows only what the model wrote. Navigation lives in the model's own inline markdown links (validated by repairLinks above), so no
+    // evidence chips are attached: the old fallback to "the top 3 retrieved records" put unrelated cards and canned notes under answers.
+    const cards: EntityRef[] = [];
 
     const nav = navigationFor(cards, navigation, knowledge);
 

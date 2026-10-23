@@ -159,18 +159,15 @@ test('ConversationalEngine maintains multi-turn memory across turns and supports
   assert.equal(conversational.history.length, 0);
 });
 
-test('ConversationalEngine generates valid CardPlan navigation targets', async () => {
+test('ConversationalEngine (LLM mode) attaches no evidence cards, so there is nothing canned to plan', async () => {
   const conversational = buildConversationalEngine({ portfolio, now: NOW });
   const mockConv = createMockConversation(undefined, 'Here are Noman’s Go and Kubernetes projects.');
 
   const answer = await conversational.answer('Tell me about Kubernetes', { conversation: mockConv });
-  assert.ok(answer.cards.length > 0);
+  assert.equal(answer.text, 'Here are Noman’s Go and Kubernetes projects.');
+  assert.deepEqual(answer.cards, []);
 
+  // plan() must still behave for an answer without cards (the widget calls it for every answer).
   const plans = conversational.plan(answer, '/');
-  assert.equal(plans.length, answer.cards.length);
-  for (const plan of plans) {
-    assert.ok(plan.href);
-    assert.ok(plan.label);
-    assert.ok(plan.action);
-  }
+  assert.equal(plans.length, 0);
 });

@@ -62,3 +62,12 @@ test('the instruction asks for a natural voice and a requirements grid (no force
   assert.match(ins, /Requirement \| Fit: Strong, Partial, or Not documented \| Evidence/);
   assert.doesNotMatch(ins, /You MUST use markdown formatting/);
 });
+
+test('LLM answers carry no evidence cards or navigation chips (inline links in the model text are the navigation)', async () => {
+  const engine = buildConversationalEngine({ portfolio, now: NOW });
+  const { layer } = capture('Sure — it is [VERSEYE](/products/verseye).');
+  const answer = await engine.answer('Tell me about VERSEYE', { conversation: layer });
+  assert.deepEqual(answer.cards, []);
+  assert.equal(answer.caveats.length, 0);
+  assert.ok(answer.text.includes('[VERSEYE](/products/verseye)'));
+});
